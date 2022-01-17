@@ -1,0 +1,51 @@
+.wrap {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.top {
+  margin: 1;
+  border: 2px solid grey;
+  height: 60px;
+}
+
+.middle {
+  flex: 1;
+  overflow-y: auto;
+  background: black;
+  z-index: -1;
+}
+
+#profil,
+#play {
+  margin: 10px;
+  width: 100px;
+  height: 100px;
+  background: white;
+  border: 1px solid grey;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 .3em gray;
+  z-index: 2;
+}
+
+#play {
+  color: gray;
+  text-shadow: -1px -1px black, 1px 1px white;
+  text-align: center;
+  font-family: 'Press Start 2P';
+  float: right;
+  font-size: 15pt;
+}
+
+#profil:active {
+  margin-top: 15px;
+  box-shadow: none;
+}
+
+#play:active {
+  margin-bottom: 5px;
+  box-shadow: none;
+}
