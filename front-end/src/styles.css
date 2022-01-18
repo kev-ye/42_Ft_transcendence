@@ -1,12 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
 @font-face {
 	font-family: 'Press Start 2P';
 	src: url(./assets/font/PressStart2P-Regular.ttf)
-}
-
-* {
-	margin: 0px;
-	padding: 0px;
 }
 
 html,
@@ -15,6 +12,6 @@ body {
 }
 
 body {
-	background-color: black;
-	color: white;
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
 }

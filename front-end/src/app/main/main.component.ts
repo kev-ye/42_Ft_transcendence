@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
+import { UserConnexionService } from '../user-connexion.service';
+
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
@@ -7,9 +9,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MainComponent implements OnInit {
 
-  constructor() { }
+  title: string = 'ft_transcendence - Pong';
 
-  ngOnInit(): void {
+  constructor(private userConnexionService: UserConnexionService) { }
+
+  ngOnInit(): void {}
+
+  checkConnexion() {
+    return this.userConnexionService.getConnexion();
   }
 
 }

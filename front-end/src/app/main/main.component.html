@@ -1,10 +1,27 @@
-<div class='wrap'>
-  <div class='top'>
-    <button id='profil'>profil</button>
+<mat-toolbar [ngClass]="{
+    'container': checkConnexion(),
+    'container_logout': !checkConnexion()
+  }">
+  <div *ngIf="checkConnexion()">
+    <button mat-raised-button mat-icon-button class="item">
+      <mat-icon>person</mat-icon>
+    </button>
+    <button mat-raised-button mat-icon-button class="item" >
+      <mat-icon>sports_esports</mat-icon>
+    </button>
   </div>
-  <div class='middle'>
+
+  <span>{{ title }}</span>
+
+  <div *ngIf="checkConnexion()">
+    <button mat-raised-button mat-icon-button class="item">
+      <mat-icon>people</mat-icon>
+    </button>
+    <button mat-raised-button mat-icon-button class="item">
+      <mat-icon>settings</mat-icon>
+    </button>
+    <button mat-raised-button mat-icon-button class="item">
+      <mat-icon>logout</mat-icon>
+    </button>
   </div>
-  <div>
-    <button id='play'>play</button>
-  </div>
-</div>
+</mat-toolbar>
