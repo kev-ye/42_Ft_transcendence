@@ -84,3 +84,5 @@ front-end/.vscode/*
 !front-end/.vscode/tasks.json
 !front-end/.vscode/launch.json
 !front-end/.vscode/extensions.json
+
+front-end/.angular/cache

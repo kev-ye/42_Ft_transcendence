@@ -1,15 +1,15 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { LoginComponent } from './login/login.component';
-import { Login2Component } from './login2/login2.component';
-import { ProfilComponent } from './profil/profil.component';
+import { UserLoginComponent } from './user-login/user-login.component';
+import { UserLogin2Component } from './user-login2/user-login2.component';
+import { UserSubscriptionComponent } from './user-subscription/user-subscription.component';
 
 const routes: Routes = [
   // { path: '', redirectTo: '/login', pathMatch:'full' },
-  { path: 'login', component: LoginComponent },
-  { path: 'login2', component: Login2Component },
-  { path: 'profil', component: ProfilComponent }
+  { path: 'user_login', component: UserLoginComponent },
+  { path: 'user_login2', component: UserLogin2Component },
+  { path: 'user_subscription', component: UserSubscriptionComponent }
 ];
 
 @NgModule({
