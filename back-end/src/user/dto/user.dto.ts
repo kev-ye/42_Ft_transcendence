@@ -14,7 +14,6 @@ export interface UserDto {
 export interface LimitedUserDto {
 	id: string;
 	name: string;
-	avatar: string;
 }
 
 export interface HistoryDto {
