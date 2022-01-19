@@ -1,5 +1,6 @@
 import { Controller, Delete, Get, Inject, Param, Post } from '@nestjs/common';
 import { FriendService } from './friend.service';
+import { MessageBody } from '@nestjs/websockets'
 
 @Controller('friend')
 export class FriendController {
@@ -21,8 +22,4 @@ export class FriendController {
     async getFriends(@Param('id') id: number) {
         return await this.service.getFriends(id);
     }
-}
-
-function MessageBody() {
-    throw new Error('Function not implemented.');
 }
