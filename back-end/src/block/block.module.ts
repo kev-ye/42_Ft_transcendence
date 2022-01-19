@@ -14,6 +14,12 @@ import { BlockService } from './block.service';
       provide: 'BLOCK_SERVICE',
       useClass: BlockService
     }
+  ],
+  exports: [
+    {
+      provide: 'BLOCK_SERVICE',
+      useClass: BlockService
+    }
   ]
 })
 export class BlockModule {}

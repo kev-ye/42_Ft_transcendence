@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ChatHistory } from './chat_history.entity';
 
+
 @Injectable()
 export class ChatHistoryService {
     constructor(@InjectRepository(ChatHistory) private repo: Repository<ChatHistory>) {}

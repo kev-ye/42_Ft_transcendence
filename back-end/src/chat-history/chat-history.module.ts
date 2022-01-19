@@ -9,6 +9,17 @@ import { ChatHistory } from './chat_history.entity';
     TypeOrmModule.forFeature([ChatHistory]),
   ],
   controllers: [ChatHistoryController],
-  providers: [ChatHistoryService]
+  providers: [
+    {
+      provide: 'CHAT_HISTORY_SERVICE',
+      useClass: ChatHistoryService
+    }
+  ],
+  exports: [
+    {
+      provide: 'CHAT_HISTORY_SERVICE',
+      useClass: ChatHistoryService
+    }
+  ]
 })
 export class ChatHistoryModule {}
