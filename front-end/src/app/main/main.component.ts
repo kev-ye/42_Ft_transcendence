@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { UserConnexionService } from '../user-connexion.service';
+import { UserConnexionService } from '../service/user_connexion/user-connexion.service';
 
 @Component({
   selector: 'app-main',

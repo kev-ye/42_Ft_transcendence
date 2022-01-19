@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormGroup, FormControl, ValidatorFn, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-user-subscription',
@@ -7,7 +8,18 @@ import { Component, OnInit } from '@angular/core';
 })
 export class UserSubscriptionComponent implements OnInit {
 
-  constructor() { }
+  name?: string;
+
+  subscriptionForm: FormGroup = new FormGroup({
+    name: new FormControl('', [
+      Validators.required,
+      Validators.minLength(6),
+      Validators.maxLength(16),
+      Validators.pattern('^[a-zA-Z ]*$')
+    ])
+  });
+
+  constructor() {}
 
   ngOnInit(): void {
   }
