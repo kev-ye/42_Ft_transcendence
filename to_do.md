@@ -5,8 +5,6 @@
 
 
 - [ ] bdd
-	# GET PAUL'S BDD
-
 	- user (see @user_account)
 		42id
 		name

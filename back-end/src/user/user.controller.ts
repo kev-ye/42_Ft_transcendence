@@ -15,28 +15,28 @@ export class UserController {
 	}
 
 	@Get()
-	getUsers() : LimitedUserDto[] {
+	getUsers() : Promise<LimitedUserDto[]> {
 		return this.userService.getUsers()
 	}
 
 	@Get('id/:id')
 	getUserById(
 		@Param('id') id: string
-	) : LimitedUserDto {
+	) : Promise<LimitedUserDto> {
 		return this.userService.getUserById(id)
 	}
 
 	@Get('name/:name')
 	getUserByName(
 		@Param('name') name: string
-	) : LimitedUserDto {
+	) : Promise<UserDto> {
 		return this.userService.getUserByName(name)
 	}
 
 	@Put('update/:id')
 	updateUser(
 		@Param('id') id: string
-	) : LimitedUserDto {
+	) : Promise<UserDto> {
 		return this.userService.updateUser(id)
 	}
 }

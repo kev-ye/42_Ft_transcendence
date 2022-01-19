@@ -2,8 +2,11 @@ import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/c
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { UserMiddleWare } from '../common/middleware/user.middleware';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UserEntity } from '../entities/user.entity';
 
 @Module({
+	imports: [ TypeOrmModule.forFeature([UserEntity]) ],
 	controllers: [ UserController ],
 	providers: [ UserService ]
 })
