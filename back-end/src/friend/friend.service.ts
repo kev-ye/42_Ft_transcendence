@@ -5,7 +5,10 @@ import { Friend } from './friend.entity';
 
 @Injectable()
 export class FriendService {
-    constructor(@InjectRepository(Friend) private repo: Repository<Friend>) {}
+    constructor(@InjectRepository(Friend) private repo: Repository<Friend>) {
+        console.log("friendService");
+        
+    }
 
     async addFriend(data: {first: number, second: number}) {
         const tmp = await this.repo.findOne({

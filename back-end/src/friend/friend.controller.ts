@@ -1,6 +1,7 @@
 import { Controller, Delete, Get, Inject, Param, Post } from '@nestjs/common';
 import { FriendService } from './friend.service';
 import { MessageBody } from '@nestjs/websockets'
+import { Interval } from '@nestjs/schedule';
 
 @Controller('friend')
 export class FriendController {
@@ -21,5 +22,11 @@ export class FriendController {
     @Get(':id')
     async getFriends(@Param('id') id: number) {
         return await this.service.getFriends(id);
+    }
+
+    @Interval(1000)
+    checkInterval() {
+        console.log("Interval");
+        
     }
 }
