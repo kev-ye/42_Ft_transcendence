@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 
 import { SharedMaterialModule } from './shared/shared-material.module';
 
@@ -15,7 +16,8 @@ import { UserComponent } from './user/user.component';
 import { ChatComponent } from './chat/chat.component';
 import { GameRoomComponent } from './game-room/game-room.component';
 import { GameComponent } from './game/game.component';
-
+import { LoginCallbackComponent } from './login-callback/login-callback.component';
+import { NotFoundComponent } from './not-found/not-found.component';
 
 @NgModule({
   declarations: [
@@ -27,8 +29,9 @@ import { GameComponent } from './game/game.component';
     UserComponent,
     ChatComponent,
     GameRoomComponent,
-    GameComponent
-
+    GameComponent,
+    LoginCallbackComponent,
+    NotFoundComponent
   ],
   imports: [
     BrowserModule,
@@ -36,9 +39,11 @@ import { GameComponent } from './game/game.component';
     SharedMaterialModule,
     AppRoutingModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}

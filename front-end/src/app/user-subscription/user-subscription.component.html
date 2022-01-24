@@ -1,11 +1,11 @@
 <div class="stepperContainer">
   <mat-vertical-stepper [linear]="true">
-    <form [formGroup]="subscriptionForm">
+    <form [formGroup]="subscriptionForm" #f="ngForm">
 
       <!-- name step -->
       <mat-step [stepControl]="subscriptionForm" label="Info">
         <mat-form-field hintLabel="16 caracters max">
-          <input name="name" matInput formControlName="name" required>
+          <input name="name" matInput formControlName="name"  maxlength="16" [(ngModel)]="user.name" required>
           <mat-placeholder>
             <mat-icon>person</mat-icon>name
           </mat-placeholder>
@@ -13,26 +13,25 @@
           <mat-error *ngIf="subscriptionForm.get('name')?.hasError('required')">name shouldn't empty</mat-error>
           <mat-error *ngIf="subscriptionForm.get('name')?.hasError('pattern')">only letters</mat-error>
           <mat-error *ngIf="subscriptionForm.get('name')?.hasError('minlength')">min 6 caracters.</mat-error>
-          <mat-error *ngIf="subscriptionForm.get('name')?.hasError('maxlength')">max 16 caracters.</mat-error>
         </mat-form-field>
         <div>
           <button mat-button matStepperNext color="primary">Next to Avatar</button>
         </div>
       </mat-step>
-
+      
       <!-- avatar step -->
       <mat-step label="Avatar" optional>
         <button mat-button matStepperPrevious color="warn">Back to Info</button>
         <button mat-button matStepperNext color="primary">Next to submit</button>
       </mat-step>
-      
-      
-      <!-- submit step -->
-      <mat-step label="Done" optional>
-        <button mat-button matStepperPrevious color="warn">Back to Avatar</button>
-        <button type="submit" mat-button color="primary">Done</button>
-      </mat-step>
-    
+
     </form>
+      
+    <!-- submit step -->
+    <mat-step label="Done" optional>
+      <button mat-button matStepperPrevious color="warn">Back to Avatar</button>
+      <button type="submit" mat-button color="primary" (click)="createUser(f)">Done</button>
+    </mat-step>
+    
   </mat-vertical-stepper>
 </div>

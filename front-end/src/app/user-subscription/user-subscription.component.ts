@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, ValidatorFn, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+
+import { UserApiService } from '../service/user_api/user-api.service';
+import { User } from '../user/user';
+
 
 @Component({
   selector: 'app-user-subscription',
@@ -8,6 +13,10 @@ import { FormGroup, FormControl, ValidatorFn, Validators } from '@angular/forms'
 })
 export class UserSubscriptionComponent implements OnInit {
 
+  user: User = {
+    id: 0,
+    name: ""
+  };
   name?: string;
 
   subscriptionForm: FormGroup = new FormGroup({
@@ -19,9 +28,18 @@ export class UserSubscriptionComponent implements OnInit {
     ])
   });
 
-  constructor() {}
+  constructor(
+    private userApiService: UserApiService,
+    private router: Router) {}
 
   ngOnInit(): void {
+  }
+
+  createUser(f: any) {
+    this.userApiService.createUser(f.value)
+      .subscribe((result) => {
+        console.log(result);
+      });
   }
 
 }
