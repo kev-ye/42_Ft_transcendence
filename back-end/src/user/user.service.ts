@@ -2,7 +2,7 @@ import { Injectable, HttpException, ForbiddenException, HttpStatus } from '@nest
 import { UserDto, LimitedUserDto, HistoryDto } from './dto/user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UserEntity } from 'src/entities/user.entity';
+import { UserEntity } from './entity/user.entity';
 import { HttpErrorByCode } from '@nestjs/common/utils/http-error-by-code.util';
 import { v4 as uuid } from 'uuid';
 

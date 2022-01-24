@@ -4,7 +4,12 @@ import { Connection } from 'typeorm';
 
 /* Custom imports */
 import { UserModule } from '../user/user.module';
-import { UserEntity } from '../entities/user.entity';
+import { BlockModule } from '../block/block.module';
+import { FriendModule } from '../friend/friend.module';
+import { ChatHistoryModule } from 'src/chat-history/chat-history.module';
+import { LadderModule } from '../ladder/ladder.module';
+import { PrivateModule } from '../private/private.module';
+
 
 
 @Module({
@@ -19,10 +24,15 @@ import { UserEntity } from '../entities/user.entity';
 		synchronize: true,
 		// logging: false,
 		// dropSchema: false, // don't use in prod
-		entities: [ UserEntity ]
+		entities: [ "./dist/**/*.entity.js" ]
 		// entities: ['../entities/*.entity{.ts,.js}']
 		}),
 		UserModule,
+    FriendModule,
+    BlockModule,
+    ChatHistoryModule,
+    LadderModule,
+    PrivateModule
 	]
 })
 export class AppModule {
