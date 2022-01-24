@@ -28,5 +28,9 @@ export class UserModule implements NestModule {
 			path: 'user/update',
 			method: RequestMethod.PUT
 		});
+		consumer.apply(UserMiddleWare).forRoutes({
+			path: 'user/delete/:id',
+			method: RequestMethod.POST
+		});
 	}
 }

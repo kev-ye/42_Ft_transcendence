@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, ForbiddenException, HttpStatus } from '@nestjs/common';
 import { UserDto, LimitedUserDto, HistoryDto } from './dto/user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from 'src/entities/user.entity';
+import { HttpErrorByCode } from '@nestjs/common/utils/http-error-by-code.util';
+import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class UserService {
@@ -12,70 +14,70 @@ export class UserService {
 		private usersRepository: Repository<UserEntity>
 	) {}
 
-	findAll(): Promise<UserEntity[]> {
-		return this.usersRepository.find();
-	}
-
-	createUser(user: LimitedUserDto) : UserDto {
-		if (!this.isUniqueUserName(user.name))
-			return undefined // return 400
+	async createUser(user: LimitedUserDto) : Promise<UserDto> {
 		
-		console.log(`Creating profile: ${user.id} ${user.name}`)
+		await this._checkNewUserName(user.name);
+		
+		console.log(`Creating profile: login:${user.login} name:${user.name}`)
 
 		let newUser : UserDto = {
-			id: '',
-			login: user.id,
-			name: user.name,
+			...user,
+			id: uuid(), // TODO: change to 42 id
 			avatar: '',
-			fortyTwoAvatar: `https://cdn.intra.42.fr/users/${user.id}.jpg`,
-			email: `${user.name}@gmail.com`
-			// friends: [],
-			// history: [],
-			// xp: 0,
-			// level: 1,
-			// created_at: new Date(),
-			// updated_at: new Date()
+			fortyTwoAvatar: `https://cdn.intra.42.fr/users/${user.login}.jpg`,
+			email: `${user.login}@student.42.fr`
 		}
-
-		this.usersRepository.save(newUser)
-
-		return newUser
+		return await this.usersRepository.save(newUser)
 	}
 
 	async getUsers() : Promise<LimitedUserDto[]> {
-		return (await this._getCompleteUsers()).map(user => {
-			return {
-				id: user.id,
-				login: user.login,
-				name: user.name,
-				avatar: user.avatar,
-				fortyTwoAvatar: user.fortyTwoAvatar,
-				email: user.email
-			}
-		})
+		return await this._getCompleteUsers()
 	}
 
 	async getUserById(id: string) : Promise<UserDto> {
-		return (await this._getCompleteUsers()).find(user => user.id === id)
+		return (await this._getCompleteUsers())
+			.find(user => user.id === id)
+	}
+
+	async getUserByLogin(login: string) : Promise<UserDto> {
+		return (await this._getCompleteUsers())
+			.find(user => user.login === login)
 	}
 
 	async getUserByName(name: string) : Promise<UserDto> {
-		return (await this._getCompleteUsers()).find(user => user.name === name)
+		return (await this._getCompleteUsers())
+			.find(user => user.name === name)
 	}
 
-	async updateUser(id: string) : Promise<UserDto> {
-		const user : UserDto = await this.getUserById(id)
+	async updateUserById(updatedUser: UserDto) : Promise<UserDto> {
+		if (!updatedUser)
+			throw new ForbiddenException(`no user to update`)
 		
-		console.log(`updating user ${id}`)
-
+		// get the UserDto to update
+		let user : UserDto = await this.getUserById(updatedUser.id)
+		
 		if (!user)
-			return undefined // return 404
+			throw new ForbiddenException(`user ${updatedUser.id} not found`)
 		
+		if (user === updatedUser)
+			throw new ForbiddenException(`nothing to update`)
 
-		// update user here
+
+		// this enable to update only some fields on the request
+		user = {
+			...user,
+			...updatedUser
+		}
+		
+		// check if the (maybe updated) username is unique
+		await this._checkNewUserName(user.name)
+
+		return await this.usersRepository.save(user)
+	}
 
 
-		return user // new_user infos instead
+	async deleteUserById(id: string) {
+		await this.usersRepository.delete({id: id})
 	}
 
 	
@@ -88,10 +90,36 @@ export class UserService {
 	}
 
 	/*
+	** username format must be like this:
+	** - 6 to 16 characters
+	** - only letters (lower or upper case)
+	*/
+	private _checkUserNameFormat(username : string) : boolean {
+		return /^[a-zA-Z]{6,16}$/.test(username)
+	}
+
+	/*
 	** check if the username is unique in the database
 	** must be private for security reasons
 	*/
-	private isUniqueUserName(username : string) : boolean {
-		return this.getUserByName(username) === undefined
+	private async _isUniqueUserName(username : string) : Promise<boolean> {
+		return (await this.getUserByName(username)) === undefined
+	}
+
+	private async _checkNewUserName(username : string) : Promise<boolean> {
+		
+		// check username format
+		if (!this._checkUserNameFormat(username))
+		{
+			throw new ForbiddenException(`username ${username} is not valid`)
+		}
+
+		// check if the username is unique
+		if (!(await this._isUniqueUserName(username)))
+		{
+			throw new ForbiddenException(`username ${username} is already taken`)
+		}
+		
+		return true
 	}
 }

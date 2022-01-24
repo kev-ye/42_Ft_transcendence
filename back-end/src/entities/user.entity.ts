@@ -1,3 +1,4 @@
+import { ParseUUIDPipe } from '@nestjs/common';
 import { Column, CreateDateColumn, Entity, PrimaryColumn } from 'typeorm'
 
 // table for users
@@ -5,23 +6,23 @@ import { Column, CreateDateColumn, Entity, PrimaryColumn } from 'typeorm'
 @Entity()
 export class UserEntity {
 	@PrimaryColumn({ unique: true })
-	id: string; //42 id
+	id: string; // 42 id
 
 	@CreateDateColumn()
-	created: Date; //auto-generated date
+	created: Date; // auto-generated date
 
-	@Column('text')
-	login: string; //42 login
+	@Column({ unique: true, type: 'text'})
+	login: string; // 42 login
 
-	@Column({ nullable: true })
-	name: string; //username
-
-	@Column({ nullable: true })
-	avatar: string; //avatar
+	@Column({ unique: true, nullable: true})
+	name: string; // username
 
 	@Column({ nullable: true })
-	fortyTwoAvatar: string; //link to 42 avatar
+	avatar: string; // avatar
 
 	@Column({ nullable: true })
-	email: string; //42 email ?
+	fortyTwoAvatar: string; // link to 42 avatar
+
+	@Column({ nullable: true })
+	email: string; // 42 email (?)
 }
