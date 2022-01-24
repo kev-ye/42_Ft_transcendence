@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Ladder } from './ladder.entity';
+import { LadderEntity } from './entity/ladder.entity';
 import { Repository } from 'typeorm';
 export const INITIAL_POINTS = 500;
 export const POINTS_WINNING = 10;
@@ -8,7 +8,7 @@ export const POINTS_LOSING = 10;
 
 @Injectable()
 export class LadderService {
-    constructor(@InjectRepository(Ladder) private ladderRepo: Repository<Ladder>) {}
+    constructor(@InjectRepository(LadderEntity) private ladderRepo: Repository<LadderEntity>) {}
 
     async getPointsFromUser(user_id: string) {
         return await this.ladderRepo.find({id: user_id})

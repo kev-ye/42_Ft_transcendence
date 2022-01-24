@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BlockController } from './block.controller';
-import { Block } from './block.entity';
+import { BlockEntity } from './entity/block.entity';
 import { BlockService } from './block.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Block]),
+    TypeOrmModule.forFeature([BlockEntity]),
   ],
   controllers: [BlockController],
   providers: [

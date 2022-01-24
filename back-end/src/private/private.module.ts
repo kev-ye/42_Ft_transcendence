@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PrivateController } from './private.controller';
-import { Private } from './private.entity';
+import { PrivateMessageEntity } from './entity/private_message.entity';
 import { PrivateService } from './private.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Private])
+    TypeOrmModule.forFeature([PrivateMessageEntity])
   ],
   controllers: [PrivateController],
   providers: [

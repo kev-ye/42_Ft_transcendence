@@ -2,8 +2,8 @@ import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeor
 
 //table for channels' message history
 
-@Entity()
-export class ChatHistory {
+@Entity('channels_history_table')
+export class ChatHistoryEntity {
     
     @PrimaryGeneratedColumn('uuid')
     id: string; //auto-generated id

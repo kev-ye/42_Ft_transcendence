@@ -2,7 +2,7 @@ import { Column, Entity, PrimaryColumn } from "typeorm";
 
 // table for ladder level
 
-@Entity()
+@Entity('ladder_table')
 export class LadderEntity {
 	@PrimaryColumn({ unique: true })
 	id: string; //user (identified by his 42 id) 

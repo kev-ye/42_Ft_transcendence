@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Private } from './private.entity';
+import { PrivateMessageEntity } from './entity/private_message.entity';
 
 @Injectable()
 export class PrivateService {
-    constructor(@InjectRepository(Private) private repo: Repository<Private>) {}
+    constructor(@InjectRepository(PrivateMessageEntity) private repo: Repository<PrivateMessageEntity>) {}
 
     async postMessage(data: {from: number, to: number, type: number, message?: string}) {
         const tmp = this.repo.create(data);

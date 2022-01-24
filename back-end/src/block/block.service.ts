@@ -1,12 +1,12 @@
-import { Injectable } from '@nestjs/common';
+ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Block } from './block.entity';
+import { BlockEntity } from './entity/block.entity';
 
 
 @Injectable()
 export class BlockService {
-    constructor(@InjectRepository(Block) private repo: Repository<Block>) {}
+    constructor(@InjectRepository(BlockEntity) private repo: Repository<BlockEntity>) {}
 
     async blockUser(data: {first: number, second: number}) {
         if (await this.repo.findOne({

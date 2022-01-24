@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ChatHistory } from './chat_history.entity';
+import { ChatHistoryEntity } from './entity/chat_history.entity';
 
 
 @Injectable()
 export class ChatHistoryService {
-    constructor(@InjectRepository(ChatHistory) private repo: Repository<ChatHistory>) {}
+    constructor(@InjectRepository(ChatHistoryEntity) private repo: Repository<ChatHistoryEntity>) {}
 
     async showAll() {
         return await this.repo.find({ order: {

@@ -2,8 +2,8 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 //table for friend relationships between users
 
-@Entity()
-export class Friend {
+@Entity('friends_table')
+export class FriendEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string; //auto-generated id
 

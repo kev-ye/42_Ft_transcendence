@@ -4,7 +4,6 @@ import { Connection } from 'typeorm';
 
 /* Custom imports */
 import { UserModule } from '../user/user.module';
-import { UserEntity } from '../entities/user.entity';
 import { BlockModule } from '../block/block.module';
 import { FriendModule } from '../friend/friend.module';
 import { ChatHistoryModule } from 'src/chat-history/chat-history.module';

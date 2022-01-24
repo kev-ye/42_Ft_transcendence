@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { LadderController } from './ladder.controller';
-import { Ladder } from './ladder.entity';
+import { LadderEntity } from './entity/ladder.entity';
 import { LadderService } from './ladder.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Ladder])
+    TypeOrmModule.forFeature([LadderEntity])
   ],
   controllers: [LadderController],
   providers: [
