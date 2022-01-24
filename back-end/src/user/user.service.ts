@@ -23,6 +23,7 @@ export class UserService {
 		let newUser : UserDto = {
 			...user,
 			id: uuid(), // TODO: change to 42 id
+			login: '',
 			avatar: '',
 			fortyTwoAvatar: `https://cdn.intra.42.fr/users/${user.login}.jpg`,
 			email: `${user.login}@student.42.fr`
