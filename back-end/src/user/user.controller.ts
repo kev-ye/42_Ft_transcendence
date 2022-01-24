@@ -7,22 +7,6 @@ export class UserController {
 
 	constructor(private readonly userService : UserService) {}
 
-	@Post('create')
-	createUser(
-		@Body() user: LimitedUserDto
-	) : Promise<UserDto> {
-		// let newUser = undefined
-
-		// try {
-		// 	newUser = this.userService.createUser(user)
-		// } catch (error) {
-		// 	console.log(error);
-		// }
-		// return newUser
-
-		return this.userService.createUser(user)
-	}
-
 	@Get()
 	getUsers() : Promise<LimitedUserDto[]> {
 		return this.userService.getUsers()
@@ -47,6 +31,13 @@ export class UserController {
 		@Param('name') name: string
 	) : Promise<UserDto> {
 		return this.userService.getUserByName(name)
+	}
+
+	@Post('create')
+	createUser(
+		@Body() user: LimitedUserDto
+	) : Promise<UserDto> {
+		return this.userService.createUser(user)
 	}
 
 	@Put('update')
