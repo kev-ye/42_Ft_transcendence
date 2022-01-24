@@ -18,6 +18,8 @@ export class ChatHistoryService {
         let result: any[] = await this.repo.query('select * from history where chat_id=\''
         + chat_id
         + "\' order by created desc limit " + 20 + ";");
+		// let result: any[] = await this.repo.query(
+		// 	`select * from history where chat_id='${chat_id}' order by created desc limit ${20};`);
         result.reverse();
         return result;
     }
