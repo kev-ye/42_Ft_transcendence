@@ -15,22 +15,22 @@ export class UserService {
 
 	async createUser(user: LimitedUserDto) : Promise<UserDto> {
 		
-		await this._checkNewUserName(user.name);
-		
-		console.log(`Creating profile: login:${user.login} name:${user.name}`)
+		await this._checkNewUser(user);
 
+		// console.log(`Creating profile: login:${user.login} name:${user.name}`)
+		
 		let newUser : UserDto = {
 			...user,
 			id: uuid(), // TODO: change to 42 id
-			login: '',
-			avatar: '',
-			fortyTwoAvatar: `https://cdn.intra.42.fr/users/${user.login}.jpg`,
-			email: `${user.login}@student.42.fr`
 		}
+		console.log(newUser);
 		return await this.usersRepository.save(newUser)
 	}
 
 	async getUsers() : Promise<LimitedUserDto[]> {
+
+		// this.createUser({ id: uuid(), login: 'test', name: 'test', avatar: 'test', fortyTwoAvatar: 'test', email: 'test' })
+
 		return await this._getCompleteUsers()
 	}
 
@@ -70,7 +70,12 @@ export class UserService {
 		}
 		
 		// check if the (maybe updated) username is unique
-		await this._checkNewUserName(user.name)
+		// await this._checkNewUserName(user.name)
+
+		if (!this._checkUserNameFormat(user.name))
+			throw new ForbiddenException(`username ${user.name} is not valid`)
+		if (!(await this._isUniqueUserName(user.name)))
+			throw new ForbiddenException(`username ${user.name} is already taken`)
 
 		return await this.usersRepository.save(user)
 	}
@@ -108,20 +113,29 @@ export class UserService {
 		return (await this.getUserByName(username)) === undefined
 	}
 
-	private async _checkNewUserName(username : string) : Promise<boolean> {
+	private async _isUniqueLogin(login : string) : Promise<boolean> {
+		return (await this.getUserByLogin(login)) === undefined
+	}
+
+	private async _checkNewUser(user : LimitedUserDto) : Promise<boolean> {
 		
 		// check username format
-		if (!this._checkUserNameFormat(username))
+		if (!this._checkUserNameFormat(user.name))
 		{
-			throw new ForbiddenException(`username ${username} is not valid`)
+			throw new ForbiddenException(`username ${user.name} is not valid`)
 		}
 
 		// check if the username is unique
-		if (!(await this._isUniqueUserName(username)))
+		if (!(await this._isUniqueUserName(user.name)))
 		{
-			throw new ForbiddenException(`username ${username} is already taken`)
+			throw new ForbiddenException(`username ${user.name} is already taken`)
 		}
-		
+
+		if (!(await this._isUniqueLogin(user.login)))
+		{
+			throw new ForbiddenException(`login ${user.login} is already taken`)
+		}
+
 		return true
 	}
 }

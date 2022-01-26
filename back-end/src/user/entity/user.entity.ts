@@ -2,7 +2,6 @@ import { ParseUUIDPipe } from '@nestjs/common';
 import { Column, CreateDateColumn, Entity, PrimaryColumn } from 'typeorm'
 
 // table for users
-
 @Entity('users_table')
 export class UserEntity {
 	@PrimaryColumn({ unique: true })
