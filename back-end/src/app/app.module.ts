@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { UserEntity } from 'src/user/entity/user.entity';
 import { Connection } from 'typeorm';
 
 /* Custom imports */
@@ -22,9 +23,8 @@ import { PrivateModule } from '../private/private.module';
 		database: 'test',
 		synchronize: true,
 		// logging: false,
-		// dropSchema: false, // don't use in prod
+		dropSchema: true, // don't use in production
 		entities: [ "./dist/**/*.entity.js" ]
-		// entities: ['../entities/*.entity{.ts,.js}']
 		}),
 		UserModule,
 		FriendModule,
