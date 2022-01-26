@@ -9,30 +9,30 @@ import { FriendModule } from '../friend/friend.module';
 import { ChatHistoryModule } from 'src/chat-history/chat-history.module';
 import { LadderModule } from '../ladder/ladder.module';
 import { PrivateModule } from '../private/private.module';
-
-
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
-	TypeOrmModule.forRoot({
-		type: 'postgres',
-		host: 'localhost',
-		port: 5432,
-		username: 'yek',
-		password: '',
-		database: 'test',
-		synchronize: true,
-		// logging: false,
-		// dropSchema: false, // don't use in prod
-		entities: [ "./dist/**/*.entity.js" ]
-		// entities: ['../entities/*.entity{.ts,.js}']
-		}),
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: 'localhost',
+      port: 5432,
+      username: 'yek',
+      password: '',
+      database: 'test',
+      synchronize: true,
+      // logging: false,
+      // dropSchema: false, // don't use in prod
+      entities: [ "./dist/**/*.entity.js" ]
+      // entities: ['../entities/*.entity{.ts,.js}']
+    }),
 		UserModule,
     FriendModule,
     BlockModule,
     ChatHistoryModule,
     LadderModule,
-    PrivateModule
+    PrivateModule,
+    AuthModule
 	]
 })
 export class AppModule {

@@ -1,4 +1,7 @@
-import { Controller, Get, Post, Put, Param, Body, Redirect } from "@nestjs/common";
+import { Controller, Get, Post, Put, Req, Res, Param, Body, Redirect, UseGuards } from "@nestjs/common";
+import { AuthGuard } from '@nestjs/passport';
+import { REFUSED } from "dns";
+
 import { UserDto, LimitedUserDto, HistoryDto } from "./dto/user.dto";
 import { UserService } from "./user.service";
 
@@ -53,4 +56,15 @@ export class UserController {
 	) {
 		return this.userService.deleteUserById(id)
 	}
+
+  // auth
+
+  // @Get('auth/42')
+  // @UseGuards(AuthGuard('42'))
+  // async ftAuth() {}
+
+  // @Get('auth/42/callback')
+  // @UseGuards(AuthGuard('42'))
+  // // @Redirect('/')
+  // ftAuthCallback() {}
 }

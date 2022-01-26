@@ -12,11 +12,11 @@ export class UserApiService {
 
   constructor(private httpClient: HttpClient) { }
 
-  public readUser(){
-    return this.httpClient.get<User[]>(`${this.USER_API_SERVER}/users`);
+  public ftAuthLogin() {
+    window.location.href = `${this.USER_API_SERVER}/user/auth/42`;
   }
 
-  public createUser(users: any){
+  public createUser(users: any) {
     return this.httpClient.post<User>(`${this.USER_API_SERVER}/users/create`, users);
   }
 }

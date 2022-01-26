@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { User42ApiService } from '../service/user42_api/user42-api.service';
+import { UserApiService } from '../service/user_api/user-api.service';
 import { User42 } from '../user/user';
 
 @Component({
@@ -13,12 +13,11 @@ export class UserLoginComponent implements OnInit {
   icon: string = "login";
   buttonMsg: string = "Login with 42";
 
-  constructor(private user42ApiService: User42ApiService) {}
+  constructor(private readonly userApiService: UserApiService) {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
-  login_42() {
-    this.user42ApiService.login_42();
+  ftLogin() {
+    this.userApiService.ftAuthLogin();
   }
 }

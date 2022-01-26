@@ -1,9 +1,8 @@
-import { Injectable, HttpException, ForbiddenException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, ForbiddenException, HttpStatus, Body } from '@nestjs/common';
 import { UserDto, LimitedUserDto, HistoryDto } from './dto/user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from './entity/user.entity';
-import { HttpErrorByCode } from '@nestjs/common/utils/http-error-by-code.util';
 import { v4 as uuid } from 'uuid';
 
 @Injectable()
@@ -11,7 +10,7 @@ export class UserService {
 	
 	constructor(
 		@InjectRepository(UserEntity)
-		private usersRepository: Repository<UserEntity>
+		private usersRepository: Repository<UserEntity>,
 	) {}
 
 	async createUser(user: LimitedUserDto) : Promise<UserDto> {
@@ -76,12 +75,14 @@ export class UserService {
 		return await this.usersRepository.save(user)
 	}
 
-
 	async deleteUserById(id: string) {
 		await this.usersRepository.delete({id: id})
 	}
 
-	
+  // auth
+  ftLogin() {
+  }
+
 	/////////////////////
 	/* PRIVATE METHODS */
 	/////////////////////
