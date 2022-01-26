@@ -6,10 +6,9 @@ import { Connection } from 'typeorm';
 import { UserModule } from '../user/user.module';
 import { BlockModule } from '../block/block.module';
 import { FriendModule } from '../friend/friend.module';
-import { ChatHistoryModule } from 'src/chat-history/chat-history.module';
+import { ChatHistoryModule } from '../chat-history/chat-history.module';
 import { LadderModule } from '../ladder/ladder.module';
 import { PrivateModule } from '../private/private.module';
-
 
 
 @Module({
@@ -28,11 +27,11 @@ import { PrivateModule } from '../private/private.module';
 		// entities: ['../entities/*.entity{.ts,.js}']
 		}),
 		UserModule,
-    FriendModule,
-    BlockModule,
-    ChatHistoryModule,
-    LadderModule,
-    PrivateModule
+		FriendModule,
+		BlockModule,
+		ChatHistoryModule,
+		LadderModule,
+		PrivateModule
 	]
 })
 export class AppModule {
