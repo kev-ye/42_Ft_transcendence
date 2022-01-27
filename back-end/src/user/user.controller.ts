@@ -59,12 +59,12 @@ export class UserController {
 
   // auth
 
-  // @Get('auth/42')
-  // @UseGuards(AuthGuard('42'))
-  // async ftAuth() {}
+  @Get('auth/42/callback')
+  @UseGuards(AuthGuard('42'))
+  ftAuthCallback(@Req() req: any): any {
 
-  // @Get('auth/42/callback')
-  // @UseGuards(AuthGuard('42'))
-  // // @Redirect('/')
-  // ftAuthCallback() {}
+    const { login } = req.user;
+  
+    return { login };
+  }
 }

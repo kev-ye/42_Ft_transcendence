@@ -23,7 +23,21 @@ export class UserService {
 			...user,
 			id: uuid(), // TODO: change to 42 id
 		}
-		console.log(newUser);
+		// console.log(newUser);
+		return await this.usersRepository.save(newUser)
+	}
+
+  async createUserByLogin(user: LimitedUserDto) : Promise<UserDto> {
+		
+		await this._checkNewUserWithLogin(user);
+
+		// console.log(`Creating profile: login:${user.login} name:${user.name}`)
+		
+		let newUser : UserDto = {
+			...user,
+			id: uuid(), // TODO: change to 42 id
+		}
+		// console.log(newUser);
 		return await this.usersRepository.save(newUser)
 	}
 
@@ -130,6 +144,16 @@ export class UserService {
 		{
 			throw new ForbiddenException(`username ${user.name} is already taken`)
 		}
+
+		if (!(await this._isUniqueLogin(user.login)))
+		{
+			throw new ForbiddenException(`login ${user.login} is already taken`)
+		}
+
+		return true
+	}
+
+  private async _checkNewUserWithLogin(user : LimitedUserDto) : Promise<boolean> {
 
 		if (!(await this._isUniqueLogin(user.login)))
 		{

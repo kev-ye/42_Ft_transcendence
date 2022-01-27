@@ -11,37 +11,21 @@ export class AuthService {
     private readonly httpService: HttpService
   ) {}
 
-  async valideUser(accessToken: string): Promise<any> {
-    this.httpService.get('https://api.intra.42.fr/v2/me', {
-      headers: { "Authorization": "Bearer " + accessToken }
-    })
-    .subscribe(async (result) => {
-      const { login } = result.data;
-      if (login) {
-        console.log('login: ', login);
-        const user = await this.userService.getUserByLogin(login);
-        
-        if (user)
-        {
-          console.log('ret user');
-          return user;
-        }
-        else {
-          const createUser: LimitedUserDto = {
-            id: '',
-            name: '',
-            avatar: '',
-            login: login,
-            fortyTwoAvatar: '',
-            email: ''
-          };
-          console.log('create user: ', createUser);
-          return await this.userService.createUser(createUser);
-        }
-      }
-    });
-    console.log('here\n');
-    return 'ok';
+  async valideUser(login: string): Promise<any> {
+    const user = await this.userService.getUserByLogin(login);
+
+    if (!user) {
+      const createUser: LimitedUserDto = {
+        id: '',
+        name: '',
+        avatar: '',
+        login: login,
+        fortyTwoAvatar: '',
+        email: ''
+      };
+      console.log('create user: ', createUser);
+      await this.userService.createUserByLogin(createUser);
+    }
   }
 
 }
