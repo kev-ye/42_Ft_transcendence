@@ -7,6 +7,9 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list'
+import { MatBadgeModule } from '@angular/material/badge'
+import { MatTabsModule } from '@angular/material/tabs'
 
 @NgModule({
   imports: [
@@ -16,7 +19,9 @@ import { MatInputModule } from '@angular/material/input';
     MatToolbarModule,
     MatStepperModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    MatBadgeModule,
+    MatTabsModule
   ], 
   exports: [
     MatButtonModule,
@@ -25,7 +30,10 @@ import { MatInputModule } from '@angular/material/input';
     MatToolbarModule,
     MatStepperModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    MatListModule,
+    MatBadgeModule,
+    MatTabsModule
   ]
 })
 export class SharedMaterialModule {}

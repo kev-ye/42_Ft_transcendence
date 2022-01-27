@@ -9,6 +9,8 @@ export class ChatComponent implements OnInit {
 
   constructor() { }
 
+  friendRequests: any[] = [{username: "wartek"}, {username: "diablox9"}]
+
   ngOnInit(): void {
   }
 

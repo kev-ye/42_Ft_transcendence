@@ -10,6 +10,7 @@ import { UserConnexionService } from '../service/user_connexion/user-connexion.s
 export class MainComponent implements OnInit {
 
   title: string = 'ft_transcendence - Pong';
+  chatVisibility: boolean = true;
 
   constructor(private userConnexionService: UserConnexionService) { }
 
@@ -17,6 +18,14 @@ export class MainComponent implements OnInit {
 
   checkConnexion() {
     return this.userConnexionService.getConnexion();
+  }
+
+  openChat() {
+    if (this.chatVisibility)
+      this.chatVisibility = false;
+    else
+      this.chatVisibility = true;
+
   }
 
 }

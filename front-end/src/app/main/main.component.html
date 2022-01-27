@@ -1,10 +1,11 @@
+
 <mat-toolbar [ngClass]="{
     'container': checkConnexion(),
     'container_logout': !checkConnexion()
   }">
   <div *ngIf="checkConnexion()">
     <button mat-raised-button mat-icon-button class="item">
-      <mat-icon>person</mat-icon>
+      <mat-icon (click)="openChat()">people</mat-icon>
     </button>
     <button mat-raised-button mat-icon-button class="item" >
       <mat-icon>sports_esports</mat-icon>
@@ -15,7 +16,7 @@
 
   <div *ngIf="checkConnexion()">
     <button mat-raised-button mat-icon-button class="item">
-      <mat-icon>people</mat-icon>
+      <mat-icon> person</mat-icon>
     </button>
     <button mat-raised-button mat-icon-button class="item">
       <mat-icon>settings</mat-icon>
@@ -25,3 +26,5 @@
     </button>
   </div>
 </mat-toolbar>
+
+<app-chat *ngIf="chatVisibility"></app-chat>
