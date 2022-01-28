@@ -10,7 +10,7 @@ import { NotFoundComponent } from './not-found/not-found.component';
 const routes: Routes = [
   // { path: '', redirectTo: '/login', pathMatch:'full' },
   { path: 'user_login', component: UserLoginComponent},
-  { path: 'user_login2', component: UserLogin2Component },
+  // { path: 'user_login2', component: UserLogin2Component },
   { path: 'user_subscription', component: UserSubscriptionComponent },
   { path: 'callback', component: LoginCallbackComponent },
   // { path: '**', component: NotFoundComponent }

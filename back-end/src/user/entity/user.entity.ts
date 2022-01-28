@@ -24,4 +24,7 @@ export class UserEntity {
 
 	@Column({ nullable: true })
 	email: string; // 42 email (?)
+
+  @Column({ nullable: false })
+  online: boolean; // online stats
 }

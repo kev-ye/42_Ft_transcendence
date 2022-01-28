@@ -35,8 +35,12 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
         name: '',
         avatar: '',
         fortyTwoAvatar: photos[0].value,
-        email: emails[0].value
+        email: emails[0].value,
+        online: true
       };
+
+      if (username)
+        await this.authService.valideUser(user);
 
       return cb(null, user);
     }

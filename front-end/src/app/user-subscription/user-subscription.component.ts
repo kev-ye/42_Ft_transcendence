@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { UserApiService } from '../service/user_api/user-api.service';
 import { User } from '../user/user';
 
 
@@ -29,17 +28,16 @@ export class UserSubscriptionComponent implements OnInit {
   });
 
   constructor(
-    private userApiService: UserApiService,
     private router: Router) {}
 
   ngOnInit(): void {
   }
 
-  createUser(f: any) {
-    this.userApiService.createUser(f.value)
-      .subscribe((result) => {
-        console.log(result);
-      });
-  }
+  // createUser(f: any) {
+  //   this.userApiService.createUser(f.value)
+  //     .subscribe((result) => {
+  //       console.log(result);
+  //     });
+  // }
 
 }

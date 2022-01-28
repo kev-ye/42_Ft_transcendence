@@ -16,36 +16,36 @@ export class UserService {
 	async createUser(user: LimitedUserDto) : Promise<UserDto> {
 		
 		await this._checkNewUser(user);
-
-		// console.log(`Creating profile: login:${user.login} name:${user.name}`)
 		
 		let newUser : UserDto = {
-			...user,
-			id: uuid(), // TODO: change to 42 id
+			...user
 		}
-		// console.log(newUser);
+
 		return await this.usersRepository.save(newUser)
 	}
 
-  async createUserByLogin(user: LimitedUserDto) : Promise<UserDto> {
-		
-		await this._checkNewUserWithLogin(user);
+  // by kaye
+  public async updateUserByAuth(user: LimitedUserDto): Promise<UserDto> {
+    let upUser: UserDto = await this.getUserById(user.id);
 
-		// console.log(`Creating profile: login:${user.login} name:${user.name}`)
-		
-		let newUser : UserDto = {
-			...user,
-			id: uuid(), // TODO: change to 42 id
-		}
-		// console.log(newUser);
-		return await this.usersRepository.save(newUser)
+	  if (upUser === undefined) {
+      console.log('user no exit, so create it');
+      upUser = { ...user };
+      return await this.usersRepository.save(upUser);
+    }
+    else {
+      console.log('user already exist, just return it');
+      return await this.usersRepository.save(upUser);
+    }
 	}
+
+  // end by kaye
 
 	async getUsers() : Promise<LimitedUserDto[]> {
 
 		// this.createUser({ id: uuid(), login: 'test', name: 'test', avatar: 'test', fortyTwoAvatar: 'test', email: 'test' })
 
-		return await this._getCompleteUsers()
+		return await this._getCompleteUsers();
 	}
 
 	async getUserById(id: string) : Promise<UserDto> {
@@ -98,10 +98,6 @@ export class UserService {
 		await this.usersRepository.delete({id: id})
 	}
 
-  // auth
-  ftLogin() {
-  }
-
 	/////////////////////
 	/* PRIVATE METHODS */
 	/////////////////////
@@ -144,16 +140,6 @@ export class UserService {
 		{
 			throw new ForbiddenException(`username ${user.name} is already taken`)
 		}
-
-		if (!(await this._isUniqueLogin(user.login)))
-		{
-			throw new ForbiddenException(`login ${user.login} is already taken`)
-		}
-
-		return true
-	}
-
-  private async _checkNewUserWithLogin(user : LimitedUserDto) : Promise<boolean> {
 
 		if (!(await this._isUniqueLogin(user.login)))
 		{

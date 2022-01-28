@@ -62,9 +62,8 @@ export class UserController {
   @Get('auth/42/callback')
   @UseGuards(AuthGuard('42'))
   ftAuthCallback(@Req() req: any): any {
-
-    const { login } = req.user;
+    const { id } = req.user;
   
-    return { login };
+    return { id };
   }
 }

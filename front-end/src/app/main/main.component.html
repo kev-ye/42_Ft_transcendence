@@ -1,8 +1,8 @@
 <mat-toolbar [ngClass]="{
-    'container': checkConnexion(),
-    'container_logout': !checkConnexion()
+    'container': true,
+    'container_logout': false
   }">
-  <div *ngIf="checkConnexion()">
+  <div *ngIf="true">
     <button mat-raised-button mat-icon-button class="item">
       <mat-icon>person</mat-icon>
     </button>
@@ -13,7 +13,7 @@
 
   <span>{{ title }}</span>
 
-  <div *ngIf="checkConnexion()">
+  <div *ngIf="true">
     <button mat-raised-button mat-icon-button class="item">
       <mat-icon>people</mat-icon>
     </button>
