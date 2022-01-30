@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
 import { UserAuthService } from '../service/user_auth/user-auth.service';
-import { User42 } from '../user/user';
 
 @Component({
   selector: 'app-user-login',

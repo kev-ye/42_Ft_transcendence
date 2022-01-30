@@ -1,0 +1,19 @@
+.container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.container_logout {
+  display: flex;
+  justify-content: space-around;
+}
+
+.item {
+  margin: 2px;
+}
+
+@media screen and (max-height: 200px) {
+  .container_logout {
+    display: none;
+  }
+}

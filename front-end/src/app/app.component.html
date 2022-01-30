@@ -1,2 +1,28 @@
-<app-main></app-main>
+<mat-toolbar [ngClass]="{
+  'container': true,
+  'container_logout': false
+}">
+<div *ngIf="true">
+  <button mat-raised-button mat-icon-button class="item">
+    <mat-icon>person</mat-icon>
+  </button>
+  <button mat-raised-button mat-icon-button class="item" >
+    <mat-icon>sports_esports</mat-icon>
+  </button>
+</div>
+
+<span>{{ title }}</span>
+
+<div *ngIf="true">
+  <button mat-raised-button mat-icon-button class="item">
+    <mat-icon>people</mat-icon>
+  </button>
+  <button mat-raised-button mat-icon-button class="item">
+    <mat-icon>settings</mat-icon>
+  </button>
+  <button mat-raised-button mat-icon-button class="item">
+    <mat-icon>logout</mat-icon>
+  </button>
+</div>
+</mat-toolbar>
 <router-outlet></router-outlet>

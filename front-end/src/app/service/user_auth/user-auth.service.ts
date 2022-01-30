@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { Observable, throwError, of  } from 'rxjs';
+import { Observable, throwError, of, lastValueFrom  } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
@@ -26,7 +26,7 @@ export class UserAuthService {
     window.location.href = `${URL_42_LOGIN}?${client_id}&${redirect_uri}&${response_type}&${scope}`;
   }
 
-  public ftAuthValider(): Observable<any> {
+  public async ftAuthValider(): Promise<any> {
     let code_query: any = undefined;
     const url_api: string = 'http://localhost:3000';
 
@@ -36,7 +36,11 @@ export class UserAuthService {
     const url_api_callback: string = `${url_api}/user/auth/42/callback?code=${code_query.code}`;
 
     toUnsub.unsubscribe();
-    return this._tryAuth(url_api_callback);
+    return this._tryAuth(url_api_callback)
+      .then((param) => {
+        console.log('param:', param);
+        window.localStorage.setItem('userId', param.id);
+      });
   }
 
   // comment:
@@ -46,11 +50,12 @@ export class UserAuthService {
 
 /* private function */
 
-  private _tryAuth(url: string) : Observable<any> {
-    return this.httpClient.get(url)
+  private async _tryAuth(url: string) : Promise<any> {
+    const ret$ = this.httpClient.post(url, null)
       .pipe(
         tap(_ => { console.log('User connected') }),
         catchError(this._handleError))
+    return lastValueFrom(ret$);
   }
 
   private _handleError = (error: HttpErrorResponse) => {

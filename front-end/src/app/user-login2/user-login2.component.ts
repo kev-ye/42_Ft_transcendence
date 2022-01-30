@@ -13,6 +13,8 @@ export class UserLogin2Component implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+    window.localStorage.removeItem('userId');
+    console.log('after remove', window.localStorage.getItem('userId'));
   }
 
 }

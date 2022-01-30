@@ -12,8 +12,7 @@ export class LoginCallbackComponent implements OnInit {
     private readonly userAuthService: UserAuthService) {}
 
   ngOnInit(): void {
-    this.userAuthService.ftAuthValider()
-      .subscribe(param => { console.log('param:', param) })
+    this.userAuthService.ftAuthValider();
   }
   
 }

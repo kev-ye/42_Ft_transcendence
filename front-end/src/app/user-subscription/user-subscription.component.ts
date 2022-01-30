@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { User } from '../user/user';
+import { User } from '../service/user_api/user';
 
 
 @Component({
@@ -13,8 +13,8 @@ import { User } from '../user/user';
 export class UserSubscriptionComponent implements OnInit {
 
   user: User = {
-    id: 0,
-    name: ""
+    id: '',
+    name: ''
   };
   name?: string;
 
@@ -27,10 +27,10 @@ export class UserSubscriptionComponent implements OnInit {
     ])
   });
 
-  constructor(
-    private router: Router) {}
-
   ngOnInit(): void {
+    console.log('before:', window.localStorage.getItem('userId'));
+    window.localStorage.removeItem('userId');
+    console.log('after:', window.localStorage.getItem('userId'));
   }
 
   // createUser(f: any) {

@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+
+import { Observable, Subscribable, Subscriber, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-main',
@@ -6,11 +9,5 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./main.component.css']
 })
 export class MainComponent implements OnInit {
-
-  title: string = 'ft_transcendence - Pong';
-
-  constructor() { }
-
   ngOnInit(): void {}
-
 }
