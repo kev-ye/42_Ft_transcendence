@@ -4,15 +4,16 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { Observable, throwError, of, lastValueFrom  } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
+import { UserApiService } from '../user_api/user-api.service';
 
 @Injectable({ providedIn: 'root' })
 export class UserAuthService {
-  user: any = undefined;
 
   constructor(
     private httpClient: HttpClient,
     private activeRoute: ActivatedRoute,
-    private router: Router) {}
+    private router: Router,
+    private userApi: UserApiService) {}
   
 /* public function */
 
@@ -40,13 +41,13 @@ export class UserAuthService {
       .then((param) => {
         console.log('param:', param);
         window.localStorage.setItem('userId', param.id);
-      });
+      })
+      .catch(this._handleError);
   }
 
-  // comment:
-  // last time:
-  // create user service (to do) -> to check user stat .. and other thing
-  // callback page (to do) -> verif user stat and redirect to dependencie page
+  public exit(): void {
+    window.localStorage.removeItem('userId');
+  }
 
 /* private function */
 

@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { User } from '../service/user_api/user';
-
+import { UserApiService } from '../service/user_api/user-api.service';
+import { LocalUser } from '../service/user_api/user';
 
 @Component({
   selector: 'app-user-subscription',
@@ -11,14 +11,33 @@ import { User } from '../service/user_api/user';
   styleUrls: ['./user-subscription.component.css']
 })
 export class UserSubscriptionComponent implements OnInit {
+  constructor(
+    private router: Router,
+    private userApi: UserApiService) { }
 
-  user: User = {
-    id: '',
-    name: ''
+  user: LocalUser = {
+    name: '',
+    avatar: '',
+    fortyTwoAvatar: ''
   };
-  name?: string;
+
+  ngOnInit(): void {
+    const isLogin = window.localStorage.getItem('userId');
+  
+    if (!isLogin) {
+      this.router.navigate(['user_login']);
+      return ;
+    }
+
+    this.userApi.getUserById(isLogin)
+      .then(res => {
+        if (res.name !== '')
+          this.router.navigate(['main']);
+      });
+  }
 
   subscriptionForm: FormGroup = new FormGroup({
+    id: new FormControl(window.localStorage.getItem('userId')),
     name: new FormControl('', [
       Validators.required,
       Validators.minLength(6),
@@ -27,17 +46,12 @@ export class UserSubscriptionComponent implements OnInit {
     ])
   });
 
-  ngOnInit(): void {
-    console.log('before:', window.localStorage.getItem('userId'));
-    window.localStorage.removeItem('userId');
-    console.log('after:', window.localStorage.getItem('userId'));
+  createUser() {
+    console.log('create:', this.subscriptionForm.value);
+    this.userApi.createUser(this.subscriptionForm.value)
+      .then(param => {
+        if (param.name === this.subscriptionForm.value.name)
+          this.router.navigate(['main']);
+      })
   }
-
-  // createUser(f: any) {
-  //   this.userApiService.createUser(f.value)
-  //     .subscribe((result) => {
-  //       console.log(result);
-  //     });
-  // }
-
 }

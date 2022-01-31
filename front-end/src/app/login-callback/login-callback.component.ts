@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { UserAuthService } from '../service/user_auth/user-auth.service';
 
@@ -9,10 +10,12 @@ import { UserAuthService } from '../service/user_auth/user-auth.service';
 })
 export class LoginCallbackComponent implements OnInit {
   constructor(
-    private readonly userAuthService: UserAuthService) {}
+    private readonly userAuth: UserAuthService,
+    private router: Router) {}
 
   ngOnInit(): void {
-    this.userAuthService.ftAuthValider();
+    this.userAuth.ftAuthValider()
+      .then(_ => this.router.navigate(['main']) );
   }
   
 }

@@ -62,9 +62,9 @@ export class UserController {
   @Post('auth/42/callback')
   @UseGuards(AuthGuard('42'))
   ftAuthCallback(@Req() req: any): any {
-    console.log(req.user);
-    const { id } = req.user;
+    // console.log(req.user);
+    const user: UserDto = req.user;
   
-    return { id };
+    return user;
   }
 }

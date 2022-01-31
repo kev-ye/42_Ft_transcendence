@@ -27,4 +27,7 @@ export class UserEntity {
 
   @Column({ nullable: false })
   online: boolean; // online stats
+
+  @Column({ nullable: false })
+  accessToken: string; // 42 token
 }

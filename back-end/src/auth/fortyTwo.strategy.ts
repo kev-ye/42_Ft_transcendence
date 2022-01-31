@@ -1,8 +1,12 @@
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { PassportStrategy } from '@nestjs/passport';
+
 import { Strategy } from "passport-42";
+import { v4 as uuid } from 'uuid';
+
 import { LimitedUserDto } from "src/user/dto/user.dto";
 import { AuthService } from "./auth.service";
+
 
 @Injectable()
 export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
@@ -26,8 +30,7 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
       }
 
     async validate (accessToken: string, refreshToken: string, profile: any, cb: any) : Promise<any> {
-      
-      // console.log(accessToken);
+      console.log(accessToken);
       // console.log(profile);
       const { id, username, emails, photos } = profile;
       
@@ -38,7 +41,8 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
         avatar: '',
         fortyTwoAvatar: photos[0].value,
         email: emails[0].value,
-        online: true
+        online: true,
+        accessToken
       };
 
       if (username)
