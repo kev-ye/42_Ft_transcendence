@@ -13,11 +13,12 @@ import { UserLoginComponent } from './user-login/user-login.component';
 import { UserLogin2Component } from './user-login2/user-login2.component';
 import { UserSubscriptionComponent } from './user-subscription/user-subscription.component';
 import { UserComponent } from './user/user.component';
-import { ChatComponent, DialogInvite } from './chat/chat.component';
+import { ChatComponent, DialogInvite, DialogUser } from './chat/chat.component';
 import { GameRoomComponent } from './game-room/game-room.component';
 import { GameComponent } from './game/game.component';
 import { LoginCallbackComponent } from './login-callback/login-callback.component';
 import { NotFoundComponent } from './not-found/not-found.component';
+import { LadderComponent } from './ladder/ladder.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,9 @@ import { NotFoundComponent } from './not-found/not-found.component';
     GameComponent,
     LoginCallbackComponent,
     NotFoundComponent,
-    DialogInvite
+    DialogInvite,
+    DialogUser,
+    LadderComponent
   ],
   imports: [
     BrowserModule,

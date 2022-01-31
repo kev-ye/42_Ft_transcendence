@@ -1,5 +1,9 @@
-<h1> Change username </h1>
-<p> Please enter new username </p>
-<input type="text" placeholder="newUsername.." autocomplete="false" #newUsername>
-<button (click)="changeUsername(newUsername.value)"> Change </button>
-<p #statusText></p>
+
+<div style="max-width: 500px" >
+
+    <h1> Change username </h1>
+    <p> Please enter new username </p>
+    <input type="text" placeholder="New username.." autocomplete="false" #newUsername (input)="inputEvent(newUsername.value)">
+    <button (click)="changeUsername(newUsername.value)"> Change </button>
+    <div #statusText></div>
+</div>

@@ -94,6 +94,10 @@ export class ChatComponent implements OnInit {
     })
   }
 
+  createChat() {
+    //todo implement creating chat
+  }
+
 }
 
 @Component({
@@ -152,5 +156,8 @@ export class DialogUser {
   templateUrl: "./dialog-invite.html"
 })
 export class DialogInvite {
+  inviteFriend(friend: string, channel: string) {
+    //invite friend to channel
+  }
 
 }

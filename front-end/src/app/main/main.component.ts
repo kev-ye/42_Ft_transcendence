@@ -1,5 +1,6 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { UserConnexionService } from '../service/user_connexion/user-connexion.service';
 
@@ -30,7 +31,7 @@ export class MainComponent implements OnInit {
   chatVisibility: boolean = true;
   userVisibility: boolean = true;
 
-  constructor(private userConnexionService: UserConnexionService) { }
+  constructor(private userConnexionService: UserConnexionService, private router: Router) { }
 
   ngOnInit(): void {}
 
@@ -51,6 +52,10 @@ export class MainComponent implements OnInit {
       this.userVisibility = false;
     else
       this.userVisibility = true;
+  }
+
+  openLadder() {
+    this.router.navigate(["ladder"])
   }
 
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 
@@ -41,9 +41,30 @@ export class UserComponent implements OnInit {
 @Component({
   templateUrl: './dialog-change-username.html'
 })
-export class DialogChangeUsername {
+export class DialogChangeUsername implements OnInit {
+
+  constructor() {}
+
+  ngOnInit(): void {
+      
+  }
+
+  @ViewChild('statusText') private statusText: ElementRef<HTMLDivElement>;
 
   changeUsername(newUsername: string) {
     //ask to back-end if newUsername is already taken
+  }
+
+  inputEvent(username: string) {
+    
+    if (username)
+    {
+      //look for username in database and see if available
+      
+      this.statusText.nativeElement.textContent = username + " is available";
+    } else {
+      this.statusText.nativeElement.textContent = "";
+    }
+
   }
 }
