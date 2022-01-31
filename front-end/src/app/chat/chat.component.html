@@ -2,7 +2,7 @@
     .background-one {
         background-color: rgb(223, 223, 223);
         width: 400px;
-        height: 70%;
+        height: 600px;
         border-top-right-radius: 15px;
         border-bottom-right-radius: 15px;
         position: fixed;
@@ -84,18 +84,39 @@
     .channel:hover {
         background-color: rgb(165, 164, 164);
     }
+
+    .ChatInformation {
+        height: 50px;
+    }
+
+    ::-webkit-scrollbar {
+        display: none;
+    }
+
+    .btn {
+        position: absolute;
+        cursor: pointer;
+        border-radius: 50%;
+    }
+
+    .btn:hover {
+        background-color: rgb(206, 206, 206);
+    }
 </style>
 
 
 <div class="background-one">
+    
     <mat-tab-group mat-stretch-tabs animationDuration="0ms" fitInkBarToContent=false  (selectedTabChange)="openFriendList($event)">
-        <mat-tab>
-            <ng-template mat-tab-label>
-                <p>
-                    <mat-icon matBadge="15" matBadgeColor="warn">chat_bubble</mat-icon>
-                      <!-- Include text description of the icon's meaning for screen-readers -->
-                  </p>
-            </ng-template>
+            
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <p>
+                        <mat-icon matBadge="15" matBadgeColor="warn">chat_bubble</mat-icon>
+                        <!-- Include text description of the icon's meaning for screen-readers -->
+                    </p>
+                </ng-template>
+            
             <div *ngIf="!showChat" id="roomsList" style="height: 400px;">
                 <div *ngFor="let channel of channelList">
                     <div style="position: relative; height: 25px; cursor: pointer;" (click)="openChannel(channel)" class="channel">
@@ -111,8 +132,16 @@
                     </div>
                 </div>
             </div>
-            <div *ngIf="showChat" style="overflow: hidden; height: 600px; width: 400px; position: relative;">
-                <div style="height: 85%; width: 100%; position: relative;">
+            <div *ngIf="showChat" style="overflow: hidden; height: 550px; width: 400px">
+                <div class="ChatInformation" style="position: relative; height: 50px;">
+                    <div style="position: absolute; top: 0%; left: 50%; transform: translate(-50%, 0); text-decoration: underline;">
+                        {{ chat.name }}
+                    </div>
+                    <mat-icon (click)="openFriendList()" style="position: absolute; top: 0%; left: 0%; cursor: pointer;"> keyboard_arrow_left </mat-icon>
+                    <mat-icon (click)="inviteFriend()" class="btn" style="bottom: 0%; right: 0%; margin-right: 15px;"> person_add</mat-icon>
+                    <mat-icon (click)="openSpec()" class="btn" style="bottom: 0%; left: 0%; margin-left: 15px;"> remove_red_eye </mat-icon>
+                </div>
+                <div style="height: 85%; width: 100%; position: relative; background-color: rgb(189, 153, 153); overflow-x: hidden; overflow-y: scroll; -ms-overflow-style: none; scrollbar-width: none;">
                     <div *ngFor="let msg of messages; let index = index">
                         <div style="position: relative;">
                             <div class="test">
@@ -126,10 +155,9 @@
                         </div>
                     </div>
                 </div>
-                <div style="height: 14%;">
-                    <input type="text" placeholder="Enter text.." style="width: 67%; height: 100%;">
-
-                    <button style="height: 100%; width: auto;"> Send </button>
+                <div >
+                    <input type="text" placeholder="Enter text.." style="width: -webkit-fill-available;">
+                    
                 </div>
             </div>
             
@@ -166,7 +194,7 @@
                     </div>
                 </div>
                 <div style="height: 14%;">
-                    <input type="text" placeholder="Enter text.." style="width: 67%; height: 100%;">
+                    <input type="text" placeholder="Enter text.." style="width: -webkit-fill-available">
 
                     <button style="height: 100%; width: auto;"> Send </button>
                 </div>

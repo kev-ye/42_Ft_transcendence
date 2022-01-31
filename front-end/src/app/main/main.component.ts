@@ -14,6 +14,13 @@ import { UserConnexionService } from '../service/user_connexion/user-connexion.s
       transition('void <=> *', [
         animate('500ms ease-in-out')
       ])
+    ]),
+    trigger('user', [
+      state('*', style({right: "0%"})),
+      state('void', style({right: "-100%"})),
+      transition("void <=> *", [
+        animate('500ms ease-in-out')
+      ])
     ])
   ]
 })
@@ -21,6 +28,7 @@ export class MainComponent implements OnInit {
 
   title: string = 'ft_transcendence - Pong';
   chatVisibility: boolean = true;
+  userVisibility: boolean = true;
 
   constructor(private userConnexionService: UserConnexionService) { }
 
@@ -36,6 +44,13 @@ export class MainComponent implements OnInit {
     else
       this.chatVisibility = true;
 
+  }
+
+  openUser() {
+    if (this.userVisibility)
+      this.userVisibility = false;
+    else
+      this.userVisibility = true;
   }
 
 }

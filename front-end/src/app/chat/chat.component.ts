@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog'
 
 @Component({
@@ -12,14 +12,20 @@ export class ChatComponent implements OnInit {
   constructor(public dialog: MatDialog) { }
 
   showChat: boolean = false;
-  messages : {id: number, username: string, message: string}[] = [{id: 1, username: "wartek", message: "coucou les gamers comment allez-vous en ce jour assez incroyable ?"},{id: 1, username: "wartek", message: "xxxxx"}];
+  messages : {id: number, username: string, message: string}[] = [{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "xxxxx"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wagrtek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wardtek", message: "incroyable ?"}];
   //messages : {id: number, username: string, message: string}[] = [{id: 1, username: "wartek", message: "coucou les gamers comment allez-vous en ce jour assez incroyable ?"}];
 
   friendRequests: any[] = [{username: "wartek"}, {username: "diablox9"}]
   focus: string = "";
-  channelList: any[] = [{id: 1, name: "les Boss", access: 0}, {id: 2, name: "Coucou", access: 1}]
+  channelList: any[] = [{id: 1, name: "les Boss", access: 0, moderator: true}, {id: 2, name: "Coucou", access: 1, moderator: true}]
+  chat: any = {name: "Chat-Name"};
 
   ngOnInit(): void {
+  }
+
+  test() {
+    console.log("test");
+    
   }
 
   openFriendChat(friend: any) {
@@ -57,9 +63,9 @@ export class ChatComponent implements OnInit {
     this.focus = "";
   }
 
-  openFriendList(event: any) {
+  openFriendList(event?: any) {
     this.showChat = false;
-    console.log("salut", event);
+    
     
   }
 
@@ -67,6 +73,23 @@ export class ChatComponent implements OnInit {
     this.dialog.open(DialogUser, {
       data: {
         username: username,
+      }
+    })
+  }
+
+  openSpec() {
+    this.dialog.open(DialogSpectator, {
+      data :
+      {
+        //channel name to send and moderator status
+      }
+    })
+  }
+
+  inviteFriend() {
+    this.dialog.open(DialogInvite, {
+      data: {
+        //data
       }
     })
   }
@@ -87,6 +110,31 @@ export class DialogProtectedChat implements OnInit{
 }
 
 @Component({
+  selector: "dialog-spec",
+  templateUrl: "./dialog-spectator.html"
+})
+export class DialogSpectator implements OnInit{
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any, public dialogRef: MatDialogRef<DialogSpectator>, public dialog: MatDialog) {}
+
+  ngOnInit(): void {
+      console.log(this.data);
+      
+  }
+
+  openUserProfile(username: string) {
+    //this.dialogRef.close();
+    
+    const ref = this.dialog.open(DialogUser, {
+      data: {
+        username: username
+      }
+    });
+    
+
+  }
+}
+
+@Component({
   selector: "dialog-user",
   templateUrl: "./dialog-user.html"
 })
@@ -96,4 +144,13 @@ export class DialogUser {
   }
 
   username: string = "";
+}
+
+
+@Component({
+  selector: "dialog-invite",
+  templateUrl: "./dialog-invite.html"
+})
+export class DialogInvite {
+
 }

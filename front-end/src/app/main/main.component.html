@@ -4,8 +4,8 @@
     'container_logout': !checkConnexion()
   }">
   <div *ngIf="checkConnexion()">
-    <button mat-raised-button mat-icon-button class="item">
-      <mat-icon (click)="openChat()">people</mat-icon>
+    <button mat-raised-button mat-icon-button class="item" (click)="openChat()">
+      <mat-icon>people</mat-icon>
     </button>
     <button mat-raised-button mat-icon-button class="item" >
       <mat-icon>sports_esports</mat-icon>
@@ -15,7 +15,7 @@
   <span>{{ title }}</span>
 
   <div *ngIf="checkConnexion()">
-    <button mat-raised-button mat-icon-button class="item">
+    <button mat-raised-button mat-icon-button class="item" (click)="openUser()">
       <mat-icon> person</mat-icon>
     </button>
     <button mat-raised-button mat-icon-button class="item">
@@ -28,3 +28,4 @@
 </mat-toolbar>
 
 <app-chat *ngIf="chatVisibility" style="position: fixed;" @chat></app-chat>
+<app-user *ngIf="userVisibility" style="position: fixed; right: 0%;" @user> </app-user>
