@@ -10,6 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list'
 import { MatBadgeModule } from '@angular/material/badge'
 import { MatTabsModule } from '@angular/material/tabs'
+import { MatDialogModule } from '@angular/material/dialog'
 
 @NgModule({
   imports: [
@@ -21,7 +22,8 @@ import { MatTabsModule } from '@angular/material/tabs'
     MatFormFieldModule,
     MatInputModule,
     MatBadgeModule,
-    MatTabsModule
+    MatTabsModule,
+    MatDialogModule
   ], 
   exports: [
     MatButtonModule,
@@ -33,7 +35,9 @@ import { MatTabsModule } from '@angular/material/tabs'
     MatInputModule,
     MatListModule,
     MatBadgeModule,
-    MatTabsModule
+    MatTabsModule,
+    MatDialogModule
+    
   ]
 })
 export class SharedMaterialModule {}

@@ -1,6 +1,6 @@
 <style>
     .background-one {
-        background-color: rgb(212, 212, 212);
+        background-color: rgb(223, 223, 223);
         width: 400px;
         height: 70%;
         border-top-right-radius: 15px;
@@ -30,11 +30,65 @@
         background-color: royalblue;
         bottom: 12px;
     }
+
+    .friend {
+        background: linear-gradient(90deg, rgb(62, 119, 57), rgb(223, 223, 223) 90%);
+        height: 15px;
+        padding-top: 5px;
+        margin-top: 5px;
+        margin-bottom: 5px;
+        padding-bottom: 5px;
+        padding-left: 5px;
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
+        vertical-align: middle;
+        cursor: default;
+        font-weight: bold;
+        position: relative;
+    }
+
+    .friend:hover {
+        background: linear-gradient(90deg, rgb(129, 63, 2), rgb(223, 223, 223) 90%);
+    }
+
+    .messages {
+        cursor: default;
+        word-break: break-all;
+        user-select: none;
+        margin-top: 5px;
+        
+    }
+
+    .messages.mine {
+        margin-right: 10px;
+    }
+
+    .messages.yours {
+        margin-left: 10px;
+    }
+
+    .test:before {
+        position: absolute;
+        content: "";
+        background-color: cornflowerblue;
+        width: 5px;
+        height: 100%;
+        margin-right: 5px;
+        margin-left: 2px;
+    }
+
+    .messages:hover {
+        background-color: rgb(143, 143, 143);
+    }
+
+    .channel:hover {
+        background-color: rgb(165, 164, 164);
+    }
 </style>
 
 
 <div class="background-one">
-    <mat-tab-group mat-stretch-tabs animationDuration="0ms" fitInkBarToContent=false>
+    <mat-tab-group mat-stretch-tabs animationDuration="0ms" fitInkBarToContent=false  (selectedTabChange)="openFriendList($event)">
         <mat-tab>
             <ng-template mat-tab-label>
                 <p>
@@ -42,9 +96,43 @@
                       <!-- Include text description of the icon's meaning for screen-readers -->
                   </p>
             </ng-template>
-            <div id="roomsList">
+            <div *ngIf="!showChat" id="roomsList" style="height: 400px;">
+                <div *ngFor="let channel of channelList">
+                    <div style="position: relative; height: 25px; cursor: pointer;" (click)="openChannel(channel)" class="channel">
+                        <mat-icon *ngIf="channel.access == 1" style="position: absolute;"> lock </mat-icon>
+                        <mat-icon *ngIf="channel.access == 0" style="position: absolute;"> lock_open </mat-icon>
+                        <mat-icon *ngIf="channel.access == 2" style="position: absolute;"> block_icon </mat-icon>
+                        
+                        <div style="position: absolute; left: 25%; top: 50%; transform: translate(0, -50%); ">
+                            {{ channel.name }}
+                        </div>
+                        <mat-icon style="position: absolute; left: 90%; top: 50%; transform: translate(0, -50%); ">keyboard_arrow_right</mat-icon>
 
+                    </div>
+                </div>
             </div>
+            <div *ngIf="showChat" style="overflow: hidden; height: 600px; width: 400px; position: relative;">
+                <div style="height: 85%; width: 100%; position: relative;">
+                    <div *ngFor="let msg of messages; let index = index">
+                        <div style="position: relative;">
+                            <div class="test">
+                                <div class="messages yours">
+                                    {{ msg.message }}
+                                </div>
+                            </div>
+                        </div>
+                        <div style="font-size:75%; cursor: pointer; display: inline-block;" (click)="openUserDialog(msg.username)" *ngIf="index == messages.length - 1 || msg.username != messages[index + 1].username">
+                            {{ msg.username }}
+                        </div>
+                    </div>
+                </div>
+                <div style="height: 14%;">
+                    <input type="text" placeholder="Enter text.." style="width: 67%; height: 100%;">
+
+                    <button style="height: 100%; width: auto;"> Send </button>
+                </div>
+            </div>
+            
         </mat-tab>
         <mat-tab>
             <ng-template mat-tab-label>
@@ -53,11 +141,35 @@
                       <!-- Include text description of the icon's meaning for screen-readers -->
                   </p>
             </ng-template>
-            <div id="friendRequests">
-                <div *ngFor="let friend of friendRequests"> {{ friend.username }} </div>
+            <div id="friendRequests" *ngIf="!showChat">
+                <div *ngFor="let friend of friendRequests" (mouseover)="focusFriend(friend.username)" (mouseleave)="unfocusFriend()" class="friend">
+                    <div>
+                        {{ friend.username }}
+                    </div>
+                    <mat-icon *ngIf="focus == friend.username" style="position: absolute ;cursor: pointer; margin-right: 20px; transform: translate(0, -50%); top: 50%; left: 80%" (click)="openFriendChat(friend)">mail_outline</mat-icon>
+                    <mat-icon *ngIf="focus == friend.username" style="position: absolute ;cursor: pointer; margin-right: 10px; transform: translate(0, -50%); top: 50%; left: 70%">gamepad</mat-icon>
+                </div>
             </div>
-            <div id="friendsList">
+            <div *ngIf="showChat" style="overflow: hidden; height: 600px; width: 400px; position: relative;">
+                <div style="height: 85%; width: 100%; position: relative;">
+                    <div *ngFor="let msg of messages; let index = index">
+                        <div style="position: relative;">
+                            <div class="test">
+                                <div class="messages yours">
+                                    {{ msg.message }}
+                                </div>
+                            </div>
+                        </div>
+                        <div style="font-size:75%;" *ngIf="index == messages.length - 1 || msg.username != messages[index + 1].username">
+                            {{ msg.username }}
+                        </div>
+                    </div>
+                </div>
+                <div style="height: 14%;">
+                    <input type="text" placeholder="Enter text.." style="width: 67%; height: 100%;">
 
+                    <button style="height: 100%; width: auto;"> Send </button>
+                </div>
             </div>
         </mat-tab>
     </mat-tab-group>

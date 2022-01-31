@@ -1,3 +1,4 @@
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
 
 import { UserConnexionService } from '../service/user_connexion/user-connexion.service';
@@ -5,7 +6,16 @@ import { UserConnexionService } from '../service/user_connexion/user-connexion.s
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
-  styleUrls: ['./main.component.css']
+  styleUrls: ['./main.component.css'],
+  animations: [
+    trigger('chat', [
+      state('*', style({left: "0%"})),
+      state('void', style({left: "-100%"})),
+      transition('void <=> *', [
+        animate('500ms ease-in-out')
+      ])
+    ])
+  ]
 })
 export class MainComponent implements OnInit {
 
