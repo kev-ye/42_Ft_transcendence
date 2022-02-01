@@ -96,6 +96,11 @@ export class ChatComponent implements OnInit {
 
   createChat() {
     //todo implement creating chat
+    this.dialog.open(DialogCreateChat, {
+      data: {
+        //data
+      }
+    })
   }
 
 }
@@ -158,6 +163,24 @@ export class DialogUser {
 export class DialogInvite {
   inviteFriend(friend: string, channel: string) {
     //invite friend to channel
+  }
+
+}
+
+@Component({
+  selector: "dialog-create-chat",
+  templateUrl: "./dialog-create-chat.html"
+})
+export class DialogCreateChat {
+  passwordInput: boolean = false;
+
+  hidePassword() {
+    this.passwordInput = false;
+  }
+  
+  showPassword() {
+    this.passwordInput = true;
+    
   }
 
 }

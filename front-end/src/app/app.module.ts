@@ -13,7 +13,7 @@ import { UserLoginComponent } from './user-login/user-login.component';
 import { UserLogin2Component } from './user-login2/user-login2.component';
 import { UserSubscriptionComponent } from './user-subscription/user-subscription.component';
 import { UserComponent } from './user/user.component';
-import { ChatComponent, DialogInvite, DialogUser } from './chat/chat.component';
+import { ChatComponent, DialogCreateChat, DialogInvite, DialogUser } from './chat/chat.component';
 import { GameRoomComponent } from './game-room/game-room.component';
 import { GameComponent } from './game/game.component';
 import { LoginCallbackComponent } from './login-callback/login-callback.component';
@@ -35,6 +35,7 @@ import { LadderComponent } from './ladder/ladder.component';
     NotFoundComponent,
     DialogInvite,
     DialogUser,
+    DialogCreateChat,
     LadderComponent
   ],
   imports: [

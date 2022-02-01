@@ -120,7 +120,7 @@
             <div *ngIf="!showChat" id="roomsList" style="height: 400px; overflow-x: hidden;">
                 <div style="height: 25px; position: relative;">
 
-                    <div style="position: absolute; left: 50%; top: 50%;cursor: pointer; transform: translate(-50%, -50%);" (click)="createChat()">
+                    <div (click)="createChat()" style="position: absolute; left: 50%; top: 50%;cursor: pointer; transform: translate(-50%, -50%);" (click)="createChat()">
                         Create Chat
                     </div>
                 </div>

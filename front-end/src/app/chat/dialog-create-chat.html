@@ -1,0 +1,70 @@
+<style>
+    .background {
+        width: 300px;
+        position: relative;
+        height: 300px;
+        overflow-x: hidden;
+    }
+
+    .main {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .access {
+        border: solid black 1px;
+    }
+
+    .btn {
+        position: absolute;
+        bottom: 0%;
+        left: 50%;
+        transform: translate(-50%, 0);
+        width: 300px;
+    }
+
+    .title {
+        position: absolute;
+        left: 50%;
+        transform: translate(-50%, 0);
+        text-decoration: underline;
+        font-weight: bold;
+        font-size: 2rem;
+        width: 300px;
+        text-align: center;
+    }
+</style>
+
+<div class="background">
+
+    <div style="position: relative;height: 50px; width: 300px;">
+        <div class="title"> Create chat </div>
+    </div>
+
+    <div class="main">
+
+
+        <input type="text" name="chatName">
+        <label for="chatName" style="text-align: center; display: block;" > Name </label>
+        <br>
+        <div class="access">
+
+            <input (change)="hidePassword()" type="radio" name="protected" value="open">
+            <label for="protected"> Open </label>
+            <br>
+            <input (change)="hidePassword()" type="radio" name="protected" value="protected"> Protected
+            <br>
+            <input (change)="showPassword()" type="radio" name="protected" value="private"> Private
+            <div *ngIf="passwordInput">
+                <input type="password" placeholder="Type password..">
+                <br>
+                <input type="password" placeholder="Type again..">
+            </div>
+        </div>
+        <label for="accessChat" style="display: block; text-align: center;"> Access Mode </label>
+    </div>
+    <button class="btn"> Create </button>
+</div>
+    
