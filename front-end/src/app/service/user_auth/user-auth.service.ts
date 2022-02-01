@@ -53,9 +53,9 @@ export class UserAuthService {
 
   private async _tryAuth(url: string) : Promise<any> {
     const ret$ = this.httpClient.post(url, null)
-      .pipe(
-        tap(_ => { console.log('User connected') }),
-        catchError(this._handleError))
+      // .pipe(
+      //   tap(_ => { console.log('User connected') }),
+      //   catchError(this._handleError))
     return lastValueFrom(ret$);
   }
 

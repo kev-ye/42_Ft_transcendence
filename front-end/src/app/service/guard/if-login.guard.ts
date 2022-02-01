@@ -22,7 +22,7 @@ export class IfLoginGuard implements CanActivate {
 
       return this.userApi.getUserById(isLogin)
         .then(res => {
-          if (res.id === isLogin) {
+          if (res.id && res.id === isLogin) {
             this.router.navigate(['main']);
             return false;
           }

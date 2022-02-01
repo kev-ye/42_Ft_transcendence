@@ -26,7 +26,7 @@ export class AuthGuard implements CanActivate {
 
       return this.userApi.getUserById(isLogin)
         .then(res => {
-          if (res.id === isLogin)
+          if (res.id && res.id === isLogin)
             return true;
           else {
             this.router.navigate(['user_login']);
