@@ -23,7 +23,7 @@ import { PrivateModule } from '../private/private.module';
 		database: 'test',
 		synchronize: true,
 		// logging: false,
-		dropSchema: true, // don't use in production
+		dropSchema: true, // drop & recreate each tables - don't use in production
 		entities: [ "./dist/**/*.entity.js" ]
 		}),
 		UserModule,
