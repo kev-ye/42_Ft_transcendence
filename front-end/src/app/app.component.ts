@@ -1,7 +1,5 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-
-import { UserAuthService } from './service/user_auth/user-auth.service';
+import { Component} from '@angular/core';
+import { GlobalConsts } from './common/global';
 
 @Component({
   selector: 'app-root',
@@ -9,14 +7,5 @@ import { UserAuthService } from './service/user_auth/user-auth.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title: string = 'ft_transcendence - Pong';
-
-  constructor(
-    private readonly userAuth: UserAuthService,
-    private router: Router) {}
-
-  public exit(): void {
-    this.userAuth.exit();
-    this.router.navigate(['user_login']);
-  }
+  title: string = GlobalConsts.siteTitle;
 }

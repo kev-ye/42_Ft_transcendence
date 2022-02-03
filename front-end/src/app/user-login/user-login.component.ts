@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { UserAuthService } from '../service/user_auth/user-auth.service';
+import { GlobalConsts } from '../common/global';
 
 @Component({
   selector: 'app-user-login',
@@ -9,6 +10,7 @@ import { UserAuthService } from '../service/user_auth/user-auth.service';
 })
 export class UserLoginComponent implements OnInit {
 
+  title: string = GlobalConsts.siteTitle;
   icon: string = "login";
   buttonMsg: string = "Login with 42";
 

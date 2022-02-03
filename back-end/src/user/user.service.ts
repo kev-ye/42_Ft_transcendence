@@ -25,19 +25,23 @@ export class UserService {
 	}
 
   // by kaye
-  public async updateUserByAuth(user: LimitedUserDto): Promise<UserDto> {
-    let upUser: UserDto = await this.getUserById(user.id);
+  public async updateUserByAuth(user: LimitedUserDto): Promise<void> {
+    const upUser: UserDto = { ...user };
 
-	  if (upUser === undefined) {
-      console.log('user no exit, so create it');
-      upUser = { ...user };
-      return await this.usersRepository.save(upUser);
-    }
-    else {
-      console.log('user already exist, just return it');
-      return await this.usersRepository.save(upUser);
-    }
-	}
+		console.log('user id:', user.id);
+
+		this.getUserById(user.id)
+			.then(user => {
+				console.log('user:', user);
+				if (!user) {
+					console.log('user no exist');
+					this.usersRepository.save(upUser)
+				}
+				else
+					console.log('user exist');
+			})
+	
+  }
 
   // end by kaye
 

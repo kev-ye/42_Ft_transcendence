@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { lastValueFrom } from 'rxjs';
+import { lastValueFrom, Observable } from 'rxjs';
+import { CookieService } from 'ngx-cookie-service';
 
-import { User } from './user';
-import { LocalUser } from './user';
+import { User } from '../../common/user';
+import { LocalUser } from '../../common/user';
 
 @Injectable({ providedIn: 'root' })
 export class UserApiService {
@@ -15,18 +16,12 @@ export class UserApiService {
 
 /* public function */
 
-  public async getUserById(id: string): Promise<User> {
-    const ret = this.httpClient.get(`${this.USER_API}/id/${id}`)
-    return lastValueFrom(ret)
-      .then(res => res as User)
-      .catch(this._handleError);
-  }
-
-  public async getLocalUserById(id: string): Promise<LocalUser> {
-    const ret = this.httpClient.get(`${this.USER_API}/id/${id}`)
-    return lastValueFrom(ret)
-      .then(res => res as LocalUser)
-      .catch(this._handleError);
+  public async getUserById(): Promise<LocalUser> {
+    return lastValueFrom(this.httpClient.get(`${this.USER_API}/id`, {
+			withCredentials: true
+		}))
+		.then(res => res as LocalUser)
+		.catch(this._handleError);
   }
 
   public async createUser(name: any): Promise<any> {

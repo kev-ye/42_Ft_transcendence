@@ -1,8 +1,8 @@
-import { Controller, Get, Post, Put, Req, Res, Param, Body, Redirect, UseGuards } from "@nestjs/common";
+import { Controller, Get, Post, Put, Delete, Req, Res , Param, Body, UseGuards, Header, Head, Redirect} from "@nestjs/common";
+import express, { Request, Response } from "express";
 import { AuthGuard } from '@nestjs/passport';
-import { REFUSED } from "dns";
 
-import { UserDto, LimitedUserDto, HistoryDto } from "./dto/user.dto";
+import { UserDto, LimitedUserDto } from "./dto/user.dto";
 import { UserService } from "./user.service";
 
 @Controller('user')
@@ -15,56 +15,62 @@ export class UserController {
 		return this.userService.getUsers()
 	}
 
-	@Get('id/:id')
-	getUserById(
-		@Param('id') id: string
-	) : Promise<LimitedUserDto> {
+	@Get('id')
+  @Header('Access-Control-Allow-Origin', 'http://localhost:4200')
+	getUserById(@Req() req: any) : Promise<LimitedUserDto> {
+    const id = req.signedCookies.userId;
+
 		return this.userService.getUserById(id)
 	}
 
 	@Get('login/:login')
-	getUserByLogin(
-		@Param('login') login: string
-	) : Promise<LimitedUserDto> {
+	getUserByLogin(@Param('login') login: string) : Promise<LimitedUserDto> {
 		return this.userService.getUserByLogin(login)
 	}
 
 	@Get('name/:name')
-	getUserByName(
-		@Param('name') name: string
-	) : Promise<UserDto> {
+	getUserByName(@Param('name') name: string) : Promise<UserDto> {
 		return this.userService.getUserByName(name)
 	}
 
 	@Post('create')
-	createUser(
-		@Body() user: LimitedUserDto
-	) : Promise<UserDto> {
+	createUser(@Body() user: LimitedUserDto) : Promise<UserDto> {
 		return this.userService.createUser(user)
 	}
 
 	@Put('update')
-	updateUserById(
-		@Body() user: UserDto
-	) : Promise<UserDto> {
+	updateUserById(@Body() user: UserDto) : Promise<UserDto> {
 		return this.userService.updateUserById(user)
 	}
 
 	@Get('delete/:id')
-	deleteUserById(
-		@Param('id') id: string
-	) {
+	deleteUserById(@Param('id') id: string) {
 		return this.userService.deleteUserById(id)
 	}
 
   // auth
 
-  @Post('auth/42/callback')
+  @Get('42/auth/login')
   @UseGuards(AuthGuard('42'))
-  ftAuthCallback(@Req() req: any): any {
-    // console.log(req.user);
+  async ftAuth(): Promise<void> {}
+
+  @Get('42/auth/callback')
+  @Redirect('http://localhost:4200/main')
+  @UseGuards(AuthGuard('42'))
+  ftAuthC(@Req() req: any, @Res() res: any): void {
     const user: UserDto = req.user;
-  
-    return user;
+
+    res.cookie('userId', user.id, {
+      httpOnly: true,
+      signed: true
+    });
   }
+	
+  @Delete('42/auth/logout')  
+  @Header('Access-Control-Allow-Origin', 'http://localhost:4200')
+  getCookie(@Res() res: any) {
+    res.clearCookie('userId');
+    res.send('');
+  }
+
 }

@@ -3,6 +3,7 @@ import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot, UrlTree } fro
 import { Router } from '@angular/router';
 
 import { lastValueFrom, Observable } from 'rxjs';
+import { LocalUser } from 'src/app/common/user';
 
 import { UserApiService } from '../user_api/user-api.service';
 
@@ -12,26 +13,17 @@ export class AuthGuard implements CanActivate {
     private router: Router,
     private userApi: UserApiService) { }
 
-  canActivate(
+  async canActivate(
     route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-      const isLogin = window.localStorage.getItem('userId');
+    state: RouterStateSnapshot): Promise<boolean> {
+      const user: LocalUser = await this.userApi.getUserById();
 
-      // console.log('route:', route);
+      // console.log('auth user:', user);
 
-      if (!isLogin) {
-        this.router.navigate(['user_login']);
-        return false;
-      }
+			if (user)
+				return true;
 
-      return this.userApi.getUserById(isLogin)
-        .then(res => {
-          if (res.id && res.id === isLogin)
-            return true;
-          else {
-            this.router.navigate(['user_login']);
-            return false;
-          }
-        })
-  } 
+			this.router.navigate(['user_login']);
+      return false;
+  }
 }

@@ -3,7 +3,8 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { UserApiService } from '../service/user_api/user-api.service';
-import { LocalUser } from '../service/user_api/user';
+import { LocalUser } from '../common/user';
+import { GlobalConsts } from '../common/global';
 
 @Component({
   selector: 'app-user-subscription',
@@ -11,6 +12,8 @@ import { LocalUser } from '../service/user_api/user';
   styleUrls: ['./user-subscription.component.css']
 })
 export class UserSubscriptionComponent implements OnInit {
+	title: string = GlobalConsts.siteTitle;
+
   constructor(
     private router: Router,
     private userApi: UserApiService) { }
@@ -22,16 +25,9 @@ export class UserSubscriptionComponent implements OnInit {
   };
 
   ngOnInit(): void {
-    const isLogin = window.localStorage.getItem('userId');
-  
-    if (!isLogin) {
-      this.router.navigate(['user_login']);
-      return ;
-    }
-
-    this.userApi.getUserById(isLogin)
+		this.userApi.getUserById()
       .then(res => {
-        if (res.name !== '')
+        if (res && res.name !== '')
           this.router.navigate(['main']);
       });
   }

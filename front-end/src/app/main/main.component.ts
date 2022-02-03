@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 
-import { Observable, Subscribable, Subscriber, Subscription } from 'rxjs';
 import { Router } from '@angular/router';
+
 import { UserApiService } from '../service/user_api/user-api.service';
+import { UserAuthService } from '../service/user_auth/user-auth.service';
+import { GlobalConsts } from '../common/global';
+import { LocalUser } from '../common/user';
 
 @Component({
   selector: 'app-main',
@@ -11,22 +13,23 @@ import { UserApiService } from '../service/user_api/user-api.service';
   styleUrls: ['./main.component.css']
 })
 export class MainComponent implements OnInit {
+  title: string = GlobalConsts.siteTitle;
+
   constructor(
     private router: Router,
-    private userApi: UserApiService) { }
+    private userApi: UserApiService,
+    private userAuth: UserAuthService) { }
 
-  ngOnInit(): void {
-    const isLogin = window.localStorage.getItem('userId');
-  
-    if (!isLogin) {
-      this.router.navigate(['user_login']);
-      return ;
-    }
-
-    this.userApi.getUserById(isLogin)
+  ngOnInit() {
+    this.userApi.getUserById()
       .then(res => {
         if (res && res.name === '')
           this.router.navigate(['user_subscription']);
       });
   }
+
+  logOut(): void {
+		this.userAuth.ftAuthLogout();
+		window.location.reload();
+	}
 }
