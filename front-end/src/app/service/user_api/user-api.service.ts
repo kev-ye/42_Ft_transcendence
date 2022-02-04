@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { lastValueFrom, Observable } from 'rxjs';
-import { CookieService } from 'ngx-cookie-service';
+import { lastValueFrom } from 'rxjs';
 
-import { User } from '../../common/user';
 import { LocalUser } from '../../common/user';
 
 @Injectable({ providedIn: 'root' })
@@ -25,9 +23,10 @@ export class UserApiService {
   }
 
   public async createUser(name: any): Promise<any> {
-    const ret = this.httpClient.put(`${this.USER_API}/update`, name)
-    return lastValueFrom(ret)
-      .catch(this._handleError);
+    return lastValueFrom(this.httpClient.put(`${this.USER_API}/create/first`, { name: name}, {
+			withCredentials: true
+		}))
+		.catch(this._handleError);
   }
 
 /* private function */

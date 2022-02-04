@@ -25,14 +25,11 @@ export class UserService {
 	}
 
   // by kaye
-  public async updateUserByAuth(user: LimitedUserDto): Promise<void> {
+  async updateUserByAuth(user: LimitedUserDto): Promise<void> {
     const upUser: UserDto = { ...user };
-
-		console.log('user id:', user.id);
 
 		this.getUserById(user.id)
 			.then(user => {
-				console.log('user:', user);
 				if (!user) {
 					console.log('user no exist');
 					this.usersRepository.save(upUser)
@@ -40,8 +37,18 @@ export class UserService {
 				else
 					console.log('user exist');
 			})
-	
   }
+
+	async firstUserCreate(id: string, name: string): Promise<UserDto> {
+		const user: UserDto = await this.getUserById(id);
+		const toCreate: UserDto = {
+			...user,
+			name: name
+		};
+
+		console.log('new user:', toCreate);
+		return this.usersRepository.save(toCreate);
+	}
 
   // end by kaye
 

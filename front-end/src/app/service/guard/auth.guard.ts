@@ -18,8 +18,6 @@ export class AuthGuard implements CanActivate {
     state: RouterStateSnapshot): Promise<boolean> {
       const user: LocalUser = await this.userApi.getUserById();
 
-      // console.log('auth user:', user);
-
 			if (user)
 				return true;
 

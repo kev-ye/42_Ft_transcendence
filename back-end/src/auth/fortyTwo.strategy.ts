@@ -33,7 +33,7 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
       const { id, login, email, image_url } = (await getUser).data;
 
       const user: LimitedUserDto = {
-        id: id,
+        id: id.toString(),
         login: login,
         name: '',
         avatar: '',

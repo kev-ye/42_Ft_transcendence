@@ -38,6 +38,14 @@ export class UserController {
 		return this.userService.createUser(user)
 	}
 
+	@Put('create/first')
+	@Header('Access-Control-Allow-Origin', 'http://localhost:4200')
+	firstUserCreate(@Req() req: any, @Body() name: any) : Promise<UserDto> {
+		const id: string = req.signedCookies.userId;
+		
+		return this.userService.firstUserCreate(id, name.name);
+	}
+
 	@Put('update')
 	updateUserById(@Body() user: UserDto) : Promise<UserDto> {
 		return this.userService.updateUserById(user)

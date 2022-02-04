@@ -3,19 +3,13 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Observable, throwError, of, lastValueFrom  } from 'rxjs';
-import { CookieService } from 'ngx-cookie-service';
 
 import { UserApiService } from '../user_api/user-api.service';
 
 @Injectable({ providedIn: 'root' })
 export class UserAuthService {
 
-	constructor(
-		private httpClient: HttpClient,
-		private activeRoute: ActivatedRoute,
-		private router: Router,
-		private userApi: UserApiService,
-		private cookieService: CookieService) {}
+	constructor(private httpClient: HttpClient) {}
 	
 /* public function */
 

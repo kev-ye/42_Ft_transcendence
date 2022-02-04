@@ -4,8 +4,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
-import { CookieService } from 'ngx-cookie-service';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { MainComponent } from './main/main.component';
@@ -32,7 +30,6 @@ import { SharedMaterialModule } from './common/shared-material.module';
     ReactiveFormsModule,
     HttpClientModule
   ],
-  providers: [CookieService],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

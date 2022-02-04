@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { UserAuthService } from '../service/user_auth/user-auth.service';
 import { GlobalConsts } from '../common/global';
+import { UserApiService } from '../service/user_api/user-api.service';
 
 @Component({
   selector: 'app-user-login',
@@ -14,11 +16,19 @@ export class UserLoginComponent implements OnInit {
   icon: string = "login";
   buttonMsg: string = "Login with 42";
 
-  constructor(private readonly userAuthService: UserAuthService) {}
+  constructor(
+		private readonly userAuth: UserAuthService,
+		private readonly userApi: UserApiService,
+		private router: Router) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+		this.userApi.getUserById()
+      .then(_ => {
+          this.router.navigate(['main']);
+      });
+	}
 
   ftLogin() {
-    this.userAuthService.ftAuthLogin();
+    this.userAuth.ftAuthLogin();
   }
 }
