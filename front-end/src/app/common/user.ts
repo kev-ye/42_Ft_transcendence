@@ -5,8 +5,7 @@ export interface User {
 	avatar: string;
 	fortyTwoAvatar: string;
 	email: string;
-  online: boolean;
-  token: string;
+  online: string;
 }
 
 export interface LocalUser {

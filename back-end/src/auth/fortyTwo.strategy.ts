@@ -32,6 +32,12 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
       
       const { id, login, email, image_url } = (await getUser).data;
 
+			const userData = lastValueFrom(this.httpService.get(`https://api.intra.42.fr/v2/users/${id}`, {
+					headers: { "Authorization": "Bearer " + accessToken }
+					}));
+
+			// console.log('User data:', (await userData).data);
+
       const user: LimitedUserDto = {
         id: id.toString(),
         login: login,
@@ -39,8 +45,7 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
         avatar: '',
         fortyTwoAvatar: image_url,
         email: email,
-        online: true,
-        accessToken
+        online: 'online',
       };
 
       if (login)

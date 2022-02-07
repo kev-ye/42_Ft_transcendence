@@ -6,8 +6,7 @@ export interface UserDto {
 	avatar: string;
 	fortyTwoAvatar: string;
 	email: string;
-  online: boolean;
-  accessToken: string;
+  online: string;
 	// friends: string[];
 	// history: HistoryDto[]; // ?
 	// xp: number;
@@ -22,8 +21,7 @@ export interface LimitedUserDto {
 	avatar: string;
 	fortyTwoAvatar: string;
 	email: string;
-  online: boolean;
-  accessToken: string;
+  online: string;
 }
 
 export interface HistoryDto {

@@ -23,7 +23,8 @@ export class UserLoginComponent implements OnInit {
 
   ngOnInit() {
 		this.userApi.getUserById()
-      .then(_ => {
+      .then(user => {
+				if (user)
           this.router.navigate(['main']);
       });
 	}

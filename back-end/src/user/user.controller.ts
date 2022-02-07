@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Put, Delete, Req, Res , Param, Body, UseGuards, Header, Head, Redirect} from "@nestjs/common";
+import { Controller, Get, Post, Put, Delete, Req, Res , Param, Body, UseGuards, Header, Head, Redirect, Session} from "@nestjs/common";
 import express, { Request, Response } from "express";
 import { AuthGuard } from '@nestjs/passport';
 
 import { UserDto, LimitedUserDto } from "./dto/user.dto";
 import { UserService } from "./user.service";
+import { Any } from "typeorm";
 
 @Controller('user')
 export class UserController {
@@ -18,9 +19,10 @@ export class UserController {
 	@Get('id')
   @Header('Access-Control-Allow-Origin', 'http://localhost:4200')
 	getUserById(@Req() req: any) : Promise<LimitedUserDto> {
-    const id = req.signedCookies.userId;
-
-		return this.userService.getUserById(id)
+		// console.log('id:', req.session.userId);
+		const id = req.session.userId;
+	
+		return this.userService.getUserById(id);
 	}
 
 	@Get('login/:login')
@@ -41,7 +43,8 @@ export class UserController {
 	@Put('create/first')
 	@Header('Access-Control-Allow-Origin', 'http://localhost:4200')
 	firstUserCreate(@Req() req: any, @Body() name: any) : Promise<UserDto> {
-		const id: string = req.signedCookies.userId;
+		console.log('id:', req.session.userId);
+		const id: string = req.session.userId;
 		
 		return this.userService.firstUserCreate(id, name.name);
 	}
@@ -68,16 +71,17 @@ export class UserController {
   ftAuthC(@Req() req: any, @Res() res: any): void {
     const user: UserDto = req.user;
 
-    res.cookie('userId', user.id, {
-      httpOnly: true,
-      signed: true
-    });
+		req.session.userId = user.id;
   }
 	
   @Delete('42/auth/logout')  
   @Header('Access-Control-Allow-Origin', 'http://localhost:4200')
-  getCookie(@Res() res: any) {
-    res.clearCookie('userId');
+  getCookie(@Req() req, @Res() res: any) {
+		req.session.destroy(err => {
+			if (err)
+				console.log('error by session destroy:', err);
+			});
+		res.clearCookie('__pong_session_id__');
     res.send('');
   }
 
