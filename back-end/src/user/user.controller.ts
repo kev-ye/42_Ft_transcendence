@@ -1,11 +1,11 @@
-import { Controller, Get, Post, Put, Param, Body, Redirect } from "@nestjs/common";
+import { Controller, Get, Post, Put, Param, Body, Redirect, Inject } from "@nestjs/common";
 import { UserDto, LimitedUserDto, HistoryDto } from "./dto/user.dto";
 import { UserService } from "./user.service";
 
 @Controller('user')
 export class UserController {
 
-	constructor(private readonly userService : UserService) {}
+	constructor(@Inject('USER_SERVICE') private readonly userService : UserService) {}
 
 	@Get()
 	getUsers() : Promise<LimitedUserDto[]> {

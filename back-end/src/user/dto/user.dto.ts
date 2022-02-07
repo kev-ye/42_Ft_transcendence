@@ -23,7 +23,7 @@ export interface LimitedUserDto {
 }
 
 export interface HistoryDto {
-	id: number;
+	id: string;
 	user_id: string;
 	status: boolean; // win or lose
 }

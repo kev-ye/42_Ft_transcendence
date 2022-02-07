@@ -8,7 +8,16 @@ import { UserEntity } from './entity/user.entity';
 @Module({
 	imports: [ TypeOrmModule.forFeature([UserEntity]) ],
 	controllers: [ UserController ],
-	providers: [ UserService ]
+	providers: [ 
+		{
+			provide: 'USER_SERVICE',
+			useClass: UserService
+		}
+	 ],
+	exports: [ {
+		provide: 'USER_SERVICE',
+		useClass: UserService
+	} ]
 })
 export class UserModule implements NestModule {
 	configure(consumer: MiddlewareConsumer) {

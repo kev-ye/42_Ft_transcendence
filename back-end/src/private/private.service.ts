@@ -7,12 +7,12 @@ import { PrivateMessageEntity } from './entity/private_message.entity';
 export class PrivateService {
     constructor(@InjectRepository(PrivateMessageEntity) private repo: Repository<PrivateMessageEntity>) {}
 
-    async postMessage(data: {from: number, to: number, type: number, message?: string}) {
+    async postMessage(data: {from: string, to: string, type: number, message?: string}) {
         const tmp = this.repo.create(data);
         return await this.repo.save(tmp);
     }
 
-    async getMessages(data: {first: number, second: number}) {
+    async getMessages(data: {first: string, second: string}) {
         const tmp = await this.repo.find({where : [
             {from: data.first, to: data.second},
             {from: data.second, to: data.first}

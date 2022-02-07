@@ -37,17 +37,17 @@ export class UserService {
 
 	async getUserById(id: string) : Promise<UserDto> {
 		return (await this._getCompleteUsers())
-			.find(user => user.id === id)
+			.find(user => user.id == id)
 	}
 
 	async getUserByLogin(login: string) : Promise<UserDto> {
 		return (await this._getCompleteUsers())
-			.find(user => user.login === login)
+			.find(user => user.login == login)
 	}
 
 	async getUserByName(name: string) : Promise<UserDto> {
 		return (await this._getCompleteUsers())
-			.find(user => user.name === name)
+			.find(user => user.name == name)
 	}
 
 	async updateUserById(updatedUser: UserDto) : Promise<UserDto> {
@@ -87,7 +87,10 @@ export class UserService {
 	/////////////////////
 
 	private async _getCompleteUsers() : Promise<UserDto[]> {
-		return await this.usersRepository.find()
+		const tmp = await this.usersRepository.find();
+		console.log("tmp ", tmp);
+		
+		return tmp;
 	}
 
 	/*

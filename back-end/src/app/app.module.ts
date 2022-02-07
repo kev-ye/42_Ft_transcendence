@@ -9,6 +9,8 @@ import { FriendModule } from '../friend/friend.module';
 import { ChatHistoryModule } from 'src/chat-history/chat-history.module';
 import { LadderModule } from '../ladder/ladder.module';
 import { PrivateModule } from '../private/private.module';
+import { ChannelsModule } from 'src/channels/channels.module';
+import { ChatGateway } from 'src/gateways/chat.gateway';
 
 
 
@@ -18,21 +20,25 @@ import { PrivateModule } from '../private/private.module';
 		type: 'postgres',
 		host: 'localhost',
 		port: 5432,
-		username: 'bsellem',
-		password: 'test',
+		username: 'postgres',
+		password: 'poinsinet',
 		database: 'test',
 		synchronize: true,
 		// logging: false,
-		// dropSchema: false, // don't use in prod
+		 dropSchema: false, // don't use in prod
 		entities: [ "./dist/**/*.entity.js" ]
 		// entities: ['../entities/*.entity{.ts,.js}']
 		}),
-		UserModule,
+	UserModule,
     FriendModule,
     BlockModule,
     ChatHistoryModule,
     LadderModule,
-    PrivateModule
+    PrivateModule,
+	ChannelsModule,
+	],
+	providers: [
+		ChatGateway
 	]
 })
 export class AppModule {
