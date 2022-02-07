@@ -11,6 +11,7 @@ import { LadderModule } from '../ladder/ladder.module';
 import { PrivateModule } from '../private/private.module';
 import { ChannelsModule } from 'src/channels/channels.module';
 import { ChatGateway } from 'src/gateways/chat.gateway';
+import { ImageModule } from 'src/image/image.module';
 
 
 
@@ -36,6 +37,7 @@ import { ChatGateway } from 'src/gateways/chat.gateway';
     LadderModule,
     PrivateModule,
 	ChannelsModule,
+	ImageModule
 	],
 	providers: [
 		ChatGateway

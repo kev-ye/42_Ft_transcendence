@@ -21,11 +21,13 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   //messages : {id: number, username: string, message: string}[] = [{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "xxxxx"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wagrtek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wardtek", message: "incroyable ?"}];
   
 
-  friendList: any[] = [{username: "wartek", status: 0, id: 124}, {username: "diablox9", status: 1}, {username: "BeastmodeIII", status: 2, id: 125}]
+  friendList: any[] = [{username: "wartek", status: 0, id: "124"}, {username: "diablox9", status: 1}, {username: "BeastmodeIII", status: 2, id: "125"}]
   focus: string = "";
   channelList: any[] = [];
   colorMap: Map<string, string> = new Map<string, string>();
   socket: Socket;
+
+  user: any = {id: "123"}
 
   @ViewChild('input') input: ElementRef<HTMLInputElement>;
 
@@ -122,7 +124,8 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   openPrivate(friend: any) {
     console.log("Opening chat " + friend.id + " with ", friend);
 
-
+    console.log("user:", this.user);
+    
     this.socket.emit('connectRoom', {user_id: "123", chat: {public: false, id: friend.id}});
     this.http.get('http://localhost:3000/private/' + "123" + "/" + friend.id).subscribe(data => {
       console.log("fetched private history", data);
@@ -196,10 +199,12 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.socket.emit('disconnectRoom')
   }
 
-  openUserDialog(username: string) {
+  openUserDialog(message: any) {
     this.dialog.open(DialogUser, {
       data: {
-        username: username,
+        username: message.username,
+        id: message.user_id
+        
       }
     })
   }
@@ -274,11 +279,26 @@ export class DialogSpectator implements OnInit{
   selector: "dialog-user",
   templateUrl: "./dialog-user.html"
 })
-export class DialogUser {
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
+export class DialogUser implements OnInit {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private http: HttpClient) {
     this.username = data.username;
+    this.id = data.id;
   }
 
+  ngOnInit(): void {
+    this.http.get('http://localhost:3000/user/id/' + this.id).subscribe({
+      next: data => {
+        console.log("fetched user", data);
+      },
+      error: data => {
+        console.log("could not fetch user");
+        
+      }
+    })
+  }
+
+
+  id: string = "";
   username: string = "";
 }
 

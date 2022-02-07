@@ -11,7 +11,7 @@ export class UserComponent implements OnInit {
 
   constructor(public dialog: MatDialog) { }
 
-  user: any = {username: "ppoinsinet", ladder: 42, login: "ppoinsin", avatar: "https://cdn.intra.42.fr/users/medium_ppoinsin.jpg"};
+  user: any = {id: "123", username: "ppoinsinet", ladder: 42, login: "ppoinsin", avatar: "http://localhost:3000/image/"};
 
   changeUsername: boolean = false;
   connected: boolean = false;
@@ -21,6 +21,7 @@ export class UserComponent implements OnInit {
 
     //if connection successfull -> connected = true;
     this.connected = true;
+    this.user.avatar += this.user.id;
   }
 
   openUsername() {
