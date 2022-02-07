@@ -11,7 +11,7 @@ export class LadderService {
     constructor(@InjectRepository(LadderEntity) private ladderRepo: Repository<LadderEntity>) {}
 
     async getPointsFromUser(user_id: string) {
-        return await this.ladderRepo.find({id: user_id})
+        return await this.ladderRepo.findOne({id: user_id})
     }
 
     async createLadderUser(id: string) {

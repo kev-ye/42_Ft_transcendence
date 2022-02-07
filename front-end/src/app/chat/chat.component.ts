@@ -1,5 +1,4 @@
 import { HttpClient } from '@angular/common/http';
-import { R3TargetBinder } from '@angular/compiler';
 import { AfterContentChecked, AfterViewChecked, AfterViewInit, Component, ElementRef, Inject, OnChanges, OnDestroy, OnInit, QueryList, SimpleChanges, ViewChild, ViewChildren } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog'
@@ -20,8 +19,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   scroll: boolean = false;
   //messages : {id: number, username: string, message: string}[] = [{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "xxxxx"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wagrtek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wardtek", message: "incroyable ?"}];
   
-
-  friendList: any[] = [{username: "wartek", status: 0, id: "124"}, {username: "diablox9", status: 1}, {username: "BeastmodeIII", status: 2, id: "125"}]
+  friendList: any[] = [{username: "wartek", status: 0, id: "124"}, {username: "diablox9", status: 1, id: "145"}, {username: "BeastmodeIII", status: 2, id: "125"}]
   focus: string = "";
   channelList: any[] = [];
   colorMap: Map<string, string> = new Map<string, string>();
@@ -56,6 +54,8 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
       data.user_id = String(data.user_id);
       
       this.messages.push({id: data.id, username: data.username, message: data.message, user_id: data.user_id, type: data.type});
+      if (this.messages.length > 25)
+        this.messages.splice(0, 1);
       this.generateRandomColors();
       this.scroll = true;
     })
@@ -196,14 +196,22 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   openFriendList(event?: any) {
     this.chat.show = false;
+
+    this.friendList.sort((a, b) => {
+      return b.status - a.status;
+    })
+
     this.socket.emit('disconnectRoom')
   }
 
   openUserDialog(message: any) {
+    console.log("opening dialog", message);
+    
     this.dialog.open(DialogUser, {
       data: {
         username: message.username,
-        id: message.user_id
+        id: message.user_id,
+        my_id: this.user.id
         
       }
     })
@@ -262,12 +270,13 @@ export class DialogSpectator implements OnInit{
       
   }
 
-  openUserProfile(username: string) {
+  openUserProfile(message: any) {
     //this.dialogRef.close();
     
     const ref = this.dialog.open(DialogUser, {
       data: {
-        username: username
+        username: message.username,
+        id: message.user_id
       }
     });
     
@@ -283,21 +292,31 @@ export class DialogUser implements OnInit {
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, private http: HttpClient) {
     this.username = data.username;
     this.id = data.id;
+    this.my_id = data.my_id;
   }
+
+  
+  user: any = {};
+  error: boolean = false;
 
   ngOnInit(): void {
     this.http.get('http://localhost:3000/user/id/' + this.id).subscribe({
       next: data => {
-        console.log("fetched user", data);
+        console.log("fetched user id = " + this.id, data);
+        if (data)
+          this.user = data;
+        else
+          this.error = true;
       },
       error: data => {
         console.log("could not fetch user");
-        
+        this.error = true;
       }
     })
   }
 
 
+  my_id: string = "";
   id: string = "";
   username: string = "";
 }
@@ -319,7 +338,7 @@ export class DialogInvite {
   templateUrl: "./dialog-create-chat.html"
 })
 export class DialogCreateChat {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, dialogRef: MatDialogRef<DialogCreateChat>) {}
 
   passwordInput: boolean = false;
   access: number = 0;
@@ -342,6 +361,7 @@ export class DialogCreateChat {
       if (passwordOne != passwordTwo)
         return ;
       this.http.post('http://localhost:3000/channels', {name: name, access: this.access, password: passwordOne, creator_id: "123"}).subscribe();
+      return ;
     }
     this.http.post('http://localhost:3000/channels', {name: name, access: this.access, creator_id: "123"}).subscribe();
   }

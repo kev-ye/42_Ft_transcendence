@@ -163,7 +163,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div style="font-size:75%; cursor: pointer; display: inline-block;" (click)="openUserDialog(msg.username)" *ngIf="(index == messages.length - 1 || msg.username != messages[index + 1].username)">
+                        <div style="font-size:75%; cursor: pointer; display: inline-block;" (click)="openUserDialog(msg)" *ngIf="(index == messages.length - 1 || msg.username != messages[index + 1].username) && msg.user_id != user.id">
                             {{ msg.username }}
                         </div>
                     </div>

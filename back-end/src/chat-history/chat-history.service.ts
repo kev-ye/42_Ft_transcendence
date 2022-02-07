@@ -36,14 +36,18 @@ export class ChatHistoryService {
         return await this.repo.save(message);
     }
 
-    async getMessageById(msg_id: number)
+    async getMessageById(msg_id: string)
     {
         return await this.repo.findOne( { where: {id: msg_id}});
     }
 
-    async showUser(user_id: number, channel_id?: number) {
+    async showUser(user_id: string, channel_id?: string) {
         if (channel_id === undefined)
             return await this.repo.find({where: {user_id: user_id}});
         return await this.repo.find({where: {user_id: user_id, chat_id: channel_id}});
+    }
+
+    async deleteByChatID(chat_id: string) {
+        return await this.repo.delete({chat_id: chat_id});
     }
 }

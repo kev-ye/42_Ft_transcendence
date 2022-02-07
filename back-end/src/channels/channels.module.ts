@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ChatHistoryModule } from 'src/chat-history/chat-history.module';
 import { ChannelsController } from './channels.controller';
 import { ChannelsService } from './channels.service';
 import { ChannelEntity } from './entity/channels.entity';
@@ -7,6 +8,7 @@ import { ChannelEntity } from './entity/channels.entity';
 @Module({
   imports: [
     TypeOrmModule.forFeature([ChannelEntity]),
+    ChatHistoryModule
   ],
   controllers: [ChannelsController],
   providers: [{

@@ -22,7 +22,7 @@ import { ImageModule } from 'src/image/image.module';
 		host: 'localhost',
 		port: 5432,
 		username: 'postgres',
-		password: 'poinsinet',
+		password: 'postgres',
 		database: 'test',
 		synchronize: true,
 		// logging: false,

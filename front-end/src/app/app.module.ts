@@ -13,13 +13,12 @@ import { UserLoginComponent } from './user-login/user-login.component';
 import { UserLogin2Component } from './user-login2/user-login2.component';
 import { UserSubscriptionComponent } from './user-subscription/user-subscription.component';
 import { UserComponent } from './user/user.component';
-import { ChatComponent, DialogCreateChat, DialogInvite, DialogUser } from './chat/chat.component';
+import { ChatComponent, DialogCreateChat, DialogInvite, DialogProtectedChat, DialogSpectator, DialogUser } from './chat/chat.component';
 import { GameRoomComponent } from './game-room/game-room.component';
 import { GameComponent } from './game/game.component';
 import { LoginCallbackComponent } from './login-callback/login-callback.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { LadderComponent } from './ladder/ladder.component';
-import { SocketIoModule } from 'ngx-socket-io';
 
 @NgModule({
   declarations: [
@@ -37,6 +36,8 @@ import { SocketIoModule } from 'ngx-socket-io';
     DialogInvite,
     DialogUser,
     DialogCreateChat,
+    DialogProtectedChat,
+    DialogSpectator,
     LadderComponent
   ],
   imports: [
@@ -47,7 +48,6 @@ import { SocketIoModule } from 'ngx-socket-io';
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    SocketIoModule
   ],
   providers: [],
   bootstrap: [AppComponent]

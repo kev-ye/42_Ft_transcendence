@@ -1,4 +1,12 @@
-<p> Username: {{ username }} </p>
-<button> Add as friend </button>
-<button> Block user </button>
-<button> Invite to play </button>
+<div *ngIf="!error">
+    <p> Username: {{ username }} </p>
+    <div *ngIf="my_id != user.id">
+
+        <button> Add as friend </button>
+        <button> Block user </button>
+        <button> Invite to play </button>
+    </div>
+</div>
+<div *ngIf="error">
+    Could not load user details
+</div>
