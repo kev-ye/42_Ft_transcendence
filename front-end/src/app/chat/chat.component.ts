@@ -1,58 +1,186 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { R3TargetBinder } from '@angular/compiler';
+import { AfterContentChecked, AfterViewChecked, AfterViewInit, Component, ElementRef, Inject, OnChanges, OnDestroy, OnInit, QueryList, SimpleChanges, ViewChild, ViewChildren } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog'
+import { io, Socket } from 'socket.io-client';
 
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.css']
 })
-export class ChatComponent implements OnInit {
+export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
-  constructor(public dialog: MatDialog) { }
+  constructor(public dialog: MatDialog, private http: HttpClient) { }
 
-  showChat: boolean = false;
-  messages : {id: number, username: string, message: string}[] = [{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "xxxxx"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wagrtek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wardtek", message: "incroyable ?"}];
-  //messages : {id: number, username: string, message: string}[] = [{id: 1, username: "wartek", message: "coucou les gamers comment allez-vous en ce jour assez incroyable ?"}];
+  chat: {show: boolean, public: boolean, id: string, user_id: string, name: string} = {show: false, public: true, name: "", id: "", user_id: ""};
+  messages: {id: string, username: string, user_id: string, type: number, message?: string}[] = [];
+  
+  scroll: boolean = false;
+  //messages : {id: number, username: string, message: string}[] = [{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "xxxxx"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wagrtek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wardtek", message: "incroyable ?"}];
+  
 
-  friendRequests: any[] = [{username: "wartek"}, {username: "diablox9"}]
+  friendList: any[] = [{username: "wartek", status: 0, id: 124}, {username: "diablox9", status: 1}, {username: "BeastmodeIII", status: 2, id: 125}]
   focus: string = "";
-  channelList: any[] = [{id: 1, name: "les Boss", access: 0, moderator: true}, {id: 2, name: "Coucou", access: 1, moderator: true}]
-  chat: any = {name: "Chat-Name"};
+  channelList: any[] = [];
+  colorMap: Map<string, string> = new Map<string, string>();
+  socket: Socket;
 
-  ngOnInit(): void {
+  @ViewChild('input') input: ElementRef<HTMLInputElement>;
+
+  @ViewChild('inputPrivate') inputPrivate: ElementRef<HTMLInputElement>;
+
+  @ViewChild('frame') frame: ElementRef<HTMLDivElement>;
+
+  ngAfterViewChecked(): void {
+    if (this.scroll && this.frame)
+      this.frame.nativeElement.scroll({top: this.frame.nativeElement.scrollHeight, behavior: "smooth"});
+      
   }
 
-  test() {
-    console.log("test");
+  ngOnInit(): void {
+    this.socket = io('http://localhost:3001');
+    this.socket.onAny((type, data) => {
+    });
+
+    this.socket.on('message', (data: {
+      id: string,
+      user_id: string,
+      username: string,
+      message: string,
+      type: number
+    }) => {
+      data.user_id = String(data.user_id);
+      
+      this.messages.push({id: data.id, username: data.username, message: data.message, user_id: data.user_id, type: data.type});
+      this.generateRandomColors();
+      this.scroll = true;
+    })
+
+
+    this.http.get('http://localhost:3000/channels').subscribe({next: data => {
+      console.log("fetched channels", data);
+      this.channelList = data as any[];
+    },
+    error: _ => {
+      console.error("error during channels fetch");
+      
+    }});
+  }
+
+  ngOnDestroy(): void {
+      this.socket.disconnect();
+  }
+
+  getStatusColor(friend: any) {
+    if (!friend.status)
+      return '#700303';
+    else if  (friend.status == 1)
+      return '#3e7739';
+    return '#e9d901';
+  }
+
+  generateRandomColors() {
+    
+    this.messages.forEach(val => {
+      const tmp: string = val.user_id as string;
+      if (!this.colorMap.has(tmp))
+        this.colorMap.set(tmp, '#' + Math.floor(Math.random() * 16777215).toString(16));
+        
+    });
+
     
   }
 
-  openFriendChat(friend: any) {
-    console.log("Opening chat with ", friend);
-    if (!this.showChat)
-      this.showChat = true;
-    else
-      this.showChat = false;
+
+  sendMessage() {
+    if (this.chat.public)
+    {
+      this.socket.emit('message', {
+        user_id: 123,
+        message: this.input.nativeElement.value,
+        type: 1,
+        chat: {public: true, id: this.chat.id}})
+        this.input.nativeElement.value = "";
+      }
+      else
+      {
+        console.log("test: " + this.chat.id);
+        
+        this.socket.emit('message', {
+          user_id: 123,
+          message: this.inputPrivate.nativeElement.value,
+          type: 1,
+          chat: {public: false, id: this.chat.id}})
+        this.inputPrivate.nativeElement.value = "";
+      }
+        
+
   }
 
-  openChannel(channel: any) {
+  openPrivate(friend: any) {
+    console.log("Opening chat " + friend.id + " with ", friend);
+
+
+    this.socket.emit('connectRoom', {user_id: "123", chat: {public: false, id: friend.id}});
+    this.http.get('http://localhost:3000/private/' + "123" + "/" + friend.id).subscribe(data => {
+      console.log("fetched private history", data);
+      this.messages = data as {id: string, username: string, user_id: string, type: number, message?: string}[];
+      this.generateRandomColors();
+      
+    });
+
+    this.chat.id = friend.id;
+    this.chat.name = friend.username;
+    this.chat.public = false;
+    if (!this.chat.show)
+      this.chat.show = true;
+    else
+      this.chat.show = false;
+  }
+
+  openPublic(channel: any) {
+    console.log("opening channel", channel);
+    
     if (channel.access == 2)
       return ;
     else if (channel.access == 1)
     {
 
-      this.dialog.open(DialogProtectedChat, {
+      const tmp = this.dialog.open(DialogProtectedChat, {
         data: {
           wesh: "bite"
         }
       });
+      tmp.afterClosed().subscribe(data => {
+        console.log("closed dialog", data);
+        
+      })
+      
       return;
     }
-      if (!this.showChat)
-      this.showChat = true;
+
+
+    if (!this.chat.show)
+    {
+      this.scroll = true;
+      this.socket.emit('connectRoom', {user_id: "123", chat: {public: true, id: channel.id}});
+
+      this.http.get('http://localhost:3000/history/' + channel.id).subscribe(data => {
+        console.log("fetched history", data);
+        
+        this.messages = data as {id: string, user_id: string, type: number, username: string, message?: string}[];
+        this.chat.id = channel.id;
+        this.chat.name = channel.name;
+        this.chat.public = true;
+        
+        this.generateRandomColors();
+      });
+      this.chat.show = true;
+    }
     else
-      this.showChat = false;
+      this.chat.show = false;
   }
 
   focusFriend(username: string) {
@@ -64,9 +192,8 @@ export class ChatComponent implements OnInit {
   }
 
   openFriendList(event?: any) {
-    this.showChat = false;
-    
-    
+    this.chat.show = false;
+    this.socket.emit('disconnectRoom')
   }
 
   openUserDialog(username: string) {
@@ -172,7 +299,10 @@ export class DialogInvite {
   templateUrl: "./dialog-create-chat.html"
 })
 export class DialogCreateChat {
+  constructor(private http: HttpClient) {}
+
   passwordInput: boolean = false;
+  access: number = 0;
 
   hidePassword() {
     this.passwordInput = false;
@@ -180,7 +310,20 @@ export class DialogCreateChat {
   
   showPassword() {
     this.passwordInput = true;
-    
+  }
+
+  setAccess(value: number) {
+    this.access = value;
+  }
+
+  createChat(name: string, passwordOne?: string, passwordTwo?: string) {
+    if (this.access == 1)
+    {
+      if (passwordOne != passwordTwo)
+        return ;
+      this.http.post('http://localhost:3000/channels', {name: name, access: this.access, password: passwordOne, creator_id: "123"}).subscribe();
+    }
+    this.http.post('http://localhost:3000/channels', {name: name, access: this.access, creator_id: "123"}).subscribe();
   }
 
 }

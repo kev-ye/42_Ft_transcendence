@@ -19,6 +19,7 @@ import { GameComponent } from './game/game.component';
 import { LoginCallbackComponent } from './login-callback/login-callback.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { LadderComponent } from './ladder/ladder.component';
+import { SocketIoModule } from 'ngx-socket-io';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import { LadderComponent } from './ladder/ladder.component';
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    SocketIoModule
   ],
   providers: [],
   bootstrap: [AppComponent]

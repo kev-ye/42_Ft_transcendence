@@ -2,8 +2,8 @@
     .background {
         width: 300px;
         position: relative;
-        height: 300px;
-        overflow-x: hidden;
+        height: 400px;
+        overflow: hidden;
     }
 
     .main {
@@ -44,27 +44,24 @@
     </div>
 
     <div class="main">
-
-
-        <input type="text" name="chatName">
-        <label for="chatName" style="text-align: center; display: block;" > Name </label>
-        <br>
-        <div class="access">
-
-            <input (change)="hidePassword()" type="radio" name="protected" value="open">
-            <label for="protected"> Open </label>
+            <input type="text" name="chatName" #chatName>
+            <label for="chatName" style="text-align: center; display: block;" > Name </label>
             <br>
-            <input (change)="hidePassword()" type="radio" name="protected" value="protected"> Protected
-            <br>
-            <input (change)="showPassword()" type="radio" name="protected" value="private"> Private
-            <div *ngIf="passwordInput">
-                <input type="password" placeholder="Type password..">
+            <div class="access">
+
+                <input (change)="hidePassword(); setAccess(0)" type="radio" name="protected" value="open">
+                <label for="protected"> Open </label>
                 <br>
-                <input type="password" placeholder="Type again..">
+                <input (change)="showPassword(); setAccess(1)" type="radio" name="protected" value="protected"> Protected
+                    <input type="password" placeholder="Type password.." autocomplete="off" #passwordOne [disabled]="!passwordInput">
+                    <br>
+                    <input type="password" placeholder="Type again.." autocomplete="off" #passwordTwo [disabled]="!passwordInput">
+                    <br>
+                <input (change)="hidePassword(); setAccess(2)" type="radio" name="protected" value="private"> Private
+                <label for="accessChat" style="display: block; text-align: center;"> Access Mode </label>
+                <br>
             </div>
-        </div>
-        <label for="accessChat" style="display: block; text-align: center;"> Access Mode </label>
+        <button class="btn" (click)="createChat(chatName.value)"> Create </button>
     </div>
-    <button class="btn"> Create </button>
 </div>
     
