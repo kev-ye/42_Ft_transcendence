@@ -81,7 +81,7 @@ export class UserController {
 			if (err)
 				console.log('error by session destroy:', err);
 			});
-		res.clearCookie('__pong_session_id__');
+		// res.clearCookie('__pong_session_id__');
     res.send('');
   }
 

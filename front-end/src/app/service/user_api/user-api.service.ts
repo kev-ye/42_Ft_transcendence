@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 import { lastValueFrom } from 'rxjs';
 
@@ -12,7 +13,9 @@ export class UserApiService {
 
   USER_API: string = GlobalConsts.userApi;
 
-  constructor(private httpClient: HttpClient) {}
+  constructor(
+		private httpClient: HttpClient,
+		private router: Router) {}
 
 /* public function */
 
@@ -35,7 +38,7 @@ export class UserApiService {
 
   private _handleError(error: any): Promise<any> {
     console.error('An error occurred', error);
-
+		this.router.navigate(['user_login']);
     return Promise.reject(error.message || error);
   }
 }

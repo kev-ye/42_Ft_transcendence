@@ -45,8 +45,12 @@ export class UserSubscriptionComponent implements OnInit {
   createUser() {
     this.userApi.createUser(this.subscriptionForm.value.name)
       .then(param => {
+				console.log('param:', param);
         if (param.name === this.subscriptionForm.value.name)
           this.router.navigate(['main']);
       })
+			.catch(_ => {
+				this.router.navigate(['user_login']);
+			})
   }
 }

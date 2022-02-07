@@ -40,6 +40,12 @@ export class UserService {
   }
 
 	async firstUserCreate(id: string, name: string): Promise<UserDto> {
+		console.log('create id:', id);
+		if (!id) {
+			console.log('u mother fuck');
+			throw new ForbiddenException('id is undefined');
+		}
+
 		const user: UserDto = await this.getUserById(id);
 		const toCreate: UserDto = {
 			...user,
