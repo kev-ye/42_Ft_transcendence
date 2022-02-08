@@ -24,8 +24,8 @@ export class UserAuthService {
 	}
 
 	ftAuthLogout() {
-		return lastValueFrom(this.httpClient.delete(`${this.USER_API}/user/42/auth/logout`, {
+		return this.httpClient.delete<void>(`${this.USER_API}/user/42/auth/logout`, {
 			withCredentials: true
-		}));
+		});
 	}
 }

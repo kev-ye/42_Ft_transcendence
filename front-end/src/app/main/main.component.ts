@@ -29,7 +29,17 @@ export class MainComponent implements OnInit {
   }
 
   logOut(): void {
-		this.userAuth.ftAuthLogout();
-		window.location.reload();
+		this.userAuth.ftAuthLogout()
+			.subscribe({
+				next: (v) => {
+					// console.log('Next:', v);
+					this.router.navigate(['user_login']);
+				},
+				error: (e) => {
+					// console.log('Error:', e);
+					this.router.navigate(['user_login']);
+				},
+				complete: () => console.info('user logout')
+			})
 	}
 }

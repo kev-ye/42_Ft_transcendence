@@ -28,7 +28,7 @@ async function bootstrap() {
 			createTableIfMissing: true,
 			pruneSessionInterval: 60,
 			// tableName: 'session'
-			// ttl: 10,
+			// ttl: 60,
 		}),
 		secret: 'transcendance-session-id-secret',
 		name: '__pong_session_id__',

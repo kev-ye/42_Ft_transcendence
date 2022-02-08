@@ -19,7 +19,7 @@ export class UserApiService {
 
 /* public function */
 
-  public async getUserById(): Promise<LocalUser> {
+  async getUserById(): Promise<LocalUser> {
     return lastValueFrom(this.httpClient.get(`${this.USER_API}/user/id`, {
 			withCredentials: true
 		}))
@@ -27,7 +27,7 @@ export class UserApiService {
 		.catch(this._handleError);
   }
 
-  public async createUser(name: any): Promise<any> {
+  async createUser(name: any): Promise<any> {
     return lastValueFrom(this.httpClient.put(`${this.USER_API}/user/create/first`, { name: name}, {
 			withCredentials: true
 		}))
@@ -38,7 +38,7 @@ export class UserApiService {
 
   private _handleError(error: any): Promise<any> {
     console.error('An error occurred', error);
-		this.router.navigate(['user_login']);
+		// this.router.navigate(['user_login']);
     return Promise.reject(error.message || error);
   }
 }
