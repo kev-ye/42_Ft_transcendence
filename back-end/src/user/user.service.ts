@@ -1,9 +1,8 @@
-import { Injectable, HttpException, ForbiddenException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, ForbiddenException, HttpStatus, Body } from '@nestjs/common';
 import { UserDto, LimitedUserDto, HistoryDto } from './dto/user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from './entity/user.entity';
-import { HttpErrorByCode } from '@nestjs/common/utils/http-error-by-code.util';
 import { v4 as uuid } from 'uuid';
 
 @Injectable()
@@ -11,28 +10,59 @@ export class UserService {
 	
 	constructor(
 		@InjectRepository(UserEntity)
-		private usersRepository: Repository<UserEntity>
+		private usersRepository: Repository<UserEntity>,
 	) {}
 
 	async createUser(user: LimitedUserDto) : Promise<UserDto> {
 		
-		await this._checkNewUserName(user.name);
+		await this._checkNewUser(user);
 		
-		console.log(`Creating profile: login:${user.login} name:${user.name}`)
-
 		let newUser : UserDto = {
-			...user,
-			id: uuid(), // TODO: change to 42 id
-			login: '',
-			avatar: '',
-			fortyTwoAvatar: `https://cdn.intra.42.fr/users/${user.login}.jpg`,
-			email: `${user.login}@student.42.fr`
+			...user
 		}
+
 		return await this.usersRepository.save(newUser)
 	}
 
+  // by kaye
+  async updateUserByAuth(user: LimitedUserDto): Promise<void> {
+    const upUser: UserDto = { ...user };
+
+		this.getUserById(user.id)
+			.then(user => {
+				if (!user) {
+					console.log('user no exist');
+					this.usersRepository.save(upUser)
+				}
+				else
+					console.log('user exist');
+			})
+  }
+
+	async firstUserCreate(id: string, name: string): Promise<UserDto> {
+		console.log('create id:', id);
+		if (!id) {
+			console.log('u mother fuck');
+			throw new ForbiddenException('id is undefined');
+		}
+
+		const user: UserDto = await this.getUserById(id);
+		const toCreate: UserDto = {
+			...user,
+			name: name
+		};
+
+		console.log('new user:', toCreate);
+		return this.usersRepository.save(toCreate);
+	}
+
+  // end by kaye
+
 	async getUsers() : Promise<LimitedUserDto[]> {
-		return await this._getCompleteUsers()
+
+		// this.createUser({ id: uuid(), login: 'test', name: 'test', avatar: 'test', fortyTwoAvatar: 'test', email: 'test' })
+
+		return await this._getCompleteUsers();
 	}
 
 	async getUserById(id: string) : Promise<UserDto> {
@@ -71,17 +101,20 @@ export class UserService {
 		}
 		
 		// check if the (maybe updated) username is unique
-		await this._checkNewUserName(user.name)
+		// await this._checkNewUserName(user.name)
+
+		if (!this._checkUserNameFormat(user.name))
+			throw new ForbiddenException(`username ${user.name} is not valid`)
+		if (!(await this._isUniqueUserName(user.name)))
+			throw new ForbiddenException(`username ${user.name} is already taken`)
 
 		return await this.usersRepository.save(user)
 	}
-
 
 	async deleteUserById(id: string) {
 		await this.usersRepository.delete({id: id})
 	}
 
-	
 	/////////////////////
 	/* PRIVATE METHODS */
 	/////////////////////
@@ -110,20 +143,29 @@ export class UserService {
 		return (await this.getUserByName(username)) === undefined
 	}
 
-	private async _checkNewUserName(username : string) : Promise<boolean> {
+	private async _isUniqueLogin(login : string) : Promise<boolean> {
+		return (await this.getUserByLogin(login)) === undefined
+	}
+
+	private async _checkNewUser(user : LimitedUserDto) : Promise<boolean> {
 		
 		// check username format
-		if (!this._checkUserNameFormat(username))
+		if (!this._checkUserNameFormat(user.name))
 		{
-			throw new ForbiddenException(`username ${username} is not valid`)
+			throw new ForbiddenException(`username ${user.name} is not valid`)
 		}
 
 		// check if the username is unique
-		if (!(await this._isUniqueUserName(username)))
+		if (!(await this._isUniqueUserName(user.name)))
 		{
-			throw new ForbiddenException(`username ${username} is already taken`)
+			throw new ForbiddenException(`username ${user.name} is already taken`)
 		}
-		
+
+		if (!(await this._isUniqueLogin(user.login)))
+		{
+			throw new ForbiddenException(`login ${user.login} is already taken`)
+		}
+
 		return true
 	}
 }

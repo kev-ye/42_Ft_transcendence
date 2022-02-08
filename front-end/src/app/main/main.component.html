@@ -1,9 +1,9 @@
 
 <mat-toolbar [ngClass]="{
-    'container': checkConnexion(),
-    'container_logout': !checkConnexion()
+    'container': true,
+    'container_logout': false
   }">
-  <div *ngIf="checkConnexion()">
+  <div>
     <button mat-raised-button mat-icon-button class="item" (click)="openChat()">
       <mat-icon>people</mat-icon>
     </button>
@@ -12,16 +12,16 @@
     </button>
   </div>
 
-  <span>{{ title }}</span>
+<span>{{ title }}</span>
 
-  <div *ngIf="checkConnexion()">
+  <div>
     <button mat-raised-button mat-icon-button class="item" (click)="openUser()">
       <mat-icon> person</mat-icon>
     </button>
     <button mat-raised-button mat-icon-button class="item" (click)="openLadder()">
       <mat-icon> list </mat-icon>
     </button>
-    <button mat-raised-button mat-icon-button class="item">
+    <button mat-raised-button mat-icon-button class="item" (click)="logOut()">
       <mat-icon>logout</mat-icon>
     </button>
   </div>

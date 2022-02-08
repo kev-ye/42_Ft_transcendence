@@ -4,16 +4,16 @@ import { RouterModule, Routes } from '@angular/router';
 import { UserLoginComponent } from './user-login/user-login.component';
 import { UserLogin2Component } from './user-login2/user-login2.component';
 import { UserSubscriptionComponent } from './user-subscription/user-subscription.component';
-import { NotFoundComponent } from './not-found/not-found.component';
-import { LadderComponent } from './ladder/ladder.component';
+import { AuthGuard } from './service/guard/auth.guard';
+import { MainComponent } from './main/main.component';
 
 const routes: Routes = [
-  // { path: '', redirectTo: '/login', pathMatch:'full' },
-  { path: 'user_login', component: UserLoginComponent},
-  { path: 'user_login2', component: UserLogin2Component },
-  { path: 'user_subscription', component: UserSubscriptionComponent },
-  { path: "ladder", component: LadderComponent}
-  // { path: '**', component: NotFoundComponent }
+  { path: '', redirectTo: 'user_login', pathMatch: 'full' },
+  { path: 'user_login', component: UserLoginComponent },
+  // { path: 'user_login2', component: UserLogin2Component },
+  { path: 'user_subscription', component: UserSubscriptionComponent, canActivate: [AuthGuard] },
+  { path: 'main', component: MainComponent, canActivate: [AuthGuard] },
+  { path: '**', redirectTo: 'user_login', pathMatch: 'full' }
 ];
 
 @NgModule({

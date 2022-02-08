@@ -1,3 +1,7 @@
+<mat-toolbar [ngClass]="'container'">
+  <span>{{ title }}</span>
+</mat-toolbar>
+
 <div class="stepperContainer">
   <mat-vertical-stepper [linear]="true">
     <form [formGroup]="subscriptionForm" #f="ngForm">
@@ -5,7 +9,7 @@
       <!-- name step -->
       <mat-step [stepControl]="subscriptionForm" label="Info">
         <mat-form-field hintLabel="16 caracters max">
-          <input name="name" matInput formControlName="name"  maxlength="16" [(ngModel)]="user.name" required>
+          <input name="name" matInput formControlName="name" maxlength="16" required>
           <mat-placeholder>
             <mat-icon>person</mat-icon>name
           </mat-placeholder>
@@ -30,7 +34,8 @@
     <!-- submit step -->
     <mat-step label="Done" optional>
       <button mat-button matStepperPrevious color="warn">Back to Avatar</button>
-      <button type="submit" mat-button color="primary" (click)="createUser(f)">Done</button>
+      <button type="submit" mat-button color="primary" (click)="createUser()">Done</button>
+      <!-- <button type="submit" mat-button color="primary">Done</button> -->
     </mat-step>
     
   </mat-vertical-stepper>

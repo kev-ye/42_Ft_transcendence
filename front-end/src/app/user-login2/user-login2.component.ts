@@ -13,6 +13,7 @@ export class UserLogin2Component implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+    console.log(window.localStorage.getItem('accessToken'));
   }
 
 }

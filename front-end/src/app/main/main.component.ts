@@ -1,8 +1,10 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-
-import { UserConnexionService } from '../service/user_connexion/user-connexion.service';
+import { UserApiService } from '../service/user_api/user-api.service';
+import { UserAuthService } from '../service/user_auth/user-auth.service';
+import { GlobalConsts } from '../common/global';
+import { LocalUser } from '../common/user';
 
 @Component({
   selector: 'app-main',
@@ -26,17 +28,22 @@ import { UserConnexionService } from '../service/user_connexion/user-connexion.s
   ]
 })
 export class MainComponent implements OnInit {
+  title: string = GlobalConsts.siteTitle;
 
-  title: string = 'ft_transcendence - Pong';
   chatVisibility: boolean = true;
   userVisibility: boolean = true;
 
-  constructor(private userConnexionService: UserConnexionService, private router: Router) { }
+  constructor(private router: Router,
+    private userApi: UserApiService,
+    private userAuth: UserAuthService) { }
 
-  ngOnInit(): void {}
 
-  checkConnexion() {
-    return this.userConnexionService.getConnexion();
+  ngOnInit() {
+    this.userApi.getUserById()
+      .then(res => {
+        if (res && res.name === '')
+          this.router.navigate(['user_subscription']);
+      });
   }
 
   openChat() {
@@ -58,4 +65,18 @@ export class MainComponent implements OnInit {
     this.router.navigate(["ladder"])
   }
 
+  logOut(): void {
+		this.userAuth.ftAuthLogout()
+			.subscribe({
+				next: (v) => {
+					// console.log('Next:', v);
+					this.router.navigate(['user_login']);
+				},
+				error: (e) => {
+					// console.log('Error:', e);
+					this.router.navigate(['user_login']);
+				},
+				complete: () => console.info('user logout')
+			})
+	}
 }

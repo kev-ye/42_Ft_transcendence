@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
-import { User42ApiService } from '../service/user42_api/user42-api.service';
-import { User42 } from '../user/user';
+import { UserAuthService } from '../service/user_auth/user-auth.service';
+import { GlobalConsts } from '../common/global';
+import { UserApiService } from '../service/user_api/user-api.service';
 
 @Component({
   selector: 'app-user-login',
@@ -10,15 +12,24 @@ import { User42 } from '../user/user';
 })
 export class UserLoginComponent implements OnInit {
 
+  title: string = GlobalConsts.siteTitle;
   icon: string = "login";
   buttonMsg: string = "Login with 42";
 
-  constructor(private user42ApiService: User42ApiService) {}
+  constructor(
+		private readonly userAuth: UserAuthService,
+		private readonly userApi: UserApiService,
+		private router: Router) {}
 
   ngOnInit() {
-  }
+		this.userApi.getUserById()
+      .then(user => {
+				if (user)
+          this.router.navigate(['main']);
+      });
+	}
 
-  login_42() {
-    this.user42ApiService.login_42();
+  ftLogin() {
+    this.userAuth.ftAuthLogin();
   }
 }
