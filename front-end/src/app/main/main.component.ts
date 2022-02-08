@@ -1,6 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 
-import { UserConnexionService } from '../service/user_connexion/user-connexion.service';
+import { Router } from '@angular/router';
+
+import { UserApiService } from '../service/user_api/user-api.service';
+import { UserAuthService } from '../service/user_auth/user-auth.service';
+import { GlobalConsts } from '../common/global';
+import { LocalUser } from '../common/user';
 
 @Component({
   selector: 'app-main',
@@ -8,15 +13,33 @@ import { UserConnexionService } from '../service/user_connexion/user-connexion.s
   styleUrls: ['./main.component.css']
 })
 export class MainComponent implements OnInit {
+  title: string = GlobalConsts.siteTitle;
 
-  title: string = 'ft_transcendence - Pong';
+  constructor(
+    private router: Router,
+    private userApi: UserApiService,
+    private userAuth: UserAuthService) { }
 
-  constructor(private userConnexionService: UserConnexionService) { }
-
-  ngOnInit(): void {}
-
-  checkConnexion() {
-    return this.userConnexionService.getConnexion();
+  ngOnInit() {
+    this.userApi.getUserById()
+      .then(res => {
+        if (res && res.name === '')
+          this.router.navigate(['user_subscription']);
+      });
   }
 
+  logOut(): void {
+		this.userAuth.ftAuthLogout()
+			.subscribe({
+				next: (v) => {
+					// console.log('Next:', v);
+					this.router.navigate(['user_login']);
+				},
+				error: (e) => {
+					// console.log('Error:', e);
+					this.router.navigate(['user_login']);
+				},
+				complete: () => console.info('user logout')
+			})
+	}
 }

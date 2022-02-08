@@ -10,7 +10,7 @@ import { UserPreferenceService } from '../service/user-preference/user-preferenc
 export class UserPreferenceComponent implements OnInit {
 
 	usernameVisibility : boolean = true;
-	subscribeToUsernameVisibility : Subscription;
+	// subscribeToUsernameVisibility : Subscription;
 
 	user : any = {
 		name: 'besellem',
@@ -19,9 +19,9 @@ export class UserPreferenceComponent implements OnInit {
 	};
 
 	constructor( private userPreference: UserPreferenceService ) {
-			this.subscribeToUsernameVisibility = this.userPreference
-			.triggerUsernameVisibility()
-			.subscribe((value) => (this.usernameVisibility = value));
+			// this.subscribeToUsernameVisibility = this.userPreference
+			// .triggerUsernameVisibility()
+			// .subscribe((value) => (this.usernameVisibility = value));
 	}
 
 	ngOnInit(): void {

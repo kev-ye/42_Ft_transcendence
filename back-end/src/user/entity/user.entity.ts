@@ -24,4 +24,13 @@ export class UserEntity {
 
 	@Column({ nullable: true })
 	email: string; // 42 email (?)
+
+  @Column({ nullable: true })
+  online: string; // online stats
+
+	@Column({ nullable: true })
+	twoFactor: boolean;
+
+	@Column({ nullable: true })
+	twoFactorId: string;
 }

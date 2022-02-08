@@ -4,21 +4,21 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
-import { SharedMaterialModule } from './shared/shared-material.module';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { MainComponent } from './main/main.component';
 import { UserLoginComponent } from './user-login/user-login.component';
 import { UserLogin2Component } from './user-login2/user-login2.component';
 import { UserSubscriptionComponent } from './user-subscription/user-subscription.component';
-import { UserComponent } from './user/user.component';
-import { ChatComponent } from './chat/chat.component';
-import { GameRoomComponent } from './game-room/game-room.component';
-import { GameComponent } from './game/game.component';
-import { LoginCallbackComponent } from './login-callback/login-callback.component';
-import { NotFoundComponent } from './not-found/not-found.component';
+// import { UserComponent } from './user/user.component';
+// import { ChatComponent } from './chat/chat.component';
+// import { GameRoomComponent } from './game-room/game-room.component';
+// import { GameComponent } from './game/game.component';
+// import { LoginCallbackComponent } from './login-callback/login-callback.component';
+// import { NotFoundComponent } from './not-found/not-found.component';
 import { UserPreferenceComponent } from './user-preference/user-preference.component';
+
+import { SharedMaterialModule } from './common/shared-material.module';
 
 @NgModule({
   declarations: [
@@ -27,12 +27,12 @@ import { UserPreferenceComponent } from './user-preference/user-preference.compo
     UserLoginComponent,
     UserLogin2Component,
     UserSubscriptionComponent,
-    UserComponent,
-    ChatComponent,
-    GameRoomComponent,
-    GameComponent,
-    LoginCallbackComponent,
-    NotFoundComponent,
+    // UserComponent,
+    // ChatComponent,
+    // GameRoomComponent,
+    // GameComponent,
+    // LoginCallbackComponent,
+    // NotFoundComponent,
     UserPreferenceComponent
   ],
   imports: [
@@ -44,8 +44,6 @@ import { UserPreferenceComponent } from './user-preference/user-preference.compo
     ReactiveFormsModule,
     HttpClientModule
   ],
-  providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule {
-}
+export class AppModule {}
