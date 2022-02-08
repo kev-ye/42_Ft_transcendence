@@ -1,0 +1,21 @@
+<div class="user-preference-container">
+	<div class="user-preference-header">
+		<h2>User Preferences</h2>
+	</div>
+	<div class="user-header">
+		<div>
+			<img [src]="user.avatar" alt="User Preference Icon" class="user-preference-icon">
+		</div>
+		<div>
+			<div class="user-mod-item">
+				<h3>{{ user.name }}</h3>
+				<mat-icon *ngIf="triggerUsernameVisibility" (click)="triggerUsernameVisibility()">create</mat-icon>
+				<mat-icon *ngIf="!triggerUsernameVisibility" (click)="triggerUsernameVisibility()">check</mat-icon>
+			</div>
+			<div class="user-mod-item">
+				<h3>{{ user.email }}</h3>
+				<mat-icon>create</mat-icon>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,67 @@
+.user-preference-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 50px 20px;
+	background-color: rgba(0, 0, 0, .12);
+}
+
+.user-preference-container h2 {
+	font-size: 1.5rem;
+	font-weight: 400;
+	margin-bottom: 50px;
+}
+
+.user-preference-container mat-icon {
+	transform: scale(0.7);
+	font-weight: 100;
+}
+
+
+.user-header {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	/* background-color: rgba(0, 0, 0, .12); */
+}
+
+/* avatar */
+.user-header img {
+	width: 120px;
+	object-fit: cover;
+	border-radius: 50%;
+	transition: .12s ease;
+}
+
+.user-header img:hover {
+	cursor: pointer;
+	filter: grayscale(0.6) brightness(0.5);
+}
+
+.user-header div {
+	margin: 0 20px;
+}
+
+.user-header h3 {
+	font-size: 1rem;
+	font-weight: 100;
+}
+
+
+.user-mod-item {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.user-mod-item mat-icon {
+	color: rgba(0, 0, 0, .2);
+	margin-left: 5px;
+	transition: .12s ease;
+}
+
+.user-mod-item mat-icon:hover {
+	cursor: pointer;
+	color: rgba(0, 0, 0, .8);
+}

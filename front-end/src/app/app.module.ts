@@ -18,6 +18,7 @@ import { GameRoomComponent } from './game-room/game-room.component';
 import { GameComponent } from './game/game.component';
 import { LoginCallbackComponent } from './login-callback/login-callback.component';
 import { NotFoundComponent } from './not-found/not-found.component';
+import { UserPreferenceComponent } from './user-preference/user-preference.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { NotFoundComponent } from './not-found/not-found.component';
     GameRoomComponent,
     GameComponent,
     LoginCallbackComponent,
-    NotFoundComponent
+    NotFoundComponent,
+    UserPreferenceComponent
   ],
   imports: [
     BrowserModule,
