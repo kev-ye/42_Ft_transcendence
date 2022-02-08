@@ -17,7 +17,7 @@ export class ChatHistoryService {
             }});
     }
 
-    async showChat(chat_id: number) {
+    async showChat(chat_id: string) {
         /*let result: any[] = await this.repo.query('select * from history where chat_id=\''
         + chat_id
         + "\' order by created desc limit " + 20 + ";");

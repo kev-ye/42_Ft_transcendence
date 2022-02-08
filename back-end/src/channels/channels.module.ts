@@ -8,7 +8,6 @@ import { ChannelEntity } from './entity/channels.entity';
 @Module({
   imports: [
     TypeOrmModule.forFeature([ChannelEntity]),
-    ChatHistoryModule
   ],
   controllers: [ChannelsController],
   providers: [{

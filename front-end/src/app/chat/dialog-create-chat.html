@@ -2,7 +2,7 @@
     .background {
         width: 400px;
         position: relative;
-        height: 400px;
+        height: 500px;
         overflow: hidden;
     }
 
@@ -17,7 +17,7 @@
     }
 
     .btn {
-        position: absolute;
+        position: relative;
         bottom: 0%;
         left: 50%;
         transform: translate(-50%, 0);
@@ -34,6 +34,14 @@
         
         
     }
+
+    .error {
+        background-color: rgb(255, 164, 164);
+        text-align: center;
+        text-decoration: underline;
+        font-weight: bold;
+
+    }
 </style>
 
 <div class="background">
@@ -45,7 +53,7 @@
     <div class="main">
         <div style="position: relative; margin-top: 15px; height: 50px; width: 100%;">
             <div style="position: absolute; left: 50%; transform: translate(-50%, 0);">
-                <input type="text" name="chatName" #chatName style="left: 50%;">
+                <input type="text" name="chatName" #chatName style="left: 50%; text-align: center;">
                 <label for="chatName" style="text-align: center; display: block;" > Name </label>
             </div>
         </div>
@@ -54,7 +62,7 @@
 
                 <div style="position: relative; width: 100%; height: 15px">
                     <div style="position: absolute; left: 50%; transform: translate(-50%, 0);">
-                        <input (change)="hidePassword(); setAccess(0)" type="radio" name="protected" value="open">
+                        <input (change)="hidePassword(); setAccess(0)" type="radio" name="protected" value="open" checked>
                     </div>
                 </div>
                 <div style="width: 100%; text-align: center;">
@@ -73,18 +81,26 @@
                 <br>
                 <div style="position: relative; width: 100%;">
                     <div style="position: absolute; left: 50%; transform: translate(-50%, 0);">
-                        <input type="password" placeholder="Type password.." autocomplete="off" #passwordOne [disabled]="!passwordInput">
+                        <input type="password" placeholder="Type password.." autocomplete="off" #passwordOne [disabled]="!passwordInput" style="text-align: center;">
                     </div>
                     <br>
-                    <input type="password" placeholder="Type again.." autocomplete="off" #passwordTwo [disabled]="!passwordInput">
+                    <div style="position: absolute; left: 50%; transform: translate(-50%, 0);">
+                        <input type="password" placeholder="Type again.." autocomplete="off" #passwordTwo [disabled]="!passwordInput" style="text-align: center;">
+                    </div>
                 </div>
 
-                <br><br>
-                <input (change)="hidePassword(); setAccess(2)" type="radio" name="protected" value="private"> Private
-            </div>
-            <label for="accessChat" style="display: block; text-align: center;"> Access Mode </label>
             <br><br>
-        <button class="btn" (click)="createChat(chatName.value)"> Create </button>
-    </div>
-</div>
+            <div style="position: relative; width: 100%; height: 15px">
+                <div style="position: absolute; left: 50%; transform: translate(-50%, 0);">
+                    <input (change)="hidePassword(); setAccess(2)" type="radio" name="protected" value="private">
+                </div>
+            </div>
+            <div style="width: 100%; text-align: center;">
+                Private
+            </div>
+        </div>
+        <label for="accessChat" style="display: block; text-align: center;"> Access Mode </label>
+        <br>
+        <button class="btn" (click)="createChat(chatName.value, passwordOne.value, passwordTwo.value)"> Create </button>
+        <div #printError class="error"></div>
     

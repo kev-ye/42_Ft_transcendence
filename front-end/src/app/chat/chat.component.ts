@@ -26,6 +26,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   socket: Socket;
 
   user: any = {id: "123"}
+  password: string = "";
 
   @ViewChild('input') input: ElementRef<HTMLInputElement>;
 
@@ -37,6 +38,39 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     if (this.scroll && this.frame)
       this.frame.nativeElement.scroll({top: this.frame.nativeElement.scrollHeight, behavior: "smooth"});
       
+  }
+
+  fetchChannels() {
+    this.http.get('http://localhost:3000/channels').subscribe({next: data => {
+      console.log("fetched channels", data);
+      this.channelList = data as any[];
+    },
+    error: _ => {
+      console.error("error during channels fetch");
+      
+    }});
+  }
+
+  fetchPrivateMessage(friend: any) {
+    this.http.get('http://localhost:3000/private/' + "123" + "/" + friend.id).subscribe(data => {
+      console.log("fetched private history", data);
+      this.messages = data as {id: string, username: string, user_id: string, type: number, message?: string}[];
+      this.generateRandomColors();
+      
+    });
+  }
+
+  fetchChannelHistory(channel: any) {
+    this.http.get('http://localhost:3000/history/' + channel.id, {headers: {password: this.password}}).subscribe(data => {
+      console.log("fetched history", data);
+      
+      this.messages = data as {id: string, user_id: string, type: number, username: string, message?: string}[];
+      this.chat.id = channel.id;
+      this.chat.name = channel.name;
+      this.chat.public = true;
+      
+      this.generateRandomColors();
+    });
   }
 
   ngOnInit(): void {
@@ -61,14 +95,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     })
 
 
-    this.http.get('http://localhost:3000/channels').subscribe({next: data => {
-      console.log("fetched channels", data);
-      this.channelList = data as any[];
-    },
-    error: _ => {
-      console.error("error during channels fetch");
-      
-    }});
+    this.fetchChannels();
   }
 
   ngOnDestroy(): void {
@@ -127,12 +154,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     console.log("user:", this.user);
     
     this.socket.emit('connectRoom', {user_id: "123", chat: {public: false, id: friend.id}});
-    this.http.get('http://localhost:3000/private/' + "123" + "/" + friend.id).subscribe(data => {
-      console.log("fetched private history", data);
-      this.messages = data as {id: string, username: string, user_id: string, type: number, message?: string}[];
-      this.generateRandomColors();
-      
-    });
+    this.fetchPrivateMessage(friend);
 
     this.chat.id = friend.id;
     this.chat.name = friend.username;
@@ -142,6 +164,14 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     else
       this.chat.show = false;
   }
+   
+  connectRoom(channel: any) {
+    this.scroll = true;
+    this.socket.emit('connectRoom', {user_id: "123", chat: {public: true, id: channel.id}});
+
+    this.fetchChannelHistory(channel);
+    this.chat.show = true;
+  }
 
   openPublic(channel: any) {
     console.log("opening channel", channel);
@@ -150,38 +180,28 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
       return ;
     else if (channel.access == 1)
     {
-
       const tmp = this.dialog.open(DialogProtectedChat, {
         data: {
-          wesh: "bite"
+          id: channel.id
         }
       });
-      tmp.afterClosed().subscribe(data => {
-        console.log("closed dialog", data);
-        
-      })
       
-      return;
+      tmp.afterClosed().subscribe(data => {
+        if (data.password)
+          this.password = data.password;
+        if (data.success)
+        {
+          this.connectRoom(channel);
+          return ;
+        }
+        
+      });
+      return ;
     }
 
 
     if (!this.chat.show)
-    {
-      this.scroll = true;
-      this.socket.emit('connectRoom', {user_id: "123", chat: {public: true, id: channel.id}});
-
-      this.http.get('http://localhost:3000/history/' + channel.id).subscribe(data => {
-        console.log("fetched history", data);
-        
-        this.messages = data as {id: string, user_id: string, type: number, username: string, message?: string}[];
-        this.chat.id = channel.id;
-        this.chat.name = channel.name;
-        this.chat.public = true;
-        
-        this.generateRandomColors();
-      });
-      this.chat.show = true;
-    }
+      this.connectRoom(channel);
     else
       this.chat.show = false;
   }
@@ -236,10 +256,13 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   createChat() {
     //todo implement creating chat
-    this.dialog.open(DialogCreateChat, {
+    const tmp = this.dialog.open(DialogCreateChat, {
       data: {
-        //data
+        user_id: this.user.id
       }
+    });
+    tmp.afterClosed().subscribe(data => {
+      this.fetchChannels();
     })
   }
 
@@ -250,11 +273,28 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   templateUrl: "./dialog-protected-chat.html"
 })
 export class DialogProtectedChat implements OnInit{
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any) {}
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private http: HttpClient, private dialog: MatDialogRef<DialogProtectedChat>) {}
+
+  chat_id: string = "";
+  @ViewChild('error') error: ElementRef<HTMLDivElement>;
 
   ngOnInit(): void {
-      console.log(this.data);
+    this.chat_id = this.data.id;
+    console.log(this.data);
       
+  }
+
+  submitPassword(password: string) {
+    this.http.post('http://localhost:3000/channels/password/' + this.chat_id, {password: password}).subscribe({
+      next: data => {
+        if (data)
+          this.dialog.close({success: true, password: password});
+        else
+        {
+          this.error.nativeElement.textContent = "Password is wrong";
+        }
+      }
+    })
   }
 }
 
@@ -338,10 +378,15 @@ export class DialogInvite {
   templateUrl: "./dialog-create-chat.html"
 })
 export class DialogCreateChat {
-  constructor(private http: HttpClient, dialogRef: MatDialogRef<DialogCreateChat>) {}
+  constructor(private http: HttpClient, private dialogRef: MatDialogRef<DialogCreateChat>, @Inject(MAT_DIALOG_DATA) data: any) {
+    this.user_id = data.user_id;
+  }
+
+  @ViewChild('printError') error: ElementRef<HTMLDivElement>;
 
   passwordInput: boolean = false;
   access: number = 0;
+  user_id: string = "";
 
   hidePassword() {
     this.passwordInput = false;
@@ -356,14 +401,45 @@ export class DialogCreateChat {
   }
 
   createChat(name: string, passwordOne?: string, passwordTwo?: string) {
-    if (this.access == 1)
+    if (!name)  
     {
-      if (passwordOne != passwordTwo)
-        return ;
-      this.http.post('http://localhost:3000/channels', {name: name, access: this.access, password: passwordOne, creator_id: "123"}).subscribe();
+      this.error.nativeElement.textContent = "Please enter a channel name"
       return ;
     }
-    this.http.post('http://localhost:3000/channels', {name: name, access: this.access, creator_id: "123"}).subscribe();
+    if (this.access == 1)
+    {
+      if (!passwordOne)
+      {
+        this.error.nativeElement.textContent = "Please enter password for protected channel";
+        return ;
+      }
+      
+      if (passwordOne != passwordTwo)
+      {
+        this.error.nativeElement.textContent = "Please enter same password"
+        return ;
+      }
+      this.http.post('http://localhost:3000/channels', {name: name, access: this.access, password: passwordOne, creator_id: this.user_id}).subscribe({next:
+    data => {
+      console.log("Created channel");
+      this.dialogRef.close(true);
+    },
+  error: data => {
+    console.log("Could not create channel");
+    
+  }});
+      return ;
+    }
+    this.http.post('http://localhost:3000/channels', {name: name, access: this.access, creator_id: "123"}).subscribe({next: 
+  data => {
+    console.log("Created channel");
+    this.dialogRef.close(true);
+    
+  },
+error: data => {
+  console.log("Could not create channel");
+  
+}});
   }
 
 }

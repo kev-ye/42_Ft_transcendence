@@ -64,8 +64,6 @@ export class UserComponent implements OnInit {
       } //change data to send to dialog
     });
     ref.afterClosed().subscribe(data => {
-      console.log("haha", data);
-      
       if (data == true)
         this.refreshUserDetails();
     })

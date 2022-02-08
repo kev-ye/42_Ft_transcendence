@@ -17,6 +17,25 @@ export class ChannelsService {
         
     }
 
+    async getChannelById(id: string) {
+        return await this.repo.findOne({id: id});
+    }
+
+    async checkPassword(password: string, chat_id: string) {
+        console.log("lol");
+        
+        const tmp = await this.repo.findOne({id: chat_id});
+        if (tmp && tmp.access == 1 && tmp.password)
+        {
+            //check hashed version of password
+            console.log("test password : ", password == tmp.password);
+            
+            if (password == tmp.password)
+                return true;
+        }
+        return false;
+    }
+
     async createChannel(data: any) {
         const result = this.repo.create(data);
 

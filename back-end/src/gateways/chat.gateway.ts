@@ -2,6 +2,7 @@ import { Inject, Injectable } from "@nestjs/common";
 import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { stringify } from "querystring";
 import { Socket, Server } from "socket.io";
+import { ChannelsService } from "src/channels/channels.service";
 import { ChatHistoryService } from "src/chat-history/chat-history.service";
 import { PrivateService } from "src/private/private.service";
 import { UserService } from "src/user/user.service";
@@ -21,7 +22,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect{
 
     constructor(@Inject('CHAT_HISTORY_SERVICE') private history: ChatHistoryService,
     @Inject('PRIVATE_SERVICE') private privateService: PrivateService,
-    @Inject('USER_SERVICE') private userService: UserService) {}
+    @Inject('USER_SERVICE') private userService: UserService,
+    @Inject('CHANNELS_SERVICE') private chanService: ChannelsService) {}
 
     handleConnection(client: any, ...args: any[]) {
         console.log("Connect " + client.id);
@@ -81,12 +83,33 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect{
     @SubscribeMessage('connectRoom')
     async connectChannel(@ConnectedSocket() client: Socket, @MessageBody() data: {
         user_id: string,
-        chat: {public: boolean, id: string}}) {
+        chat: {public: boolean, id: string},
+        password?: string}) {
         
         console.log("connect " + client.id);
         
         if (data.chat.public)
-            this.switchChannel(client, data.chat.id);
+        {
+            const tmp = await this.chanService.getChannelById(data.chat.id);
+            if (tmp)
+            {
+                if (tmp.access == 1)
+                {
+                    if (data.password == undefined)
+                        return false;
+                    if (this.chanService.checkPassword(data.password, data.chat.id))
+                        this.switchChannel(client, data.chat.id);
+                    else
+                        return false;
+                }
+                else if (tmp.access == 0)
+                    this.switchChannel(client, data.chat.id);
+                else
+                    return false;
+                return true;
+            }
+            return false;
+        }
         else {
             //check to ?
 
