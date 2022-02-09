@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity('channels_table')
+@Entity('channels')
 export class ChannelEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string;

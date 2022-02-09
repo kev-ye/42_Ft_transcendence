@@ -2,7 +2,7 @@ import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeor
 
 //table for channels' message history
 
-@Entity('channels_history_table')
+@Entity('channels_history')
 export class ChatHistoryEntity {
     
     @PrimaryGeneratedColumn('uuid')

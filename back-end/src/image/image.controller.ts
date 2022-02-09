@@ -49,13 +49,16 @@ export class ImageController {
         let file;
         if (user && user.avatar && user.avatar.length > 0)
         {
-            file = fs.createReadStream(join('../uploads', user.avatar))
+            try {
+                file = fs.createReadStream(join('../uploads/', user.avatar))
+            } catch {
+                file = fs.createReadStream('./static/default_avatar.png')    
+            }
         } else 
             file = fs.createReadStream('./static/default_avatar.png')
     
             res.set('Content-Disposition', 'inline');//'attachment; filename=' + user.picture)
             return new StreamableFile(file);
-        return
     }
 
     @Delete(':id')

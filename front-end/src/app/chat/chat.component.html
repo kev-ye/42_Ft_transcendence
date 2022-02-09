@@ -135,7 +135,7 @@
                         <mat-icon *ngIf="channel.access == 2"> block_icon </mat-icon>
                         <mat-icon *ngIf="channel.moderator"> report </mat-icon>
                         
-                        <div style="position: absolute; left: 25%; top: 50%; transform: translate(0, -50%); ">
+                        <div style="position: absolute; left: 25%; top: 50%; transform: translate(0, -50%);" [ngStyle]="{'font-weight': channel.access < 2 ? 'bold' : ''}">
                             {{ channel.name }}
                         </div>
                         <mat-icon style="position: absolute; left: 90%; top: 50%; transform: translate(0, -50%); ">keyboard_arrow_right</mat-icon>
@@ -145,7 +145,8 @@
             </div>
             <div *ngIf="chat.show" style="overflow: hidden; height: 550px; width: 400px">
                 <div class="ChatInformation" style="position: relative; height: 50px;">
-                    <div style="position: absolute; top: 0%; left: 50%; transform: translate(-50%, 0); text-decoration: underline;">
+                    <div (click)="openChannelSettings()" style="position: absolute; top: 0%; left: 50%; transform: translate(-50%, 0); text-decoration: underline;" [ngStyle]="{'font-weight': chat.moderator ? 'bold': '',
+                                                                                                                                                'cursor': chat.moderator ? 'pointer': 'default'}">
                         {{ chat.name }}
                     </div>
                     <mat-icon (click)="openFriendList()" style="position: absolute; top: 0%; left: 0%; cursor: pointer;"> keyboard_arrow_left </mat-icon>

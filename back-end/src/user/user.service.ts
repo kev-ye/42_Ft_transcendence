@@ -105,7 +105,7 @@ export class UserService {
 
 		if (!this._checkUserNameFormat(user.name))
 			throw new ForbiddenException(`username ${user.name} is not valid`)
-		if (!(await this._isUniqueUserName(user.name)))
+		if (!(await this._isUniqueUserName(user)))
 			throw new ForbiddenException(`username ${user.name} is already taken`)
 
 		return await this.usersRepository.save(user)
@@ -121,8 +121,6 @@ export class UserService {
 
 	private async _getCompleteUsers() : Promise<UserDto[]> {
 		const tmp = await this.usersRepository.find();
-		console.log("tmp ", tmp);
-		
 		return tmp;
 	}
 
@@ -139,8 +137,9 @@ export class UserService {
 	** check if the username is unique in the database
 	** must be private for security reasons
 	*/
-	private async _isUniqueUserName(username : string) : Promise<boolean> {
-		return (await this.getUserByName(username)) === undefined
+	private async _isUniqueUserName(user: any) : Promise<boolean> {
+		const tmp = await this.getUserByName(user.name);
+		return (tmp == undefined || tmp.id == user.id)
 	}
 
 	private async _isUniqueLogin(login : string) : Promise<boolean> {

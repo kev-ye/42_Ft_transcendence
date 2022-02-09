@@ -1,10 +1,10 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserApiService } from '../service/user_api/user-api.service';
 import { UserAuthService } from '../service/user_auth/user-auth.service';
 import { GlobalConsts } from '../common/global';
-import { LocalUser } from '../common/user';
+import { io, Socket } from 'socket.io-client';
 
 @Component({
   selector: 'app-main',
@@ -27,7 +27,7 @@ import { LocalUser } from '../common/user';
     ])
   ]
 })
-export class MainComponent implements OnInit {
+export class MainComponent implements OnInit, OnDestroy {
   title: string = GlobalConsts.siteTitle;
 
   chatVisibility: boolean = true;
@@ -35,15 +35,31 @@ export class MainComponent implements OnInit {
 
   constructor(private router: Router,
     private userApi: UserApiService,
-    private userAuth: UserAuthService) { }
+    private userAuth: UserAuthService,) { }
 
+    private socket: Socket;
+    
+    ngOnInit() {
+    this.socket = io('http://localhost:3002/', {withCredentials: true});
+    this.socket.emit('event');
 
-  ngOnInit() {
+    
+
     this.userApi.getUserById()
       .then(res => {
         if (res && res.name === '')
           this.router.navigate(['user_subscription']);
+        else
+        {
+          //console.log("test cookie ", );
+          //this.socket.emit('session', )
+        }
       });
+
+  }
+
+  ngOnDestroy(): void {
+      this.socket.disconnect();
   }
 
   openChat() {

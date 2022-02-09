@@ -12,7 +12,6 @@ export class ChannelsService {
         tmp.map(data => {
             data['moderator'] = true;
         });
-        console.log("tesst ", tmp);
         return tmp;
         
     }
@@ -34,6 +33,10 @@ export class ChannelsService {
                 return true;
         }
         return false;
+    }
+
+    async updateById(data: any) {
+        return await this.repo.update({id: data.id}, data);
     }
 
     async createChannel(data: any) {

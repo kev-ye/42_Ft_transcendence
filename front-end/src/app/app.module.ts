@@ -11,8 +11,9 @@ import { UserLoginComponent } from './user-login/user-login.component';
 import { UserLogin2Component } from './user-login2/user-login2.component';
 import { UserSubscriptionComponent } from './user-subscription/user-subscription.component';
 import { UserComponent } from './user/user.component';
-import { ChatComponent, DialogCreateChat, DialogInvite, DialogProtectedChat, DialogSpectator, DialogUser } from './chat/chat.component';
+import { ChatComponent, DialogChannelSettings, DialogCreateChat, DialogInvite, DialogProtectedChat, DialogSpectator, DialogUser } from './chat/chat.component';
 import { LadderComponent } from './ladder/ladder.component';
+import { CookieModule } from 'ngx-cookie'
 
 @NgModule({
   declarations: [
@@ -27,7 +28,9 @@ import { LadderComponent } from './ladder/ladder.component';
     DialogInvite,
     DialogProtectedChat,
     DialogSpectator,
-    DialogUser
+    DialogUser,
+    DialogChannelSettings
+    
   ],
   imports: [
     BrowserModule,
@@ -37,6 +40,7 @@ import { LadderComponent } from './ladder/ladder.component';
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    
   ],
   bootstrap: [AppComponent]
 })

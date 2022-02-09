@@ -2,7 +2,7 @@ import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 //table for blocked user
 
-@Entity('block_table')
+@Entity('block')
 export class BlockEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string; //Auto-generated ID

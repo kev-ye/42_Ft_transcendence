@@ -1,7 +1,9 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Inject, Injectable, OnModuleInit, Req } from "@nestjs/common";
 import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
+
 import { stringify } from "querystring";
 import { Socket, Server } from "socket.io";
+import { ActiveUsersService } from "src/active-users/active-users.service";
 import { ChannelsService } from "src/channels/channels.service";
 import { ChatHistoryService } from "src/chat-history/chat-history.service";
 import { PrivateService } from "src/private/private.service";
@@ -9,21 +11,28 @@ import { UserService } from "src/user/user.service";
 
 
 @WebSocketGateway(3001, {cors: {
-    origin: '*',
+    origin: 'http://localhost:4200',
     methods: ["GET", "POST"],
     credentials: true
 }})
-export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect{
+export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, OnModuleInit{
 
     @WebSocketServer()
     server: Server;
+
+    onModuleInit() {
+        this.server.on('connection', rawSocket => {
+            
+        })
+    }
 
     rooms: Map<string, string> = new Map();
 
     constructor(@Inject('CHAT_HISTORY_SERVICE') private history: ChatHistoryService,
     @Inject('PRIVATE_SERVICE') private privateService: PrivateService,
     @Inject('USER_SERVICE') private userService: UserService,
-    @Inject('CHANNELS_SERVICE') private chanService: ChannelsService) {}
+    @Inject('CHANNELS_SERVICE') private chanService: ChannelsService,
+    @Inject('ACTIVE_USERS_SERVICE') private activeService: ActiveUsersService) {}
 
     handleConnection(client: any, ...args: any[]) {
         console.log("Connect " + client.id);
@@ -52,17 +61,18 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect{
     }
 
     @SubscribeMessage('message')
-    async receiveMessage(@ConnectedSocket() client: Socket, @MessageBody() data: {
+    async receiveMessage(@ConnectedSocket() client: Socket, @MessageBody() data: {        
         user_id: string,
         message: string,
         type: number,
         chat: {public: boolean, id: string}})
     {
+        console.log("received message", data);
+        
         const user = await this.userService.getUserById(data.user_id);
         
         if (!user)
             return ;
-        console.log("message", data);
         
         if (data.chat.public)
         {
@@ -86,7 +96,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect{
         chat: {public: boolean, id: string},
         password?: string}) {
         
-        console.log("connect " + client.id);
+        console.log("connect ", data);
         
         if (data.chat.public)
         {

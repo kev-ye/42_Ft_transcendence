@@ -2,7 +2,7 @@ import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeor
 
 // table for private messages
 
-@Entity('private_message_table')
+@Entity('private_messages')
 export class PrivateMessageEntity {
 	@PrimaryGeneratedColumn('uuid')
 	id: string; //auto-generated id

@@ -35,6 +35,15 @@
         cursor: pointer;
         user-select: none;
     }
+
+    .avatar {
+        transition: .25s ease;
+        cursor: pointer;
+    }
+
+    .avatar:hover  {
+        opacity: 0.5;
+    }
 </style>
 
 
@@ -42,9 +51,8 @@
 
     <div *ngIf="connected">
 
-        <div style="position: relative; height: 100px; padding-top: 15px;">
-
-            <img [src]="user.avatar" alt="" class="avatar">
+        <div class="container" style="position: relative; height: 100px; padding-top: 15px;">
+            <img [src]="user.avatar" alt="" class="avatar" (click)="openImageDialog()">
         </div>
 
         <h1 class="username" (click)="openUsername()"> {{ user.username }} </h1>

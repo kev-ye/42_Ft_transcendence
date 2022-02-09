@@ -15,6 +15,8 @@ import { ChannelsModule } from 'src/channels/channels.module';
 import { ChatGateway } from 'src/gateways/chat.gateway';
 import { ImageModule } from 'src/image/image.module';
 import { AuthModule } from 'src/auth/auth.module';
+import { ActiveUsersModule } from 'src/active-users/active-users.module';
+import { AppGateway } from 'src/gateways/app.gateway';
 
 
 @Module({
@@ -41,10 +43,12 @@ import { AuthModule } from 'src/auth/auth.module';
 	ImageModule,
 	PassportModule,
 	AuthModule,
+	ActiveUsersModule,
 	
 	],
 	providers: [
-		ChatGateway
+		ChatGateway,
+		AppGateway
 	]
 })
 export class AppModule {

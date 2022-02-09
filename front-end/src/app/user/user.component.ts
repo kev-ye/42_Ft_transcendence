@@ -10,47 +10,60 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 })
 export class UserComponent implements OnInit {
 
-  constructor(public dialog: MatDialog, private http: HttpClient) { }
+  constructor(public dialog: MatDialog, private http: HttpClient) {
+  }
 
-  user: any = {id: "123", username: "ppoinsinet", ladder: 42, login: "ppoinsin", avatar: "http://localhost:3000/image/"};
+  user: any;
 
   changeUsername: boolean = false;
   connected: boolean = false;
 
   refreshUserDetails() {
     //load data from backend server
-    this.http.get('http://localhost:3000/user/id/' + this.user.id).subscribe({
+    this.http.get('http://localhost:3000/user/id/', {withCredentials: true}).subscribe({
       next: data => {
-        if (data)
-          console.log("fetched user details", data);
+        if (!data)
+        {
+          console.log("Could not fetch user details");
+          return ;
+        }
+        console.log("fetched user details", data);
         const tmp = data as any;
+        this.user = tmp;
         this.user.username = tmp.name;
-      },
-      error: data => {
-        console.log("Could not fetch data");
-      }
-    });
-    this.http.get('http://localhost:3000/ladder/' + this.user.id).subscribe({
-      next: (data: any) => {
-        this.user.ladder = data.points;
-      },
-      error: data => {
-        console.log("Could not fetch user ladder points");
-        
-      }
-    });
+        this.user.avatar = "http://localhost:3000/image/" + this.user.id;
+
+        this.connected = true;
+
+        this.http.get('http://localhost:3000/ladder/' + this.user.id).subscribe({
+          next: (data: any) => {
+            this.user.ladder = data.points;
+          },
+          error: data => {
+            console.log("Could not fetch user ladder points");
+            
+        }});
+    }, error: data => {
+      console.log("Could not fetch user details");
+      
+    }});
   }
 
   ngOnInit(): void {
-    this.user.avatar += this.user.id;
-
     this.refreshUserDetails();
-    
+  }
 
-
-    //if connection successfull -> connected = true;
-    this.connected = true;
-    this.user.avatar += this.user.id;
+  openImageDialog() {
+    const tmp = this.dialog.open(DialogChangeImage, {
+      data: {
+        user_id: this.user.id
+        //data
+      }
+    });
+    tmp.afterClosed().subscribe(data => {
+      if (data)
+        this.user.avatar = data;
+    });
   }
 
   openUsername() {
@@ -130,5 +143,81 @@ export class DialogChangeUsername implements OnInit {
       this.statusText.nativeElement.textContent = "";
     }
 
+  }
+}
+
+@Component({
+  templateUrl: "./dialog-change-image.html"
+})
+export class DialogChangeImage {
+  constructor(@Inject(MAT_DIALOG_DATA) private data: any, private http: HttpClient,
+  private dialogRef: MatDialogRef<DialogChangeImage>) {
+    this.link = "http://localhost:3000/image/" + data.user_id;
+  }
+
+  link: string = "";
+  newImage: any;
+
+  @ViewChild('file') file: ElementRef<HTMLInputElement>;
+
+  changeImage(e: any) {
+    if (!e.target.files || !e.target.files.item(0))
+      return ;
+    console.log("change ", e);
+    const reader = new FileReader();
+    reader.readAsDataURL(e.target.files.item(0));
+    if (reader)
+    {
+      reader.onload = (data: any) => {
+        if (reader.result)
+          this.link = reader.result.toString();
+      };
+    }
+    
+  }
+
+
+  submitImage() {
+    
+    if (!this.file.nativeElement.files)
+      return ;
+
+    if (this.file.nativeElement.files?.length > 0)
+      console.log("submitting", this.file.nativeElement.files.item(0));
+    else
+    {
+      console.log("No file was loaded");
+      return ;
+    }
+
+    const image = this.file.nativeElement.files.item(0);
+    if (!image)
+      return ;
+
+      let ext: string = "";
+      let index: number = 0;
+      
+      if ((index = ((image.name as string).lastIndexOf('.'))) > 0)
+      {
+        ext = (image.name as string).substring(index).toUpperCase();
+        console.log("extension " + ext);
+        
+        if (ext != ".PNG" && ext != ".JPG")
+        {
+          console.log("Bad extension 1: " + ext);
+          return;
+        }
+        let fd = new FormData();
+        fd.append('image', image);
+        this.http.post<FormData>('http://localhost:3000/image/upload/' + this.data.user_id, fd, {headers: {extension: ext}}).subscribe((res) => {
+          
+        });
+      }
+      else
+        console.log("Bad extension 2: " + index);
+      this.dialogRef.close(this.link);
+
+
+    
   }
 }

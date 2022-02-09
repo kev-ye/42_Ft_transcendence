@@ -15,7 +15,7 @@ export class UserAuthService {
 
 	ftAuthLogin() {
 		const URL_42_LOGIN: string = 'https://api.intra.42.fr/oauth/authorize';
-		const client_id: string = 'fe43617a69dd01349a0721bdc45a4540c047eae07652b71c69a5cb8d9ebb8d62';
+		const client_id: string = 'dff6b306ea79df3603c349d11e8ba9de3595ba4ebddc08321158cb53c40bc847';
 		const redirect_uri: string = `${this.USER_API}/user/42/auth/callback`;
 		const response_type: string = 'code';
 		const scope: string = 'public';
