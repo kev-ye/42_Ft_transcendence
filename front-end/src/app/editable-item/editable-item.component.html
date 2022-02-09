@@ -1,0 +1,8 @@
+<div class="item">
+	<!-- <input type="text" [value]="title" (keyup)="onKeyUp($event)" (blur)="onBlur($event)" (focus)="onFocus($event)"> -->
+	<h3 *ngIf="visibility">{{ title }}</h3>
+	<mat-icon *ngIf="visibility" (click)="toggleVisibility()">create</mat-icon>
+
+	<input *ngIf="!visibility" type="text" [value]="title" contenteditable="true" autofocus>
+	<mat-icon *ngIf="!visibility" (click)="onToggle()">check</mat-icon>
+</div>

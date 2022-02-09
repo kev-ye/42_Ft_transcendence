@@ -13,12 +13,6 @@
 	margin-bottom: 50px;
 }
 
-.user-preference-container mat-icon {
-	transform: scale(0.7);
-	font-weight: 100;
-}
-
-
 .user-header {
 	display: flex;
 	flex-direction: row;
@@ -41,27 +35,4 @@
 
 .user-header div {
 	margin: 0 20px;
-}
-
-.user-header h3 {
-	font-size: 1rem;
-	font-weight: 100;
-}
-
-
-.user-mod-item {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-}
-
-.user-mod-item mat-icon {
-	color: rgba(0, 0, 0, .2);
-	margin-left: 5px;
-	transition: .12s ease;
-}
-
-.user-mod-item mat-icon:hover {
-	cursor: pointer;
-	color: rgba(0, 0, 0, .8);
 }

@@ -11,8 +11,8 @@ const routes: Routes = [
   { path: '', redirectTo: 'user_login', pathMatch: 'full' },
   { path: 'user_login', component: UserLoginComponent },
   // { path: 'user_login2', component: UserLogin2Component },
-  { path: 'user_subscription', component: UserSubscriptionComponent, canActivate: [AuthGuard] },
-  { path: 'main', component: MainComponent, canActivate: [AuthGuard] },
+  { path: 'user_subscription', component: UserSubscriptionComponent, /* canActivate: [AuthGuard] */ },
+  { path: 'main', component: MainComponent, /* canActivate: [AuthGuard] */ },
   { path: '**', redirectTo: 'user_login', pathMatch: 'full' }
 ];
 

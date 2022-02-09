@@ -19,6 +19,7 @@ import { UserSubscriptionComponent } from './user-subscription/user-subscription
 import { UserPreferenceComponent } from './user-preference/user-preference.component';
 
 import { SharedMaterialModule } from './common/shared-material.module';
+import { EditableItemComponent } from './editable-item/editable-item.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { SharedMaterialModule } from './common/shared-material.module';
     // GameComponent,
     // LoginCallbackComponent,
     // NotFoundComponent,
-    UserPreferenceComponent
+    UserPreferenceComponent,
+    EditableItemComponent
   ],
   imports: [
     BrowserModule,

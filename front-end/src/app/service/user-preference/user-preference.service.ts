@@ -1,4 +1,5 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { GlobalConsts } from '../../common/global';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 
@@ -15,5 +16,6 @@ export class UserPreferenceService {
 	triggerUsernameVisibility() : void {
 		this.usernameVisibility = !this.usernameVisibility;
 		return this.subject.next(this.usernameVisibility);
+		// `${GlobalConsts.userApi}/`
 	}
 }

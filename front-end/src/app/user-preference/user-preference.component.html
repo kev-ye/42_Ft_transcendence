@@ -7,15 +7,10 @@
 			<img [src]="user.avatar" alt="User Preference Icon" class="user-preference-icon">
 		</div>
 		<div>
-			<div class="user-mod-item">
-				<h3>{{ user.name }}</h3>
-				<mat-icon *ngIf="triggerUsernameVisibility" (click)="triggerUsernameVisibility()">create</mat-icon>
-				<mat-icon *ngIf="!triggerUsernameVisibility" (click)="triggerUsernameVisibility()">check</mat-icon>
-			</div>
-			<div class="user-mod-item">
-				<h3>{{ user.email }}</h3>
-				<mat-icon>create</mat-icon>
-			</div>
+			<app-editable-item title="{{ user.name }}" (onClick)="modifyUsername()"></app-editable-item>
+			<app-editable-item title="{{ user.email }}" (onClick)="modifyUsername()"></app-editable-item>
+			<!-- <mat-icon *ngIf="triggerUsernameVisibility" (click)="triggerUsernameVisibility()">create</mat-icon> -->
+			<!-- <mat-icon *ngIf="!triggerUsernameVisibility">check</mat-icon> -->
 		</div>
 	</div>
 </div>
