@@ -3,7 +3,6 @@ import { UserDto, LimitedUserDto, HistoryDto } from './dto/user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from './entity/user.entity';
-import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class UserService {
@@ -25,26 +24,25 @@ export class UserService {
 	}
 
   // by kaye
-  async updateUserByAuth(user: LimitedUserDto): Promise<void> {
+  async updateUserByAuth(user: LimitedUserDto): Promise<UserDto> {
     const upUser: UserDto = { ...user };
 
-		this.getUserById(user.id)
+		return await this.getUserById(user.id)
 			.then(user => {
 				if (!user) {
-					console.log('user no exist');
-					this.usersRepository.save(upUser)
+					// console.log('user no exist');
+					return this.usersRepository.save(upUser)
 				}
 				else
-					console.log('user exist');
+					// console.log('user exist');
+					return user;
 			})
   }
 
 	async firstUserCreate(id: string, name: string): Promise<UserDto> {
-		console.log('create id:', id);
-		if (!id) {
-			console.log('u mother fuck');
-			throw new ForbiddenException('id is undefined');
-		}
+		// console.log('create id:', id);
+		if (!id)
+			throw new ForbiddenException('id is undefined'); // maybe not need throw ? ...
 
 		const user: UserDto = await this.getUserById(id);
 		const toCreate: UserDto = {
@@ -52,7 +50,7 @@ export class UserService {
 			name: name
 		};
 
-		console.log('new user:', toCreate);
+		// console.log('new user:', toCreate);
 		return this.usersRepository.save(toCreate);
 	}
 

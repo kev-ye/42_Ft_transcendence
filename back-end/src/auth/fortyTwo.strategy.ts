@@ -4,7 +4,6 @@ import { PassportStrategy } from '@nestjs/passport';
 
 import { Strategy } from 'passport-oauth2'
 import { lastValueFrom } from "rxjs";
-// import { Strategy } from "passport-42";
 
 import { LimitedUserDto } from "src/user/dto/user.dto";
 import { AuthService } from "./auth.service";
@@ -20,7 +19,7 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
             tokenURL: 'https://api.intra.42.fr/oauth/token',
             clientID: 'fe43617a69dd01349a0721bdc45a4540c047eae07652b71c69a5cb8d9ebb8d62',
             clientSecret: '1c9aa5bd2286d287e667030165083668c66ccc4fe48b9f1a0940e213d9babef3',
-            callbackURL: 'http://localhost:3000/user/42/auth/callback',
+            callbackURL: 'http://localhost:3000/user/auth/42/callback',
             scope: ['public']
         });
       }
@@ -30,11 +29,16 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
         headers: { "Authorization": "Bearer " + accessToken }
         }));
       
-      const { id, login, email, image_url } = (await getUser).data;
+      const {
+				id,
+				login,
+				email,
+				image_url
+			} = (await getUser).data;
 
-			const userData = lastValueFrom(this.httpService.get(`https://api.intra.42.fr/v2/users/${id}`, {
-					headers: { "Authorization": "Bearer " + accessToken }
-					}));
+			// const userData = lastValueFrom(this.httpService.get(`https://api.intra.42.fr/v2/users/${id}`, {
+			// 		headers: { "Authorization": "Bearer " + accessToken }
+			// 		}));
 
 			// console.log('User data:', (await userData).data);
 
@@ -51,7 +55,7 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
       };
 
       if (login)
-        await this.authService.valideUser(user);
+        await this.authService.ftValideUser(user);
 
       return cb(null, user);
     }
