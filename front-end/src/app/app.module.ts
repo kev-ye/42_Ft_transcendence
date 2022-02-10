@@ -8,7 +8,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { MainComponent } from './main/main.component';
 import { UserLoginComponent } from './user-login/user-login.component';
-import { UserLogin2Component } from './user-login2/user-login2.component';
 import { UserSubscriptionComponent } from './user-subscription/user-subscription.component';
 
 import { SharedMaterialModule } from './common/shared-material.module';
@@ -18,7 +17,6 @@ import { SharedMaterialModule } from './common/shared-material.module';
     AppComponent,
     MainComponent,
     UserLoginComponent,
-    UserLogin2Component,
     UserSubscriptionComponent
   ],
   imports: [
