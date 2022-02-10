@@ -9,13 +9,22 @@ import { Observable, Subject } from 'rxjs';
 export class UserPreferenceService {
 
 	private usernameVisibility : boolean = true;
-	private subject = new Subject<any>();
 
 	constructor(private http: HttpClient) { }
 
-	triggerUsernameVisibility() : void {
-		this.usernameVisibility = !this.usernameVisibility;
-		return this.subject.next(this.usernameVisibility);
-		// `${GlobalConsts.userApi}/`
+	changeUsername(username : string) : any {
+		this.http.get(`${GlobalConsts.userApi}/user/name/${username}`).subscribe({
+			next: (user_id) => {
+				console.log(user_id);
+				// return this._changeUsername(user_id);
+			}
+		});
+	}
+
+	private _changeUsername(user_id : string) {
+		return this.http.put(`${GlobalConsts.userApi}/user/update/${user_id}`, {})
+			.subscribe({
+				next: (user) => {return user}
+			});
 	}
 }

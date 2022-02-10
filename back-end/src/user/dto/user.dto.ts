@@ -1,4 +1,3 @@
-
 export interface UserDto {
 	id: string;
 	login: string;
@@ -6,7 +5,7 @@ export interface UserDto {
 	avatar: string;
 	fortyTwoAvatar: string;
 	email: string;
-  online: string;
+	online: string;
 	twoFactor: boolean;
 	twoFactorId: string;
 	// friends: string[];
@@ -17,13 +16,13 @@ export interface UserDto {
 }
 
 export interface LimitedUserDto {
-  id: string;
+	id: string;
 	login: string;
 	name: string;
 	avatar: string;
 	fortyTwoAvatar: string;
 	email: string;
-  online: string;
+	online: string;
 	twoFactor: boolean;
 	twoFactorId: string;
 }

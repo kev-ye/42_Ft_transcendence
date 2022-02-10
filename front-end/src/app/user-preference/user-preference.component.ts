@@ -1,5 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { GlobalConsts } from '../common/global';
+import { HttpClient } from '@angular/common/http';
 import { UserPreferenceService } from '../service/user-preference/user-preference.service';
 
 @Component({
@@ -17,15 +19,21 @@ export class UserPreferenceComponent implements OnInit {
 		email: 'besellem@42.student.fr'
 	};
 
-	constructor( private userPreference: UserPreferenceService ) {
-
-	}
+	constructor(
+		private http : HttpClient,
+		private userPreference: UserPreferenceService
+	) { }
 
 	ngOnInit(): void {
-
+		// this.http.get(`${GlobalConsts.userApi}/user/id`).subscribe((user) => {this.user = user});
+		
+		console.log('TODEBUG', this.user);
 	}
 
 	modifyUsername() {
-		console.log('modifyUsername');
+		// Subscription to get the updated username
+
+		// this.userPreference.changeUsername(username);
+		console.log(this.user.name);
 	}
 }

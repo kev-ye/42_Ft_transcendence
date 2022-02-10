@@ -21,8 +21,9 @@ export class EditableItemComponent implements OnInit {
 		this.visibility = !this.visibility;
 	}
 
-	onToggle() {
-		this.toggleVisibility();
+	onToggle(event : any) {
 		this.onClick.emit();
+		this.toggleVisibility();
+		return this.title;
 	}
 }
