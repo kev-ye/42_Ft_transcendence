@@ -39,6 +39,10 @@ export class UserService {
 			})
   }
 
+	async updateUserByTF(user: UserDto): Promise<UserDto> {
+		return this.usersRepository.save(user);
+	}
+
 	async firstUserCreate(id: string, name: string): Promise<UserDto> {
 		// console.log('create id:', id);
 		if (!id)

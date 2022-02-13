@@ -1,0 +1,9 @@
+<p>QR CODE:</p>
+<img  class="images" src={{img}}/>
+<button (click)="turnOff()">turn off</button>
+
+<form [formGroup]="twoFactorForm" #f="ngForm">
+	<input name="token" matInput formControlName="token" maxlength="16" required>
+</form>
+
+<button type="submit" (click)="verif()">verif</button>

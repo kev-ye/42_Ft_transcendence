@@ -50,8 +50,7 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
         fortyTwoAvatar: image_url,
         email: email,
         online: 'online',
-				twoFactor: false,
-				twoFactorId: ''
+				twoFactorSecret: '',
       };
 
       if (login)

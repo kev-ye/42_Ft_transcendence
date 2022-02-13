@@ -4,7 +4,6 @@ import { UserModule } from 'src/user/user.module';
 import { PassportModule } from '@nestjs/passport';
 import { FortyTwoStrategy } from './fortyTwo.strategy';
 import { HttpModule } from '@nestjs/axios';
-import { GoogleStrategy } from './google.strategy';
 
 @Module({
   imports: [
@@ -14,8 +13,7 @@ import { GoogleStrategy } from './google.strategy';
 	],
   providers: [
 		AuthService,
-		FortyTwoStrategy,
-		GoogleStrategy
+		FortyTwoStrategy
 	]
 })
 export class AuthModule {}

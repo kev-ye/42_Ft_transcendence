@@ -10,6 +10,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { UserDto, LimitedUserDto } from "./dto/user.dto";
 import { UserService } from "./user.service";
 
+import * as twoFa from 'node-2fa';
+
 @Controller('user')
 export class UserController {
 	constructor(
@@ -63,7 +65,11 @@ export class UserController {
 		return this.userService.deleteUserById(id)
 	}
 
-  // auth
+/*
+ * Auth
+ */
+
+// login/logout by 42
 
   @Get('auth/42/login')
   @UseGuards(AuthGuard('42'))
@@ -75,26 +81,13 @@ export class UserController {
   ftAuthCallback(@Req() req: any): void {
     const user: LimitedUserDto = req.user;
 
-		if (user) {
+		if (user)
 			req.session.userId = user.id;
-		}
   }
-
-	@Get('auth/google/login')
-	@UseGuards(AuthGuard('google'))
-	async googleAuth(): Promise<void> {}
-
-	@Get('auth/google/callback')
-	@UseGuards(AuthGuard('google'))
-	googleAuthCallback(@Req() req: any): void {
-		const user: any = req.user;
-
-		return (user);
-	}
 	
   @Delete('auth/logout')  
   @Header('Access-Control-Allow-Origin', 'http://localhost:4200')
-  getCookie(@Req() req, @Res() res: any) {
+  getCookie(@Req() req: any, @Res() res: any) {
 		req.session.destroy(err => {
 			if (err)
 				console.log('error by session destroy:', err);
@@ -103,5 +96,66 @@ export class UserController {
 			ok: "ok"
 		});
   }
+
+// Two-factor authentication
+
+	@Post('auth/2fa/generate')
+	@Header('Access-Control-Allow-Origin', 'http://localhost:4200')
+	async twoFaGenerate(@Req() req: any, @Res() res: any): Promise<void> {
+		let user: UserDto = await this.userService.getUserById(req.session.userId);
+
+		if (user) {
+			const newSecret = twoFa.generateSecret({
+				name: "TwoFactorAuthentication",
+				account: user.name
+			});
+			user.twoFactorSecret = newSecret.secret;
+			this.userService.updateUserByTF(user);
+
+			res.status(200).json(newSecret);
+		}
+		else
+			res.status(401).json({
+				"Error message": "Unauthorized Access"
+			})
+	}
+
+	@Delete('auth/2fa/turnoff')  
+  @Header('Access-Control-Allow-Origin', 'http://localhost:4200')
+	async twoFaTurnOff(@Req() req: any, @Res() res: any): Promise<void> {
+		let user: UserDto = await this.userService.getUserById(req.session.userId);
+
+		if (user) {
+			user.twoFactorSecret = '';
+			this.userService.updateUserByTF(user);
+
+			res.status(200).json({
+				ok: "ok"
+			});
+		}
+		else
+			res.status(401).json({
+				"Error message": "Unauthorized Access"
+			})
+	}
+
+	@Post('auth/2fa/verif')
+	@Header('Access-Control-Allow-Origin', 'http://localhost:4200')
+	async twoFaVerif(@Req() req: any, @Res() res: any, @Body() body: any): Promise<void> {
+		const user: UserDto = await this.userService.getUserById(req.session.userId);
+
+		if (user) {
+			// console.log('get secret:', user.twoFactorSecret);
+			// console.log('get body token:', body.token)
+			const result = twoFa.verifyToken(user.twoFactorSecret, body.token);
+			res.status(200).json(result? result : {
+				delta: -2
+			});
+		}
+		else
+			res.status(401).json({
+				"Error message": "Unauthorized Access"
+			})
+	}
 
 }

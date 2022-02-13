@@ -11,13 +11,15 @@ import { UserLoginComponent } from './user-login/user-login.component';
 import { UserSubscriptionComponent } from './user-subscription/user-subscription.component';
 
 import { SharedMaterialModule } from './common/shared-material.module';
+import { TwoFactorComponent } from './two-factor/two-factor.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     MainComponent,
     UserLoginComponent,
-    UserSubscriptionComponent
+    UserSubscriptionComponent,
+    TwoFactorComponent
   ],
   imports: [
     BrowserModule,
