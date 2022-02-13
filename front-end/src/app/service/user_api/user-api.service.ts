@@ -36,6 +36,12 @@ export class UserApiService {
 		.catch(this._handleError);
   }
 
+	getUser(): Observable<any> {
+    return this.httpClient.get(`${this.USER_API}/user/id`, {
+			withCredentials: true
+		});
+  }
+
 	twoFaGenerate(): Observable<any> {
 		return this.httpClient.post<any>(`${this.USER_API}/user/auth/2fa/generate`, {}, {
 			withCredentials: true

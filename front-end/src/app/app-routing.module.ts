@@ -10,7 +10,7 @@ import { TwoFactorComponent } from './two-factor/two-factor.component';
 const routes: Routes = [
   { path: '', redirectTo: 'user_login', pathMatch: 'full' },
   { path: 'user_login', component: UserLoginComponent },
-	{ path: 'two_factor', component: TwoFactorComponent },
+	{ path: 'two_factor', component: TwoFactorComponent, canActivate: [AuthGuard] },
   { path: 'user_subscription', component: UserSubscriptionComponent, canActivate: [AuthGuard] },
   { path: 'main', component: MainComponent, canActivate: [AuthGuard] },
   { path: '**', redirectTo: 'user_login', pathMatch: 'full' }

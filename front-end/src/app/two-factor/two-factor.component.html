@@ -1,9 +1,34 @@
-<p>QR CODE:</p>
-<img  class="images" src={{img}}/>
-<button (click)="turnOff()">turn off</button>
+<mat-toolbar [ngClass]="'container'">
+  <span>{{ title }}</span>
+</mat-toolbar>
 
-<form [formGroup]="twoFactorForm" #f="ngForm">
-	<input name="token" matInput formControlName="token" maxlength="16" required>
-</form>
+<div class="stepperContainer">
+  <mat-vertical-stepper [linear]="true">
+    <form [formGroup]="twoFactorForm">
 
-<button type="submit" (click)="verif()">verif</button>
+			<!-- QR-code step -->
+			<mat-step label="QR-code" *ngIf="twoFaActive === false"> 
+				<div>
+					<img  class="images" src={{img}}/>
+				</div>
+				<div>
+					<button mat-button matStepperNext color="primary">Next to verification</button>
+				</div>
+			</mat-step>
+
+      <!-- Verif step -->
+      <mat-step [stepControl]="twoFactorForm" label="Verification">
+        <mat-form-field hintLabel="6 caracters max">
+          <input name="token" matInput formControlName="token" maxlength="6" required>
+        </mat-form-field>
+				<mat-hint align="end">{{ twoFactorForm.get('token')?.value?.length || 0 }} / 6</mat-hint>
+				<mat-error *ngIf="twoFactorForm.get('name')?.hasError('pattern')">only numbers</mat-error>
+        <div>
+					<button mat-button matStepperPrevious color="warn" *ngIf="twoFaActive === false">Back to QR-code</button>
+          <button type="submit" mat-button color="primary" (click)="verif()">Submit</button>
+        </div>
+      </mat-step>
+		</form>
+    
+  </mat-vertical-stepper>
+</div>
