@@ -1,8 +1,8 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { GlobalConsts } from '../common/global';
+import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { UserPreferenceService } from '../service/user-preference/user-preference.service';
+import { lastValueFrom } from 'rxjs';
+import { GlobalConsts } from '../common/global';
 
 @Component({
   selector: 'app-user-preference',
@@ -11,12 +11,8 @@ import { UserPreferenceService } from '../service/user-preference/user-preferenc
 })
 export class UserPreferenceComponent implements OnInit {
 
-	// subscribeToUsernameVisibility : Subscription;
-
 	user : any = {
-		name: 'besellem',
-		avatar: 'https://cdn.intra.42.fr/users/ppoinsin.jpg',
-		email: 'besellem@42.student.fr'
+		id: 'besellem',
 	};
 
 	constructor(
@@ -25,15 +21,26 @@ export class UserPreferenceComponent implements OnInit {
 	) { }
 
 	ngOnInit(): void {
-		// this.http.get(`${GlobalConsts.userApi}/user/id`).subscribe((user) => {this.user = user});
-		
-		console.log('TODEBUG', this.user);
+		lastValueFrom(this.http.get(`${GlobalConsts.userApi}/user/id`, { withCredentials: true }))
+		.then((data) => {
+			this.user = data;
+			console.log(this.user);
+		})
+		.catch((err) => {
+			console.error(err);
+		});
+		// .subscribe({
+		// 	next: (user) => {
+		// 		this.user = {...user}
+		// 		console.log(this.user);
+		// 	}
+		// });
+
+		console.log('TO DEBUG', this.user);
 	}
 
-	modifyUsername() {
-		// Subscription to get the updated username
-
-		// this.userPreference.changeUsername(username);
-		console.log(this.user.name);
+	updateUsername(username : string) : void {
+		if (this.userPreference.updateUsername(this.user.id, username))
+			this.user.name = username;
 	}
 }

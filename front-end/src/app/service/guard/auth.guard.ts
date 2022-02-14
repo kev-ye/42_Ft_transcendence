@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot, } from '@angular/router';
 import { Router } from '@angular/router';
 
-import { lastValueFrom, Observable } from 'rxjs';
 import { LocalUser } from 'src/app/common/user';
 
 import { UserApiService } from '../user_api/user-api.service';
@@ -21,7 +20,7 @@ export class AuthGuard implements CanActivate {
 			if (user)
 				return true;
 
-			this.router.navigate(['user_login']);
+			await this.router.navigate(['user_login']);
       return false;
   }
 }

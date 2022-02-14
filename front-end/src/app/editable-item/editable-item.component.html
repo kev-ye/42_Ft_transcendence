@@ -4,5 +4,5 @@
 
 	<input *ngIf="!this.visibility" type="text" [(ngModel)]="this.title" [value]="this.title" contenteditable="true"
 		autofocus>
-	<mat-icon *ngIf="!this.visibility" (click)="onToggle($event)">check</mat-icon>
+	<mat-icon *ngIf="!this.visibility" (click)="onToggle()">check</mat-icon>
 </div>

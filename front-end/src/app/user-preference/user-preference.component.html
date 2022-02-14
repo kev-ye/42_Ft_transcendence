@@ -7,8 +7,8 @@
 			<img [src]="user.avatar" alt="User Preference Icon" class="user-preference-icon">
 		</div>
 		<div>
-			<app-editable-item title="{{ user.name }}" (onClick)="modifyUsername()"></app-editable-item>
-			<app-editable-item title="{{ user.email }}" (onClick)="modifyUsername()"></app-editable-item>
+			<app-editable-item title="{{ user.name  }}" (onClick)="updateUsername($event)"></app-editable-item>
+			<app-editable-item title="{{ user.email }}" (onClick)="updateUsername($event)"></app-editable-item>
 		</div>
 	</div>
 </div>

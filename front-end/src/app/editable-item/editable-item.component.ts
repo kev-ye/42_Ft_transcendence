@@ -17,13 +17,12 @@ export class EditableItemComponent implements OnInit {
 
 	}
 
-	toggleVisibility() {
+	toggleVisibility() : void {
 		this.visibility = !this.visibility;
 	}
 
-	onToggle(event : any) {
-		this.onClick.emit();
+	onToggle() : void{
+		this.onClick.emit(this.title);
 		this.toggleVisibility();
-		return this.title;
 	}
 }

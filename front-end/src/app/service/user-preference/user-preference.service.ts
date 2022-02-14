@@ -12,19 +12,17 @@ export class UserPreferenceService {
 
 	constructor(private http: HttpClient) { }
 
-	changeUsername(username : string) : any {
-		this.http.get(`${GlobalConsts.userApi}/user/name/${username}`).subscribe({
-			next: (user_id) => {
-				console.log(user_id);
-				// return this._changeUsername(user_id);
+	updateUsername(id: string, username : string) : boolean {
+		this.http.put(`${GlobalConsts.userApi}/user/update`, {id: id, name: username})
+		.subscribe({
+			next: (data) => {
+				console.log('success', data);
+				return true;
+			},
+			error: (data) => {
+				console.log('error', data);
 			}
 		});
-	}
-
-	private _changeUsername(user_id : string) {
-		return this.http.put(`${GlobalConsts.userApi}/user/update/${user_id}`, {})
-			.subscribe({
-				next: (user) => {return user}
-			});
+		return false;
 	}
 }
