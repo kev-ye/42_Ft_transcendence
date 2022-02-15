@@ -15,15 +15,12 @@ import { UserService } from "src/user/user.service";
     methods: ["GET", "POST"],
     credentials: true
 }})
-export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, OnModuleInit{
+export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     @WebSocketServer()
     server: Server;
 
     onModuleInit() {
-        this.server.on('connection', rawSocket => {
-            
-        })
     }
 
     rooms: Map<string, string> = new Map();
@@ -46,6 +43,17 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
 
     switchChannel(client: any, to?: string) {
+        if (to != undefined)
+        {
+            console.log("switch", {id: client.id, chat_id: to});
+            
+            this.activeService.updateUser({id: client.id, chat_id: to});
+        }
+        else
+        {
+            console.log("switchIff", {id: client.id, chat_id: to});
+            this.activeService.removeUserBySocketId(client.id);
+        }
         let tmp = this.rooms.get(client.id);
         if (tmp != "")
         {

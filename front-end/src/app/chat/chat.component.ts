@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { AfterContentChecked, AfterViewChecked, AfterViewInit, Component, ElementRef, Inject, OnChanges, OnDestroy, OnInit, QueryList, SimpleChanges, ViewChild, ViewChildren } from '@angular/core';
+import { AfterContentChecked, AfterViewChecked, AfterViewInit, Component, ElementRef, Inject, Input, OnChanges, OnDestroy, OnInit, QueryList, SimpleChanges, ViewChild, ViewChildren } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { io, Socket } from 'socket.io-client';
@@ -27,6 +27,8 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   user: any = {}
   password: string = "";
+
+  @Input('socketID') socketID: string = "";
 
   @ViewChild('input') input: ElementRef<HTMLInputElement>;
 

@@ -5,6 +5,7 @@ import { UserApiService } from '../service/user_api/user-api.service';
 import { UserAuthService } from '../service/user_auth/user-auth.service';
 import { GlobalConsts } from '../common/global';
 import { io, Socket } from 'socket.io-client';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-main',
@@ -35,27 +36,34 @@ export class MainComponent implements OnInit, OnDestroy {
 
   constructor(private router: Router,
     private userApi: UserApiService,
-    private userAuth: UserAuthService,) { }
+    private userAuth: UserAuthService,
+    private http: HttpClient) { }
 
-    private socket: Socket;
+    public socket: Socket;
     
-    ngOnInit() {
+    async ngOnInit() {
     this.socket = io('http://localhost:3002/', {withCredentials: true});
-    this.socket.emit('event');
 
     
-
+    this.http.get('http://localhost:3000/user/id', {withCredentials: true}).subscribe((data: any) => {
+      
+      if (data.id)
+      this.socket.emit('user', {user_id: data.id});
+    })
+    
+    
+    
     this.userApi.getUserById()
-      .then(res => {
-        if (res && res.name === '')
-          this.router.navigate(['user_subscription']);
-        else
-        {
-          //console.log("test cookie ", );
-          //this.socket.emit('session', )
-        }
-      });
-
+    .then(res => {
+      if (res && res.name === '')
+      this.router.navigate(['user_subscription']);
+      else
+      {
+        //console.log("test cookie ", );
+        //this.socket.emit('session', )
+      }
+    });
+    
   }
 
   ngOnDestroy(): void {

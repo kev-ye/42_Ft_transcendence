@@ -20,7 +20,7 @@ export class ActiveUsersService {
     }
 
     async updateUser(data: any) {
-        return await this.repo.update({user_id: data.id}, data)
+        return await this.repo.update({id: data.id}, data)
     }
 
     async addUser(data: any) {

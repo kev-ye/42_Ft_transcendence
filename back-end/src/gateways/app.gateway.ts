@@ -1,6 +1,7 @@
 import { Inject, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
-import { OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway } from "@nestjs/websockets";
+import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway } from "@nestjs/websockets";
+import { Socket } from "socket.io";
 import { ActiveUsersService } from "src/active-users/active-users.service";
 
 @WebSocketGateway(3002, {cors: {
@@ -26,18 +27,16 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect{
         return ;
     }
 
-    @SubscribeMessage('event')
-    @UseGuards(AuthGuard('42'))
-    async eventWS() {
-        console.log("lool");
+    @SubscribeMessage('user')
+    async auth(@MessageBody() data: any, @ConnectedSocket() client: Socket) {
+        console.log("update ", data);
         
+        return await this.activeService.addUser({id: client.id, ...data});
     }
 
     async handleConnection(client: any, ...args: any[]) {
 
-        console.log("cookie: ", this.checkCookie(client));
-        
-        
+        console.log("add: ", client.id);
         await this.activeService.addUser({id: client.id});
     }
 

@@ -5,6 +5,7 @@ import * as session from 'express-session';
 import * as pgSession from 'connect-pg-simple';
 import * as pg from 'pg';
 
+
 async function bootstrap() {
 	const corsOptions = {
     origin: 'http://localhost:4200',
@@ -42,6 +43,7 @@ async function bootstrap() {
 		},
 		rolling: true
 	}));
+
 	await app.listen(3000);
 
 	
