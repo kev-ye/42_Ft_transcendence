@@ -29,8 +29,5 @@ export class UserEntity {
   online: string; // online stats
 
 	@Column({ nullable: true })
-	twoFactor: boolean;
-
-	@Column({ nullable: true })
-	twoFactorId: string;
+	twoFactorSecret: string;
 }

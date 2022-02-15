@@ -6,7 +6,14 @@ import { FortyTwoStrategy } from './fortyTwo.strategy';
 import { HttpModule } from '@nestjs/axios';
 
 @Module({
-  imports: [UserModule, PassportModule, HttpModule],
-  providers: [AuthService, FortyTwoStrategy]
+  imports: [
+		UserModule,
+		PassportModule,
+		HttpModule
+	],
+  providers: [
+		AuthService,
+		FortyTwoStrategy
+	]
 })
 export class AuthModule {}

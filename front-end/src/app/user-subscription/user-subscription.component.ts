@@ -13,16 +13,22 @@ import { GlobalConsts } from '../common/global';
 })
 export class UserSubscriptionComponent implements OnInit {
 	title: string = GlobalConsts.siteTitle;
-
-  constructor(
-    private router: Router,
-    private userApi: UserApiService) { }
-
   user: LocalUser = {
-    name: '',
+		name: '',
     avatar: '',
     fortyTwoAvatar: ''
   };
+	subscriptionForm: FormGroup = new FormGroup({
+    name: new FormControl('', [
+      Validators.required,
+      Validators.minLength(6),
+      Validators.pattern('^[a-zA-Z ]*$')
+    ])
+  });
+
+	constructor(
+		private router: Router,
+		private userApi: UserApiService) { }
 
   ngOnInit(): void {
 		this.userApi.getUserById()
@@ -31,16 +37,6 @@ export class UserSubscriptionComponent implements OnInit {
           this.router.navigate(['main']);
       });
   }
-
-  subscriptionForm: FormGroup = new FormGroup({
-    id: new FormControl(window.localStorage.getItem('userId')),
-    name: new FormControl('', [
-      Validators.required,
-      Validators.minLength(6),
-      Validators.maxLength(16),
-      Validators.pattern('^[a-zA-Z ]*$')
-    ])
-  });
 
   createUser() {
     this.userApi.createUser(this.subscriptionForm.value.name)

@@ -11,11 +11,9 @@ import { GlobalConsts } from '../common/global';
 })
 export class UserPreferenceComponent implements OnInit {
 
-	user : any = {
-		id: 'besellem',
-	};
+	user : any;
 
-	constructor(
+  constructor(
 		private http : HttpClient,
 		private userPreference: UserPreferenceService
 	) { }
@@ -35,8 +33,6 @@ export class UserPreferenceComponent implements OnInit {
 		// 		console.log(this.user);
 		// 	}
 		// });
-
-		console.log('TO DEBUG', this.user);
 	}
 
 	updateUsername(username : string) : void {

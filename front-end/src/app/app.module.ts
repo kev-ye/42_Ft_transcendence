@@ -8,7 +8,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { MainComponent } from './main/main.component';
 import { UserLoginComponent } from './user-login/user-login.component';
-import { UserLogin2Component } from './user-login2/user-login2.component';
 import { UserSubscriptionComponent } from './user-subscription/user-subscription.component';
 // import { UserComponent } from './user/user.component';
 // import { ChatComponent } from './chat/chat.component';
@@ -20,22 +19,18 @@ import { UserPreferenceComponent } from './user-preference/user-preference.compo
 
 import { SharedMaterialModule } from './common/shared-material.module';
 import { EditableItemComponent } from './editable-item/editable-item.component';
+import { TwoFactorComponent } from './two-factor/two-factor.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     MainComponent,
     UserLoginComponent,
-    UserLogin2Component,
     UserSubscriptionComponent,
-    // UserComponent,
-    // ChatComponent,
-    // GameRoomComponent,
-    // GameComponent,
-    // LoginCallbackComponent,
-    // NotFoundComponent,
     UserPreferenceComponent,
-    EditableItemComponent
+    EditableItemComponent,
+    UserSubscriptionComponent,
+    TwoFactorComponent,
   ],
   imports: [
     BrowserModule,

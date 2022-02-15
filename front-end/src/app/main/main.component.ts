@@ -42,4 +42,9 @@ export class MainComponent implements OnInit {
 				complete: () => console.info('user logout')
 			})
 	}
+
+	//// test function remove later
+	toTF() {
+		this.router.navigate(['two_factor']);
+	}
 }

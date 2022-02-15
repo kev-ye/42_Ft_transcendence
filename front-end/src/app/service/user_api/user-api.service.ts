@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 
-import { lastValueFrom } from 'rxjs';
+import { lastValueFrom, Observable } from 'rxjs';
 
 import { LocalUser } from '../../common/user';
 import { GlobalConsts } from 'src/app/common/global';
@@ -17,7 +17,9 @@ export class UserApiService {
 		private httpClient: HttpClient,
 		private router: Router) {}
 
-/* public function */
+/*
+ * User Api
+ */
 
   async getUserById(): Promise<LocalUser> {
     return lastValueFrom(this.httpClient.get(`${this.USER_API}/user/id`, {
@@ -34,7 +36,33 @@ export class UserApiService {
 		.catch(this._handleError);
   }
 
-/* private function */
+	getUser(): Observable<any> {
+    return this.httpClient.get(`${this.USER_API}/user/id`, {
+			withCredentials: true
+		});
+  }
+
+	twoFaGenerate(): Observable<any> {
+		return this.httpClient.post<any>(`${this.USER_API}/user/auth/2fa/generate`, {}, {
+			withCredentials: true
+		})
+	}
+
+	twoFaVerif(token: any): Observable<any> {
+		return this.httpClient.post<any>(`${GlobalConsts.userApi}/user/auth/2fa/verif`, token, {
+			withCredentials: true
+		})
+	}
+
+	twoFaTurnOff():  Observable<any> {
+		return this.httpClient.delete<any>(`${this.USER_API}/user/auth/2fa/turnoff`, {
+			withCredentials: true
+		})
+	}
+
+/*
+ * private function
+ */
 
   private _handleError(error: any): Promise<any> {
     console.error('An error occurred', error);
