@@ -1,3 +1,4 @@
+<script src="../service/user_api/user-api.service.ts"></script>
 <mat-toolbar [ngClass]="'container'">
 <div>
   <button mat-raised-button mat-icon-button class="item">
@@ -23,5 +24,10 @@
 </div>
 </mat-toolbar>
 
-<button (click)="toTF()" >Go to two_factor page</button>
+<div>
+	<img [src]="qrCode" alt="QR-code" *ngIf="twoFaActive"/>
+</div>
+<button (click)="turnOnTwoFa()" *ngIf="!twoFaActive">Turn on 2Fa</button>
+<button (click)="turnOffTwoFa()" *ngIf="twoFaActive">Turn off 2Fa</button>
+
 <p class="main">main</p>

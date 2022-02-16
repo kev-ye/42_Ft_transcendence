@@ -1,11 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-
+import {Component, OnInit} from '@angular/core';
 import { Router } from '@angular/router';
 
 import { UserApiService } from '../service/user_api/user-api.service';
 import { UserAuthService } from '../service/user_auth/user-auth.service';
 import { GlobalConsts } from '../common/global';
-import { LocalUser } from '../common/user';
 
 @Component({
   selector: 'app-main',
@@ -14,6 +12,12 @@ import { LocalUser } from '../common/user';
 })
 export class MainComponent implements OnInit {
   title: string = GlobalConsts.siteTitle;
+	/* NOTE: all subscribe need unsub in ngDestroy for no leak!!!! */
+
+	/// attribute prepared for tfa
+	twoFaActive: boolean = false;
+	qrCode: string = '';
+	///
 
   constructor(
     private router: Router,
@@ -21,30 +25,67 @@ export class MainComponent implements OnInit {
     private userAuth: UserAuthService) { }
 
   ngOnInit() {
-    this.userApi.getUserById()
-      .then(res => {
-        if (res && res.name === '')
-          this.router.navigate(['user_subscription']);
-      });
-  }
-
-  logOut(): void {
-		this.userAuth.ftAuthLogout()
+		this.userApi.getUser()
 			.subscribe({
 				next: (v) => {
-					// console.log('Next:', v);
-					this.router.navigate(['user_login']);
+					if (v && v.name === '')
+						this.router.navigate(['user_subscription']).then();
+					/// later move too parameter -> 'else' part
+					else {
+						if (v.twoFactorSecret) {
+							this.twoFaActive = true;
+							this.qrCode = v.twoFactorQR;
+							if (v.online === 0)
+								this.router.navigate(['two_factor']).then();
+						}
+					}
 				},
-				error: (e) => {
-					// console.log('Error:', e);
-					this.router.navigate(['user_login']);
-				},
-				complete: () => console.info('user logout')
+				error: (e) => console.error('init error:', e),
+				complete: () => console.info('init complete')
 			})
+  }
+
+	logOut(): void {
+		const confirm$: boolean = confirm('Are you sure?');
+		if (confirm$) {
+			this.userAuth.ftAuthLogout()
+				.subscribe({
+					next: _ => {
+						this.router.navigate(['user_login']).then();
+					},
+					error: _ => {
+						this.router.navigate(['user_login']).then();
+					},
+					complete: () => console.info('user logout')
+				})
+		}
 	}
 
-	//// test function remove later
-	toTF() {
-		this.router.navigate(['two_factor']);
+	//// test function prepared for parameter
+	turnOnTwoFa() {
+		this.userApi.twoFaGenerate()
+			.subscribe({
+				next: (v) => {
+					console.log('info:', v);
+					this.qrCode = v.qr;
+					this.twoFaActive = true;
+				},
+				error: (e) => console.error('Generate error:', e),
+				complete: () => console.info('Generate done')
+			});
+		// this.router.navigate(['two_factor']).then();
 	}
+
+  turnOffTwoFa() {
+		this.userApi.twoFaTurnOff()
+			.subscribe({
+				next: _ => {
+					this.qrCode = '';
+					this.twoFaActive = false;
+				},
+				error: (e) => console.error('turn off error:', e),
+				complete: () => console.info('two factor off done')
+			})
+  }
+
 }

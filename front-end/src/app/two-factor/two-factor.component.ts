@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { FormGroup, FormControl, Validators, Form } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 import { GlobalConsts } from '../common/global';
 import { Router } from '@angular/router';
@@ -13,8 +12,6 @@ import { UserApiService } from '../service/user_api/user-api.service';
 })
 export class TwoFactorComponent implements OnInit {
 	title: string =  GlobalConsts.siteTitle;
-	twoFaActive: boolean = false;
-	img: string = '';
 	twoFactorForm: FormGroup = new FormGroup({
 		token: new FormControl('', [
 			Validators.required,
@@ -30,56 +27,28 @@ export class TwoFactorComponent implements OnInit {
 		this.userApi.getUser()
 			.subscribe({
 				next: (v) => {
-					if (v.twoFactorSecret) {
-						console.log('twoFa:', this.twoFaActive);
-						this.twoFaActive = true;
-					}
-					else
-						this._generateNewTF();
+					if (!v.twoFactorSecret)
+						this.router.navigate(['main']).then();
 				},
-				error: (e) => console.log('Init error:', e),
-				complete: () => console.log('Init done')
+				error: (e) => {
+					console.error('Init error:', e);
+					this.router.navigate(['main']).then();
+				},
+				complete: () => console.info('Init done')
 			});
   }
 
-	turnOff(): void {
-		this.userApi.twoFaTurnOff()
-			.subscribe({
-				next: (v) => {
-					this.twoFaActive = false;
-				},
-				error: (e) => console.log('Turn off error:', e),
-				complete: () => console.log('Turn off done')
-			});
-	}
-
-	verif(): void {
-		this.userApi.twoFaVerif(this.twoFactorForm.value)
+	verify(): void {
+		this.userApi.twoFaVerify(this.twoFactorForm.value)
 			.subscribe({
 				next: (v) => {
 					if (v.delta === 0)
-						this.router.navigate(['main']);
+						this.router.navigate(['main']).then(_ => {});
 					else
 						window.alert((v.delta === -1)? 'Your token has expired' : 'Your Token is invalid');
 				},
-				error: (e) => console.log('Verif error:', e),
-				complete: () => console.log('Verif done')
-			});
-	}
-
-/*
- * Private function
- */
-
-	private _generateNewTF() {
-		this.userApi.twoFaGenerate()
-			.subscribe({
-				next: (v) => {
-					console.log('info:', v);
-					this.img = v.qr;
-				},
-				error: (e) => console.log('Generate error:', e),
-				complete: () => console.log('Generate done')
+				error: (e) => console.log('Verify error:', e),
+				complete: () => console.log('Verify done')
 			});
 	}
 
