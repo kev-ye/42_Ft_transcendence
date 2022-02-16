@@ -62,6 +62,23 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
       
     }});
   }
+
+  deleteFriend(friend: any) {
+    this.http.patch('http://localhost:3000/friend',
+    {
+      first: this.user.id,
+      second: friend.id
+    }).subscribe({
+      next: data => {
+        console.log("Deleted friend");
+        this.fetchFriends();
+        
+      }, error: data => {
+        console.log("Could not delete friend");
+        
+      }
+    });
+  }
   
   openFriendDialog() {
     const tmp = this.dialog.open(DialogAddFriend, {
@@ -120,6 +137,13 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
       this.socket.emit('user', {user_id: this.user.id});
     });
+
+    
+    this.socket.on('reconnect', () => { 
+
+      this.socket.emit('user', {user_id: this.user.id});
+    });
+    
 
     this.http.get('http://localhost:3000/user/id', {withCredentials: true}).subscribe((data: any) => {
       this.user.id = data.id;      

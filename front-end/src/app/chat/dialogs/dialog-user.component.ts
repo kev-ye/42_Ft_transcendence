@@ -47,7 +47,8 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
       this.http.patch('http://localhost:3000/friend', {
         first: this.my_id,
         second: this.id
-      }).subscribe({next: data => {
+      }).subscribe({
+        next: data => {
         console.log("deleted friend");
         this.friend = false;
       },
