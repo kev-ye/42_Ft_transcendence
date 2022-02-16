@@ -31,11 +31,11 @@ export class UserSubscriptionComponent implements OnInit {
 		private userApi: UserApiService) { }
 
   ngOnInit(): void {
-		this.userApi.getUserById()
-      .then(res => {
-        if (res && res.name !== '')
-          this.router.navigate(['main']);
-      });
+		// this.userApi.getUserById()
+    //   .then(res => {
+    //     if (res && res.name !== '')
+    //       this.router.navigate(['main']).then();
+    //   });
   }
 
   createUser() {

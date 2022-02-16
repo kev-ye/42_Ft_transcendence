@@ -29,7 +29,7 @@ export class UserAuthService {
 	}
 
 	ftAuthLogout() {
-		return this.httpClient.delete<void>(`${this.USER_API}/user/auth/logout`, {
+		return this.httpClient.post<void>(`${this.USER_API}/user/auth/logout`, {}, {
 			withCredentials: true
 		});
 	}

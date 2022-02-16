@@ -1,30 +1,25 @@
-import {Component, HostListener, OnDestroy} from '@angular/core';
+import { Component, HostListener, OnInit, OnDestroy } from '@angular/core';
 import { GlobalConsts } from './common/global';
-import {UserApiService} from "./service/user_api/user-api.service";
-import {lastValueFrom} from "rxjs";
-import {HttpClient} from "@angular/common/http";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnDestroy {
+export class AppComponent {
   title: string = GlobalConsts.siteTitle;
+	user: any = null;
 
-	// constructor(
-	// 	private userApi: UserApiService,
-	// 	private http: HttpClient) {
-	// }
+	constructor(private router: Router) {}
 
-	// @HostListener('window:beforeunload', ['$event'])
-	async ngOnDestroy() {
-	// 	console.log('here');
-	// 	this.http.get(`${GlobalConsts.userApi}/user/test`).subscribe();
+	@HostListener('window:beforeunload')
+	beforeExitWindow(): boolean {
+		return this.router.url === '/user_login';
 	}
-	//
-	// @HostListener('window:unload', ['$event'])
-	// nothing() {
-	//
-	// }
+
+	@HostListener('window:unload')
+	exitWindow(): boolean {
+		return navigator.sendBeacon(`${GlobalConsts.userApi}/user/auth/logout`);
+	}
 }

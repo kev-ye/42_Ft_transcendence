@@ -1,20 +1,23 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { UserApiService } from '../service/user_api/user-api.service';
 import { UserAuthService } from '../service/user_auth/user-auth.service';
 import { GlobalConsts } from '../common/global';
+import { Subscription, Observable } from "rxjs";
 
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.css']
 })
-export class MainComponent implements OnInit {
+export class MainComponent implements OnInit, OnDestroy {
   title: string = GlobalConsts.siteTitle;
 	/* NOTE: all subscribe need unsub in ngDestroy for no leak!!!! */
 
 	/// attribute prepared for tfa
+	userObs: Observable<any> = this.userApi.getUser();
+	subscription?: Subscription;
 	twoFaActive: boolean = false;
 	qrCode: string = '';
 	///
@@ -25,25 +28,21 @@ export class MainComponent implements OnInit {
     private userAuth: UserAuthService) { }
 
   ngOnInit() {
-		this.userApi.getUser()
-			.subscribe({
-				next: (v) => {
-					if (v && v.name === '')
-						this.router.navigate(['user_subscription']).then();
-					/// later move too parameter -> 'else' part
-					else {
-						if (v.twoFactorSecret) {
-							this.twoFaActive = true;
-							this.qrCode = v.twoFactorQR;
-							if (v.online === 0)
-								this.router.navigate(['two_factor']).then();
-						}
-					}
-				},
-				error: (e) => console.error('init error:', e),
-				complete: () => console.info('init complete')
-			})
+		this.subscription = this.userObs.subscribe({
+			next: (v) => {
+				if (v.twoFactorSecret) {
+					this.twoFaActive = true;
+					this.qrCode = v.twoFactorQR;
+				}
+			},
+			error: (e) => console.error('init error:', e),
+			complete: () => console.info('init complete')
+		})
   }
+
+	ngOnDestroy() {
+		this.subscription?.unsubscribe();
+	}
 
 	logOut(): void {
 		const confirm$: boolean = confirm('Are you sure?');

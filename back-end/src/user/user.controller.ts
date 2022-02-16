@@ -30,11 +30,16 @@ export class UserController {
 
   @Get('id')
   @Header('Access-Control-Allow-Origin', 'http://localhost:4200')
-  getUserById(@Req() req: any): Promise<LimitedUserDto> {
-    // console.log('id:', req.session.userId);
+  async getUserById(@Req() req: any, @Res() res: any): Promise<void> {
+    console.log('get id:', req.session.userId);
     const id = req.session.userId;
+    const user = await this.userService.getUserById(id);
 
-    return this.userService.getUserById(id);
+    if (user) res.status(200).json(user);
+    else
+      res.status(401).json({
+        'Error message': 'Unauthorized Access',
+      });
   }
 
   @Get('login/:login')
@@ -91,10 +96,17 @@ export class UserController {
     if (user) req.session.userId = user.id;
   }
 
-  @Delete('auth/logout')
+  @Get('isLogin')
+  async isLogin(@Req() req: any) {
+    const id = req.session.userId;
+    const user = await this.userService.getUserById(id);
+
+    return !!user;
+  }
+
+  @Post('auth/logout')
   @Header('Access-Control-Allow-Origin', 'http://localhost:4200')
   async logOut(@Req() req: any, @Res() res: any) {
-    // console.log('req:', req.session);
     const user: UserDto = await this.userService.getUserById(
       req.session.userId,
     );
@@ -169,7 +181,7 @@ export class UserController {
 
     if (user) {
       const result = twoFa.verifyToken(user.twoFactorSecret, body.token);
-      if (result.delta === 0) {
+      if (result && result.delta === 0) {
         user.online = 1;
         await this.userService.updateUser(user);
       }
@@ -179,19 +191,4 @@ export class UserController {
         'Error message': 'Unauthorized Access',
       });
   }
-
-  // @Get('test')
-  // @Header('Access-Control-Allow-Origin', 'http://localhost:4200')
-  // test(@Req() req: any, @Res() res: any) {
-  //   console.log('test:', req.session.userId);
-  //   // return { test: 'ok' };
-  //   res.send({ ok: 'ok' });
-  // }
-  //
-  // @Delete('cnm')
-  // @Header('Access-Control-Allow-Origin', 'http://localhost:4200')
-  // cnm() {
-  //   console.log('test');
-  //   return { test: 'ok' };
-  // }
 }

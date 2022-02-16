@@ -34,9 +34,15 @@ export class UserApiService {
   }
 
 	getUser(): Observable<any> {
-    return this.httpClient.get(`${this.USER_API}/user/id`, {
+    return this.httpClient.get<any>(`${this.USER_API}/user/id`, {
 			withCredentials: true
-		});
+		})
+  }
+
+	isLogin(): Observable<any> {
+    return this.httpClient.get<boolean>(`${this.USER_API}/user/isLogin`, {
+			withCredentials: true
+		})
   }
 
 	twoFaGenerate(): Observable<any> {
