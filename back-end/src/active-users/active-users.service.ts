@@ -1,14 +1,32 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { activeUserEntity } from './entity/activeUsers.entity';
 
 @Injectable()
-export class ActiveUsersService {
-    constructor(@InjectRepository(activeUserEntity) private repo: Repository<activeUserEntity>) {}
+export class ActiveUsersService implements OnModuleInit {
+    constructor(@InjectRepository(activeUserEntity) private repo: Repository<activeUserEntity>,
+    @Inject('USER_SERVICE') private userService: UserService) {}
+    
+    onModuleInit() {
+        this.repo.clear();
+    }
+
+    async getUser(userID: string) {
+        return await this.repo.find({user_id: userID});
+    }
 
     async getByChatId(chat_id: string) {
-        return await this.repo.find({where: {chat_id: chat_id}});
+        let tmp: any[] = await this.repo.find({where: {chat_id: chat_id}});
+        let result: any[] = [];
+        for (let val of tmp)
+        {
+            const user = await this.userService.getUserById(val.user_id);
+            if (user)
+                result.push({name: user.name, id: user.id})
+        }
+        return result;
     }
 
     async removeUserBySocketId(id: string) {
@@ -20,12 +38,14 @@ export class ActiveUsersService {
     }
 
     async updateUser(data: any) {
+        console.log("Update active user", data);
+        
         return await this.repo.update({id: data.id}, data)
     }
 
     async addUser(data: any) {
-        console.log("lol");
-        
+        console.log("addUser ", data); 
+         
         const tmp = this.repo.create(data);
         return await this.repo.save(tmp);
     }

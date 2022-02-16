@@ -1,6 +1,5 @@
 import { Controller, Delete, Get, Inject, Param, Post, Put } from '@nestjs/common';
 import { MessageBody } from '@nestjs/websockets';
-import { ChatHistoryService } from 'src/chat-history/chat-history.service';
 import { ChannelsService } from './channels.service';
 
 @Controller('channels')

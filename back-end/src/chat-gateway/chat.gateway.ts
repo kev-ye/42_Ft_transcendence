@@ -2,6 +2,7 @@ import { Inject, Injectable, OnModuleInit, Req } from "@nestjs/common";
 import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 
 import { stringify } from "querystring";
+import { lastValueFrom } from "rxjs";
 import { Socket, Server } from "socket.io";
 import { ActiveUsersService } from "src/active-users/active-users.service";
 import { ChannelsService } from "src/channels/channels.service";
@@ -25,34 +26,34 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     rooms: Map<string, string> = new Map();
 
-    constructor(@Inject('CHAT_HISTORY_SERVICE') private history: ChatHistoryService,
-    @Inject('PRIVATE_SERVICE') private privateService: PrivateService,
-    @Inject('USER_SERVICE') private userService: UserService,
+    constructor(
+        @Inject('PRIVATE_SERVICE') private privateService: PrivateService,
+        @Inject('USER_SERVICE') private userService: UserService,
+        @Inject('CHAT_HISTORY_SERVICE') private history: ChatHistoryService,
     @Inject('CHANNELS_SERVICE') private chanService: ChannelsService,
     @Inject('ACTIVE_USERS_SERVICE') private activeService: ActiveUsersService) {}
 
     handleConnection(client: any, ...args: any[]) {
-        console.log("Connect " + client.id);
         this.rooms.set(client.id, "");
+        this.activeService.addUser({id: client.id});
     }
 
     handleDisconnect(client: any) {
-        console.log("Disconnect: " + client.id);
         this.switchChannel(client);
+        this.activeService.removeUserBySocketId(client.id);
         this.rooms.delete(client.id);
     }
 
     switchChannel(client: any, to?: string) {
         if (to != undefined)
         {
-            console.log("switch", {id: client.id, chat_id: to});
+            console.log("updating user switch", client.id, to);
             
             this.activeService.updateUser({id: client.id, chat_id: to});
         }
         else
         {
-            console.log("switchIff", {id: client.id, chat_id: to});
-            this.activeService.removeUserBySocketId(client.id);
+            this.activeService.updateUser({id: client.id, chat_id: ""}); 
         }
         let tmp = this.rooms.get(client.id);
         if (tmp != "")
@@ -66,6 +67,35 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
             client.join(to);
         }
         this.rooms.set(client.id, tmp);
+    }
+
+    async banUser(@MessageBody() data: any) {
+        //check if user is moderator
+
+        const tmp = await this.activeService.getUser(data.user_id);
+        console.log("banService", tmp);
+        
+        if (tmp.length > 0)
+        {
+            tmp.forEach(val => {
+                if (this.server.sockets.sockets.has(val.id))
+                {
+                    console.log('emit ban to ' + val.user_id);
+                    
+                    const sock = this.server.sockets.sockets.get(val.id);
+                    if (val.chat_id == data.chat_id)
+                        sock.emit('ban');
+                }
+            })
+        }
+    }
+
+    @SubscribeMessage('user')
+    async getUserFromSocker(@MessageBody() data: any, @ConnectedSocket() client: Socket)
+    {
+        console.log("update user", data);
+        
+        this.activeService.updateUser({id: client.id, user_id: data.user_id});
     }
 
     @SubscribeMessage('message')
@@ -103,8 +133,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         user_id: string,
         chat: {public: boolean, id: string},
         password?: string}) {
-        
-        console.log("connect ", data);
         
         if (data.chat.public)
         {

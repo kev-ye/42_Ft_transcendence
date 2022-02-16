@@ -1,11 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { FriendEntity } from './entity/friend.entity';
 
 @Injectable()
 export class FriendService {
-    constructor(@InjectRepository(FriendEntity) private repo: Repository<FriendEntity>) {
+    constructor(@InjectRepository(FriendEntity) private repo: Repository<FriendEntity>,
+    @Inject('USER_SERVICE') private userService: UserService) {
         console.log("friendService");
         
     }
@@ -19,7 +21,7 @@ export class FriendService {
             //todo : check if user IDs are valid
             //const user = await this.userService.findUser({id: data.first});
 
-            //todo: send notification
+            //todo: send notification?
 
             const relation = this.repo.create({first: data.first, second: data.second, status: 1});
             return await this.repo.save(relation);
@@ -32,7 +34,7 @@ export class FriendService {
         if (tmp.first == data.first)
         {
             //if emitter of the invite is trying to add again -> don't do anything
-            return ;
+            //return ;
         } 
         return await this.repo.update({first: tmp.first, second: tmp.second}, {status: 2});
     }
@@ -46,11 +48,19 @@ export class FriendService {
         let result = [];
         tmp.forEach(value => {
             if (value.first == id)
-                result.push(value.second);
+                result.push({friend: value.second, status: value.status});
             else
-                result.push(value.first);
+                result.push({friend: value.first, status: value.status});
         });
-        return result;
+
+        let final: any[] = [];
+        for (let userID of result)
+        {
+            const friend = await this.userService.getUserById(userID.friend);
+            if (friend)
+                final.push({status: userID.status, username: friend.name, id: friend.id, online: friend.online, avatar: friend.avatar});
+        }
+        return final;
     }
 
     async deleteFriend(data: {first: number, second: number}) {

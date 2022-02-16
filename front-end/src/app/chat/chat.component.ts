@@ -2,7 +2,16 @@ import { HttpClient } from '@angular/common/http';
 import { AfterContentChecked, AfterViewChecked, AfterViewInit, Component, ElementRef, Inject, Input, OnChanges, OnDestroy, OnInit, QueryList, SimpleChanges, ViewChild, ViewChildren } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog'
+import { SocketFactory } from 'ngx-socket-io/src/socket-io.module';
 import { io, Socket } from 'socket.io-client';
+import { DialogInvite } from './dialogs/dialog-invite-channel.component';
+import { DialogChannelSettings } from './dialogs/dialog-channel-settings.component';
+import { DialogCreateChat } from './dialogs/dialog-create-chat.component';
+import { DialogProtectedChat } from './dialogs/dialog-protected-chat.component';
+import { DialogSpectator } from './dialogs/dialog-spectator.component';
+import { DialogUser } from './dialogs/dialog-user.component';
+import { DialogBanned } from './dialogs/dialog-banned.component';
+import { DialogAddFriend } from './dialogs/dialog-add-friend.component';
 
 @Component({
   selector: 'app-chat',
@@ -19,7 +28,8 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   scroll: boolean = false;
   //messages : {id: number, username: string, message: string}[] = [{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "xxxxx"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wagrtek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wartek", message: "incroyable ?"},{id: 1, username: "wardtek", message: "incroyable ?"}];
   
-  friendList: any[] = [{username: "wartek", status: 0, id: "124"}, {username: "diablox9", status: 1, id: "145"}, {username: "BeastmodeIII", status: 2, id: "125"}]
+  friendList: any[] = [];
+  //friendList: any[] = [{username: "wartek", status: 0, id: "124"}, {username: "diablox9", status: 1, id: "145"}, {username: "BeastmodeIII", status: 2, id: "125"}]
   focus: string = "";
   channelList: any[] = [];
   colorMap: Map<string, string> = new Map<string, string>();
@@ -52,6 +62,17 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
       
     }});
   }
+  
+  openFriendDialog() {
+    const tmp = this.dialog.open(DialogAddFriend, {
+      data: {
+        my_id: this.user.id
+      }
+    });
+    tmp.afterClosed().subscribe(() => {
+      this.fetchFriends();
+    })
+  }
 
   openChannelSettings() {
     if (!this.chat.moderator)
@@ -69,6 +90,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   fetchPrivateMessage(friend: any) {
+    this.messages = [];
     this.http.get('http://localhost:3000/private/' + this.user.id + "/" + friend.id).subscribe(data => {
       console.log("fetched private history", data);
       this.messages = data as {id: string, username: string, user_id: string, type: number, message?: string}[];
@@ -84,6 +106,8 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.chat.id = channel.id;
       this.chat.name = channel.name;
       this.chat.public = true;
+
+
       
       this.generateRandomColors();
     });
@@ -91,11 +115,14 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   ngOnInit(): void {
     this.socket = io('http://localhost:3001');
-    this.socket.onAny((type, data) => {
+    
+    this.socket.on('connect', () => {
+
+      this.socket.emit('user', {user_id: this.user.id});
     });
 
     this.http.get('http://localhost:3000/user/id', {withCredentials: true}).subscribe((data: any) => {
-      this.user.id = data.id;
+      this.user.id = data.id;      
     })
 
     this.socket.on('message', (data: {
@@ -114,6 +141,11 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.scroll = true;
     })
 
+    this.socket.on('ban', () => {
+      if (this.chat.show && this.chat.public)
+        this.openFriendList();
+    });
+
 
     this.fetchChannels();
   }
@@ -123,11 +155,26 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   getStatusColor(friend: any) {
-    if (!friend.status)
+    if (friend.status == 1) //invite pending
+      return '#e9d901';
+    if (!friend.online)
       return '#700303';
-    else if  (friend.status == 1)
+    else if  (friend.online == 1)
       return '#3e7739';
     return '#e9d901';
+  }
+
+  addFriend(friend: any) {
+    this.http.post('http://localhost:3000/friend/', {
+      first: this.user.id,
+      second: friend.id
+    }).subscribe({
+      next:
+      data => {
+        console.log("accepted invite from user " + friend.id);
+        this.fetchFriends();
+      }
+    })
   }
 
   generateRandomColors() {
@@ -187,19 +234,31 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
    
   connectRoom(channel: any) {
-    this.scroll = true;
-    this.socket.emit('connectRoom', {user_id: this.user.id, chat: {public: true, id: channel.id}, password: this.password});
-
-    this.fetchChannelHistory(channel);
-    this.chat.show = true;
+    this.http.post('http://localhost:3000/access', {
+      user_id: this.user.id,
+      chat_id: channel.id}).subscribe({next: (data) => {
+        console.log("received response from connectRoom:", data);
+        
+        if (data)
+        {
+          this.scroll = true;
+          this.socket.emit('connectRoom', {user_id: this.user.id, chat: {public: true, id: channel.id}, password: this.password});
+          this.messages = [];
+          this.fetchChannelHistory(channel);
+          this.chat.show = true;
+        } else
+        {
+          this.dialog.open(DialogBanned);
+        }
+      }});
   }
 
   openPublic(channel: any) {
     console.log("opening channel", channel);
     
-    if (channel.access == 2)
+    if (channel.access == 2) //private channel
       return ;
-    else if (channel.access == 1)
+    else if (channel.access == 1) //protected channel
     {
       const tmp = this.dialog.open(DialogProtectedChat, {
         data: {
@@ -217,14 +276,15 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         }
         
       });
-      return ;
+      
     }
-
-
-    if (!this.chat.show)
-      this.connectRoom(channel);
-    else
-      this.chat.show = false;
+    else if (channel.access == 0) //open channel
+    {
+      if (!this.chat.show)
+        this.connectRoom(channel);
+      else
+        this.chat.show = false;
+    }
   }
 
   focusFriend(username: string) {
@@ -235,33 +295,63 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.focus = "";
   }
 
+  fetchFriends() {
+    this.http.get('http://localhost:3000/friend/' + this.user.id).subscribe({next:
+    data => {
+      console.log("fetched friends", data);
+      this.friendList = data as any[];
+    },
+  error: 
+    data => {
+      console.error("could not fetch friends");
+    }})
+  }
+
   openFriendList(event?: any) {
     this.chat.show = false;
 
-    this.friendList.sort((a, b) => {
+
+    this.fetchFriends();
+    /*this.friendList.sort((a, b) => {
       return b.status - a.status;
     })
+    */
 
     this.socket.emit('disconnectRoom')
   }
 
-  openUserDialog(message: any) {
-    console.log("opening dialog", message);
-    
-    this.dialog.open(DialogUser, {
-      data: {
-        username: message.username,
-        id: message.user_id,
-        my_id: this.user.id
-        
-      }
-    })
+  openUserDialog(message?: any) {
+    if (message)
+    {
+
+      console.log("opening dialog", message);
+      
+      this.dialog.open(DialogUser, {
+        data: {
+          username: message.username,
+          id: message.user_id,
+          my_id: this.user.id,
+        }
+      })
+    }
+    else
+    {
+      this.dialog.open(DialogUser, {
+        data: {
+          username: this.chat.name,
+          id: this.chat.id,
+          my_id: this.user.id,
+        }
+      })
+    }
   }
 
   openSpec() {
     this.dialog.open(DialogSpectator, {
       data :
       {
+        chat: this.chat,
+        my_id: this.user.id
         //channel name to send and moderator status
       }
     })
@@ -287,245 +377,4 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     })
   }
 
-}
-
-@Component({
-  selector: "dialog-protected-chat",
-  templateUrl: "./dialog-protected-chat.html"
-})
-export class DialogProtectedChat implements OnInit{
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private http: HttpClient, private dialog: MatDialogRef<DialogProtectedChat>) {}
-
-  chat_id: string = "";
-  @ViewChild('error') error: ElementRef<HTMLDivElement>;
-
-  ngOnInit(): void {
-    this.chat_id = this.data.id;
-    console.log(this.data);
-      
-  }
-
-  submitPassword(password: string) {
-    this.http.post('http://localhost:3000/channels/password/' + this.chat_id, {password: password}).subscribe({
-      next: data => {
-        if (data)
-          this.dialog.close({success: true, password: password});
-        else
-        {
-          this.error.nativeElement.textContent = "Password is wrong";
-        }
-      }
-    })
-  }
-}
-
-@Component({
-  selector: "dialog-spec",
-  templateUrl: "./dialog-spectator.html"
-})
-export class DialogSpectator implements OnInit{
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any, public dialogRef: MatDialogRef<DialogSpectator>, public dialog: MatDialog) {}
-
-  ngOnInit(): void {
-      console.log(this.data);
-      
-  }
-
-  openUserProfile(message: any) {
-    //this.dialogRef.close();
-    
-    const ref = this.dialog.open(DialogUser, {
-      data: {
-        username: message.username,
-        id: message.user_id
-      }
-    });
-    
-
-  }
-}
-
-@Component({
-  selector: "dialog-user",
-  templateUrl: "./dialog-user.html"
-})
-export class DialogUser implements OnInit {
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private http: HttpClient) {
-    this.username = data.username;
-    this.id = data.id;
-    this.my_id = data.my_id;
-  }
-
-  
-  user: any = {};
-  error: boolean = false;
-
-  ngOnInit(): void {
-    this.http.get('http://localhost:3000/user/id/' + this.id).subscribe({
-      next: data => {
-        console.log("fetched user id = " + this.id, data);
-        if (data)
-          this.user = data;
-        else
-          this.error = true;
-      },
-      error: data => {
-        console.log("could not fetch user");
-        this.error = true;
-      }
-    })
-  }
-
-
-  my_id: string = "";
-  id: string = "";
-  username: string = "";
-}
-
-
-@Component({
-  selector: "dialog-invite",
-  templateUrl: "./dialog-invite.html"
-})
-export class DialogInvite {
-  inviteFriend(friend: string, channel: string) {
-    //invite friend to channel
-  }
-
-}
-
-@Component({
-  selector: "dialog-create-chat",
-  templateUrl: "./dialog-create-chat.html"
-})
-export class DialogCreateChat {
-  constructor(private http: HttpClient, private dialogRef: MatDialogRef<DialogCreateChat>, @Inject(MAT_DIALOG_DATA) data: any) {
-    this.user_id = data.user_id;
-  }
-
-  @ViewChild('printError') error: ElementRef<HTMLDivElement>;
-
-  passwordInput: boolean = false;
-  access: number = 0;
-  user_id: string = "";
-
-  hidePassword() {
-    this.passwordInput = false;
-  }
-  
-  showPassword() {
-    this.passwordInput = true;
-  }
-
-  setAccess(value: number) {
-    this.access = value;
-  }
-
-  createChat(name: string, passwordOne?: string, passwordTwo?: string) {
-    if (!name)  
-    {
-      this.error.nativeElement.textContent = "Please enter a channel name"
-      return ;
-    }
-    if (this.access == 1)
-    {
-      if (!passwordOne)
-      {
-        this.error.nativeElement.textContent = "Please enter password for protected channel";
-        return ;
-      }
-      
-      if (passwordOne != passwordTwo)
-      {
-        this.error.nativeElement.textContent = "Please enter same password"
-        return ;
-      }
-      this.http.post('http://localhost:3000/channels', {name: name, access: this.access, password: passwordOne, creator_id: this.user_id}).subscribe({next:
-    data => {
-      console.log("Created channel");
-      this.dialogRef.close(true);
-    },
-  error: data => {
-    console.log("Could not create channel");
-    
-  }});
-      return ;
-    }
-    this.http.post('http://localhost:3000/channels', {name: name, access: this.access, creator_id: this.user_id}).subscribe({next: 
-  data => {
-    console.log("Created channel");
-    this.dialogRef.close(true);
-    
-  },
-error: data => {
-  console.log("Could not create channel");
-  
-}});
-  }
-
-}
-
-@Component({
-  templateUrl: './dialog-channel-settings.html'
-})
-export class DialogChannelSettings {
-  constructor(private http: HttpClient, private dialogRef: MatDialogRef<DialogChannelSettings>, @Inject(MAT_DIALOG_DATA) public data: any) {
-    console.log("data channel settings", data);
-    this.chatName = data.name;
-  }
-
-  @ViewChild('printError') error: ElementRef<HTMLDivElement>;
-
-  public chatName: string = "";
-  private access: number = 0;
-
-  passwordInput: boolean = false;
-  
-  hidePassword() {
-    this.passwordInput = false;
-  }
-
-  showPassword() {
-    this.passwordInput = true;
-  }
-
-  setAccess(val: any) {
-    this.access = val;
-    
-  }
-
-  changeChat(passwordOne: string, passwordTwo: string) {
-    if (this.access == 1)
-    {
-      if (!passwordOne)
-      {
-        this.error.nativeElement.textContent = "Please enter password for protected channel";
-        return ;
-      }
-      
-      if (passwordOne != passwordTwo)
-      {
-        this.error.nativeElement.textContent = "Please enter same password"
-        return ;
-      }
-      this.http.put('http://localhost:3000/channels', {id: this.data.id, access: this.access, password: passwordOne}).subscribe({next:
-				data => {
-					console.log("Created channel");
-					this.dialogRef.close(true);
-			},
-  		error: data => {
-    		console.log("Could not create channel"); 
-  		}});
-      return ;
-    }
-    this.http.put('http://localhost:3000/channels', {id: this.data.id, access: this.access}).subscribe({next: 
-			data => {
-				console.log("Updated channel");
-				this.dialogRef.close(true);
-				
-			},
-			error: data => {
-  			console.log("Could not update channel");
-			}});
-  }
 }

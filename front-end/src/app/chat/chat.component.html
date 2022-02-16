@@ -33,7 +33,6 @@
     }
 
     .friend {
-        /*background: linear-gradient(90deg, var(--color), #e9d901 90%);*/
         background: linear-gradient(90deg, var(--color), rgb(223, 223, 223) 90%);
         height: 15px;
         padding-top: 5px;
@@ -105,6 +104,19 @@
 
     .btn:hover {
         background-color: rgb(206, 206, 206);
+    }
+
+    .addFriend {
+        text-decoration: underline; text-align: center; font-weight: bold;
+        position: absolute;
+        display: inline;
+        left: 50%;
+        transform: translate(-50%, 0);
+        cursor: pointer;
+    }
+
+    .addFriend:hover {
+        color: blue;
     }
 </style>
 
@@ -184,15 +196,25 @@
                   </p>
             </ng-template>
             <div id="friendList" *ngIf="!chat.show">
-                <div style="text-decoration: underline; text-align: center; font-weight: bold;"> Friends </div>
-                <div *ngFor="let friend of friendList" (mouseover)="focusFriend(friend.username)" (mouseleave)="unfocusFriend()" class="friend" [style.--color]="getStatusColor(friend)">
-                    <div>
+                <div style="position: relative; height: 25px;">
+
+                    <div class="addFriend" (click)="openFriendDialog()"> Friends </div>
+                </div>
+                <div *ngFor="let friend of friendList">
+                    <div *ngIf="friend.status == 2" class="friend"  (mouseover)="focusFriend(friend.username)" (mouseleave)="unfocusFriend()" [style.--color]="getStatusColor(friend)">
                         {{ friend.username }}
+                        <mat-icon *ngIf="focus == friend.username" style="position: absolute ;cursor: pointer; margin-right: 20px; transform: translate(0, -50%); top: 50%; left: 80%" (click)="openPrivate(friend)">mail_outline</mat-icon>
+                        <mat-icon *ngIf="focus == friend.username && friend.status" style="position: absolute ;cursor: pointer; margin-right: 10px; transform: translate(0, -50%); top: 50%; left: 70%">gamepad</mat-icon>
                     </div>
-                    <mat-icon *ngIf="focus == friend.username" style="position: absolute ;cursor: pointer; margin-right: 20px; transform: translate(0, -50%); top: 50%; left: 80%" (click)="openPrivate(friend)">mail_outline</mat-icon>
-                    <mat-icon *ngIf="focus == friend.username && friend.status" style="position: absolute ;cursor: pointer; margin-right: 10px; transform: translate(0, -50%); top: 50%; left: 70%">gamepad</mat-icon>
                 </div>
                 <div style="text-decoration: underline; text-align: center; font-weight: bold;"> Invites </div>
+                <div *ngFor="let invite of friendList">
+                    <div *ngIf="invite.status == 1" class="friend"  (mouseover)="focusFriend(invite.username)" (mouseleave)="unfocusFriend()" [style.--color]="getStatusColor(invite)">
+                        <div> {{ invite.username }} </div>
+                        <mat-icon *ngIf="focus == invite.username" style="position: absolute ;cursor: pointer; margin-right: 20px; transform: translate(0, -50%); top: 50%; left: 80%" (click)="addFriend(invite)">add_box</mat-icon>
+
+                    </div>
+                </div>
             </div>
             <div *ngIf="chat.show" style="overflow: hidden; height: 600px; width: 400px; position: relative;">
                 <div class="ChatInformation" style="position: relative; height: 50px;">
@@ -201,7 +223,7 @@
                     </div>
                     <mat-icon (click)="openFriendList()" style="position: absolute; top: 0%; left: 0%; cursor: pointer;"> keyboard_arrow_left </mat-icon>
                     <mat-icon (click)="inviteFriend()" class="btn" style="bottom: 0%; right: 0%; margin-right: 15px;"> gamepad </mat-icon>
-                    <mat-icon (click)="openUserDialog(chat.name)" class="btn" style="bottom: 0%; left: 0%; margin-left: 15px;"> person_pin </mat-icon>
+                    <mat-icon (click)="openUserDialog()" class="btn" style="bottom: 0%; left: 0%; margin-left: 15px;"> person_pin </mat-icon>
                 </div>
                 <div style="height: 85%; width: 100%; position: relative; background-color: rgb(233, 233, 233); overflow-x: hidden; overflow-y: scroll; -ms-overflow-style: none; scrollbar-width: none;">
                     <div *ngFor="let msg of messages; let index = index">

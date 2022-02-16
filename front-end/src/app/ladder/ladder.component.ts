@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { DialogUser } from '../chat/chat.component';
+import { DialogUser } from '../chat/dialogs/dialog-user.component';
 
 @Component({
   selector: 'app-ladder',

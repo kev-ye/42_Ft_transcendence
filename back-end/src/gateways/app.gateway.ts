@@ -29,19 +29,19 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect{
 
     @SubscribeMessage('user')
     async auth(@MessageBody() data: any, @ConnectedSocket() client: Socket) {
-        console.log("update ", data);
         
         return await this.activeService.addUser({id: client.id, ...data});
     }
 
     async handleConnection(client: any, ...args: any[]) {
 
-        console.log("add: ", client.id);
+        /*console.log("add: ", client.id);
         await this.activeService.addUser({id: client.id});
+        */
     }
 
     async handleDisconnect(client: any) {
-        await this.activeService.removeUserBySocketId(client.id);
+        //await this.activeService.removeUserBySocketId(client.id);
     }
 
 

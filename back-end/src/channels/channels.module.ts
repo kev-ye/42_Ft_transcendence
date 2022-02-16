@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { BanModule } from 'src/ban/ban.module';
 import { ChatHistoryModule } from 'src/chat-history/chat-history.module';
 import { ChannelsController } from './channels.controller';
 import { ChannelsService } from './channels.service';

@@ -15,7 +15,7 @@ async function bootstrap() {
 		database: 'test',
 		user: 'postgres',
 		port: 5432,
-		password: 'poinsinet',
+		password: 'postgres',
 	});
 	const MAX_AGE: number = 60 * 60 * 24 * 1000;
 	const connectPgSession = pgSession(session);

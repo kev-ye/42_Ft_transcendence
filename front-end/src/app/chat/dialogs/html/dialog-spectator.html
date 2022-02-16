@@ -1,0 +1,12 @@
+<h1> List of spectators</h1>
+<div style="height: 500px; width: 300px ;overflow-x: hidden; overflow-y: scroll;">
+    
+    <div *ngFor="let usr of users"> {{ usr.name }}
+        <button (click)="openUserProfile(usr)"> Profile </button>
+        <div style="display: inline;" *ngIf="true">
+            <button (click)="banUser(usr)"> Ban from chat </button>
+            <button> Mute </button>
+            <button> Mod </button>
+        </div>
+    </div>
+</div>

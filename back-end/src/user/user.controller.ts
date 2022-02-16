@@ -16,9 +16,14 @@ export class UserController {
 		return this.userService.getUsers()
 	}
 
+	@Get('id/:id')
+	async getUserById(@Param('id') id: string) {
+		return await this.userService.getUserById(id);
+	}
+
 	@Get('id')
   @Header('Access-Control-Allow-Origin', 'http://localhost:4200')
-	getUserById(@Req() req: any) : Promise<LimitedUserDto> {
+	getUser(@Req() req: any) : Promise<LimitedUserDto> {
 		// console.log('id:', req.session.userId);
 		const id = req.session.userId;
 	

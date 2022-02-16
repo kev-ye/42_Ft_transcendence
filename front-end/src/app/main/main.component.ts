@@ -47,8 +47,8 @@ export class MainComponent implements OnInit, OnDestroy {
     
     this.http.get('http://localhost:3000/user/id', {withCredentials: true}).subscribe((data: any) => {
       
-      if (data.id)
-      this.socket.emit('user', {user_id: data.id});
+      //if (data.id)
+      //this.socket.emit('user', {user_id: data.id});
     })
     
     

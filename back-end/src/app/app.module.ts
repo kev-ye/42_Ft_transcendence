@@ -12,21 +12,23 @@ import { ChatHistoryModule } from '../chat-history/chat-history.module';
 import { LadderModule } from '../ladder/ladder.module';
 import { PrivateModule } from '../private/private.module';
 import { ChannelsModule } from 'src/channels/channels.module';
-import { ChatGateway } from 'src/gateways/chat.gateway';
+import { ChatGateway } from 'src/chat-gateway/chat.gateway';
 import { ImageModule } from 'src/image/image.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { ActiveUsersModule } from 'src/active-users/active-users.module';
 import { AppGateway } from 'src/gateways/app.gateway';
+import { BanModule } from 'src/ban/ban.module';
+import { ChatGatewayModule } from 'src/chat-gateway/chat-gateway.module';
 
 
 @Module({
-  imports: [
-	TypeOrmModule.forRoot({
+  imports: [ 
+	TypeOrmModule.forRoot({ 
 		type: 'postgres',
 		host: 'localhost',
 		port: 5432,
 		username: 'postgres',
-		password: 'poinsinet',
+		password: 'postgres',
 		database: 'test',
 		synchronize: true,
 		// logging: false,
@@ -44,12 +46,13 @@ import { AppGateway } from 'src/gateways/app.gateway';
 	PassportModule,
 	AuthModule,
 	ActiveUsersModule,
-	
+	ChatGatewayModule,
+	BanModule,
+	BlockModule
 	],
 	providers: [
-		ChatGateway,
 		AppGateway
-	]
+	],
 })
 export class AppModule {
 	constructor(private connection: Connection) {}

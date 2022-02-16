@@ -1,8 +1,9 @@
 <div *ngIf="!error">
     <p> Username: {{ username }} </p>
-    <div *ngIf="my_id != user.id">
+    <div *ngIf="true">
 
-        <button> Add as friend </button>
+        <button *ngIf="!friend" (click)="addFriend()"> Add as friend </button>
+        <button *ngIf="friend" (click)="deleteFriend()"> Remove as friend</button>
         <button> Block user </button>
         <button> Invite to play </button>
     </div>

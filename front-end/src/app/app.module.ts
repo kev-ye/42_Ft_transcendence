@@ -11,9 +11,17 @@ import { UserLoginComponent } from './user-login/user-login.component';
 import { UserLogin2Component } from './user-login2/user-login2.component';
 import { UserSubscriptionComponent } from './user-subscription/user-subscription.component';
 import { UserComponent } from './user/user.component';
-import { ChatComponent, DialogChannelSettings, DialogCreateChat, DialogInvite, DialogProtectedChat, DialogSpectator, DialogUser } from './chat/chat.component';
+import { ChatComponent } from './chat/chat.component';
 import { LadderComponent } from './ladder/ladder.component';
 import { CookieModule } from 'ngx-cookie'
+import { DialogChannelSettings } from './chat/dialogs/dialog-channel-settings.component';
+import { DialogCreateChat } from './chat/dialogs/dialog-create-chat.component';
+import { DialogInvite } from './chat/dialogs/dialog-invite-channel.component';
+import { DialogProtectedChat } from './chat/dialogs/dialog-protected-chat.component';
+import { DialogSpectator } from './chat/dialogs/dialog-spectator.component';
+import { DialogUser } from './chat/dialogs/dialog-user.component';
+import { DialogBanned } from './chat/dialogs/dialog-banned.component';
+import { DialogAddFriend } from './chat/dialogs/dialog-add-friend.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +37,9 @@ import { CookieModule } from 'ngx-cookie'
     DialogProtectedChat,
     DialogSpectator,
     DialogUser,
-    DialogChannelSettings
+    DialogChannelSettings,
+    DialogBanned,
+    DialogAddFriend
     
   ],
   imports: [
