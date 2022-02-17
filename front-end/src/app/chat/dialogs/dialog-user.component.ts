@@ -11,17 +11,26 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
       this.username = data.username;
       this.id = data.id;
       this.my_id = data.my_id;
-      console.log("data for userDialog ", this.id, this.my_id);
-      http.get('http://localhost:3000/friend/' + this.my_id).subscribe(data => {
-        if ((data as any[]).find(val => {
-          return val.id == this.id && val.status == 2;
-        }))
+      console.log("data for userDialog ", data.blocked);
+      
+      (data.friends as any[]).forEach(val => {
+        if (val.id == this.id)
           this.friend = true;
-      })
+      });
+
+      (data.blocked as any[]).forEach(element => {
+        if (element == this.id)
+        {
+          console.log("element is blocked");
+          this.blocked = true;
+          
+        }
+      });
       
     }
   
     friend: boolean = false;
+    blocked: boolean = false;
     user: any = {};
     error: boolean = false;
   
@@ -41,6 +50,30 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
       });
       console.log('error : ', this.error);
       
+    }
+
+    blockUser() {
+      this.http.post('http://localhost:3000/block', {
+        first: this.my_id,
+        second: this.id
+      }).subscribe(() => {
+        (this.data.blocked as any[]).push(this.id);
+        this.blocked = true;
+      });
+    }
+
+    unblockUser() {
+      this.http.post('http://localhost:3000/unblock', {
+        first: this.my_id,
+        second: this.id
+      }).subscribe(() => {
+        const index = (this.data.blocked as any[]).findIndex(val => val == this.id);
+        if (index >= 0)
+        {
+          (this.data.blocked as any[]).splice(index);
+          this.blocked = false;
+        }
+      });
     }
 
     deleteFriend() {

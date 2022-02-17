@@ -57,7 +57,9 @@ import { DialogUser } from "./dialog-user.component";
         data: {
           username: user.name,
           id: user.id,
-          my_id: this.data.my_id
+          my_id: this.data.my_id,
+          friends: this.data.friends,
+          blocked: this.data.blocked
         }
       });
       

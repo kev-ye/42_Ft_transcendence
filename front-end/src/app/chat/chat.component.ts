@@ -34,6 +34,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   channelList: any[] = [];
   colorMap: Map<string, string> = new Map<string, string>();
   socket: Socket;
+  blocked: any[] = [];
 
   user: any = {}
   password: string = "";
@@ -111,6 +112,11 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.http.get('http://localhost:3000/private/' + this.user.id + "/" + friend.id).subscribe(data => {
       console.log("fetched private history", data);
       this.messages = data as {id: string, username: string, user_id: string, type: number, message?: string}[];
+
+      this.messages.forEach(msg => {
+        if (this.blocked.find(val => val == msg.user_id))
+          msg.message = '<message blocked>'
+      })
       this.generateRandomColors();
     });
   }
@@ -120,6 +126,12 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
       console.log("fetched history", data);
       
       this.messages = data as {id: string, user_id: string, type: number, username: string, message?: string}[];
+
+      this.messages.forEach(msg => {
+        if (this.blocked.find(val => val == msg.user_id))
+          msg.message = '<message blocked>'
+      })
+
       this.chat.id = channel.id;
       this.chat.name = channel.name;
       this.chat.public = true;
@@ -128,6 +140,12 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
       
       this.generateRandomColors();
     });
+  }
+
+  fetchBlockedUsers() {
+    this.http.get('http://localhost:3000/block/' + this.user.id).subscribe(data => {
+        this.blocked = data as any[];
+      });
   }
 
   ngOnInit(): void {
@@ -143,10 +161,12 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
       this.socket.emit('user', {user_id: this.user.id});
     });
-    
 
+    
+    
     this.http.get('http://localhost:3000/user/id', {withCredentials: true}).subscribe((data: any) => {
       this.user.id = data.id;      
+      this.fetchBlockedUsers();
     })
 
     this.socket.on('message', (data: {
@@ -157,6 +177,10 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
       type: number
     }) => {
       data.user_id = String(data.user_id);
+      console.log("blocked :", this.blocked);
+      
+      if (this.blocked.find(val => val == data.user_id))
+        data.message = '<message blocked>'
       
       this.messages.push({id: data.id, username: data.username, message: data.message, user_id: data.user_id, type: data.type});
       if (this.messages.length > 25)
@@ -234,7 +258,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
           message: this.inputPrivate.nativeElement.value,
           type: 1,
           chat: {public: false, id: this.chat.id}})
-        this.inputPrivate.nativeElement.value = "";
+          this.inputPrivate.nativeElement.value = "";
       }
         
 
@@ -350,35 +374,57 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
       console.log("opening dialog", message);
       
-      this.dialog.open(DialogUser, {
+      const tmp = this.dialog.open(DialogUser, {
         data: {
           username: message.username,
           id: message.user_id,
           my_id: this.user.id,
+          friends: this.friendList,
+          blocked: this.blocked
         }
-      })
+      });
+      tmp.afterClosed().subscribe(() => {
+        this.fetchBlockedUsers();
+        console.log("fetching blocked", this.blocked);
+        
+      });
     }
     else
     {
-      this.dialog.open(DialogUser, {
+      const tmp = this.dialog.open(DialogUser, {
         data: {
           username: this.chat.name,
           id: this.chat.id,
           my_id: this.user.id,
+          friends: this.friendList,
+          blocked: this.blocked
         }
+      });
+
+      tmp.afterClosed().subscribe(() => {
+        this.fetchBlockedUsers();
+        console.log("fetching blocked 2", this.blocked);
+        
       })
     }
   }
 
   openSpec() {
-    this.dialog.open(DialogSpectator, {
+    const tmp = this.dialog.open(DialogSpectator, {
       data :
       {
         chat: this.chat,
-        my_id: this.user.id
+        my_id: this.user.id,
+        friends: this.friendList,
+        blocked: this.blocked
         //channel name to send and moderator status
       }
-    })
+    });
+
+    tmp.afterClosed().subscribe(() => {
+      this.fetchBlockedUsers();
+    });
+    
   }
 
   inviteFriend() {

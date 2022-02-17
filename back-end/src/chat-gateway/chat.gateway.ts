@@ -123,7 +123,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
         if (data.user_id < data.chat.id)
             this.server.to(data.user_id + " | " + data.chat.id).emit('message', {id: id, user_id: data.user_id, username: user.name, message: data.message, type: data.type});
-        else if (data.user_id != data.chat.id)
+        else// if (data.user_id != data.chat.id)
             this.server.to(data.chat.id + " | " + data.user_id).emit('message', {id: id, user_id: data.user_id, username: user.id, message: data.message, type: data.type});        
         return ;
     }
@@ -161,7 +161,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
             if (data.user_id < data.chat.id)
                 this.switchChannel(client, data.user_id + " | " + data.chat.id);
-            else if (data.user_id != data.chat.id)
+            else// if (data.user_id != data.chat.id)
                 this.switchChannel(client, data.chat.id + " | " + data.user_id);
         }
     }

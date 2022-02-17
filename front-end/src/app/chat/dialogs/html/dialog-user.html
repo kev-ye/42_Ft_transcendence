@@ -4,7 +4,8 @@
 
         <button *ngIf="!friend" (click)="addFriend()"> Add as friend </button>
         <button *ngIf="friend" (click)="deleteFriend()"> Remove as friend</button>
-        <button> Block user </button>
+        <button *ngIf="!blocked" (click)="blockUser()"> Block user </button>
+        <button *ngIf="blocked" (click)="unblockUser()"> Unblock user </button>
         <button> Invite to play </button>
     </div>
 </div>
