@@ -31,7 +31,7 @@ export class UserController {
   @Get('id')
   @Header('Access-Control-Allow-Origin', 'http://localhost:4200')
   async getUserById(@Req() req: any, @Res() res: any): Promise<void> {
-    console.log('get id:', req.session.userId);
+    // console.log('get id:', req.session.userId);
     const id = req.session.userId;
     const user = await this.userService.getUserById(id);
 
@@ -102,6 +102,12 @@ export class UserController {
     const user = await this.userService.getUserById(id);
 
     return !!user;
+  }
+
+  @Get('isLogin/refresh')
+  isLoginRefresh(@Req() req: any) {
+    // console.log('Refresh:', req.session.cookie._expires);
+    return { ok: 'Refresh' };
   }
 
   @Post('auth/logout')

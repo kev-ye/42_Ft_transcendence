@@ -63,6 +63,12 @@ export class UserApiService {
 		})
 	}
 
+	test():  Observable<any> {
+		return this.httpClient.get<any>(`${this.USER_API}/user/isLogin/refresh`, {
+			withCredentials: true
+		})
+	}
+
 /*
  * private function
  */
