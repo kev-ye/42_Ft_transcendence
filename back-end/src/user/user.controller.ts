@@ -59,11 +59,11 @@ export class UserController {
 
   @Put('create/first')
   @Header('Access-Control-Allow-Origin', 'http://localhost:4200')
-  firstUserCreate(@Req() req: any, @Body() name: any): Promise<UserDto> {
-    console.log('id:', req.session.userId);
+  async firstUserCreate(@Req() req: any, @Body() name: any): Promise<UserDto> {
+    // console.log('id:', req.session.userId);
     const id: string = req.session.userId;
 
-    return this.userService.firstUserCreate(id, name.name);
+    return await this.userService.firstUserCreate(id, name.name);
   }
 
   @Put('update')
@@ -105,7 +105,8 @@ export class UserController {
   }
 
   @Get('isLogin/refresh')
-  isLoginRefresh(@Req() req: any) {
+  isLoginRefresh() {
+    // console.log('test');
     // console.log('Refresh:', req.session.cookie._expires);
     return { ok: 'Refresh' };
   }

@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { ActivatedRoute, Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
-import { Observable, throwError, of, lastValueFrom, last  } from 'rxjs';
+import { Observable } from 'rxjs';
 
-import { UserApiService } from '../user_api/user-api.service';
 import { GlobalConsts } from 'src/app/common/global';
 
 @Injectable({ providedIn: 'root' })
@@ -13,24 +11,43 @@ export class UserAuthService {
 
 	constructor(private httpClient: HttpClient) {}
 
-	ftAuthLogin() {
-		// const URL_42_LOGIN: string = 'https://api.intra.42.fr/oauth/authorize';
-		// const client_id: string = 'fe43617a69dd01349a0721bdc45a4540c047eae07652b71c69a5cb8d9ebb8d62';
-		// const redirect_uri: string = `${this.USER_API}/user/auth/42/callback`;
-		// const response_type: string = 'code';
-		// const scope: string = 'public';
-
-		// window.location.href = `${URL_42_LOGIN}?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=${response_type}&scope=${scope}`;
+	ftLogin() {
 		window.location.href = `${this.USER_API}/user/auth/42/login`;
 	}
 
-	googleAuthLogin() {
-		window.location.href = `${this.USER_API}/user/auth/google/login`;
-	}
-
-	ftAuthLogout() {
+	logout() {
 		return this.httpClient.post<void>(`${this.USER_API}/user/auth/logout`, {}, {
 			withCredentials: true
 		});
+	}
+
+	isLogin(): Observable<any> {
+    return this.httpClient.get<boolean>(`${this.USER_API}/user/isLogin`, {
+			withCredentials: true
+		})
+  }
+
+	twoFaGenerate(): Observable<any> {
+		return this.httpClient.post<any>(`${this.USER_API}/user/auth/2fa/generate`, {}, {
+			withCredentials: true
+		})
+	}
+
+	twoFaVerify(token: any): Observable<any> {
+		return this.httpClient.post<any>(`${GlobalConsts.userApi}/user/auth/2fa/verify`, token, {
+			withCredentials: true
+		})
+	}
+
+	twoFaTurnOff():  Observable<any> {
+		return this.httpClient.delete<any>(`${this.USER_API}/user/auth/2fa/turnoff`, {
+			withCredentials: true
+		})
+	}
+
+	connexionRefresh():  Observable<any> {
+		return this.httpClient.get<any>(`${this.USER_API}/user/isLogin/refresh`, {
+			withCredentials: true
+		})
 	}
 }

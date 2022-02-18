@@ -1,9 +1,10 @@
-import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { GlobalConsts } from './common/global';
 import { Router } from "@angular/router";
 
-import {interval, map, Observable, Subscription} from 'rxjs';
-import {UserApiService} from "./service/user_api/user-api.service";
+import { interval, switchMap, of, Subscription, Observable } from 'rxjs';
+
+import { UserAuthService } from "./service/user_auth/user-auth.service";
 
 @Component({
   selector: 'app-root',
@@ -15,23 +16,27 @@ export class AppComponent implements OnInit, OnDestroy {
 	time: number = 60 * 60 * 1000; // one hour
 	user: any = null;
 
-	intervalSub?: Subscription;
-	userRefreshSub?: Subscription;
+	private subscription?: Subscription;
+	intervalObs: Observable<number> = interval(this.time);
 
 	constructor(
 		private router: Router,
-		private userApi: UserApiService) {}
+		private userAuth: UserAuthService) {}
 
 	ngOnInit() {
-		this.intervalSub = interval(this.time).subscribe( () => {
-			if (this.router.url !== '/user_login')
-				this.userRefreshSub = this.userApi.test().subscribe();
-		})
+		this.subscription = this.intervalObs
+			.pipe(
+				switchMap(() => {
+					if (this.router.url !== '/user_login')
+						return this.userAuth.connexionRefresh();
+					return of(null);
+				})
+			)
+			.subscribe()
 	}
 
 	ngOnDestroy() {
-		this.intervalSub?.unsubscribe();
-		this.userRefreshSub?.unsubscribe();
+		this.subscription?.unsubscribe();
 	}
 
 	@HostListener('window:beforeunload')

@@ -19,6 +19,6 @@ export class UserLoginComponent implements OnInit {
   ngOnInit() {}
 
   ftLogin() {
-    this.userAuth.ftAuthLogin();
+    this.userAuth.ftLogin();
   }
 }
