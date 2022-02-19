@@ -35,7 +35,7 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
     error: boolean = false;
   
     ngOnInit(): void {
-      this.http.get('http://localhost:3000/user/id/' + this.id).subscribe({
+      this.http.get('http://localhost:3000/user/id/' + this.id, {withCredentials: true}).subscribe({
         next: data => {
           console.log("fetched user id = " + this.id, data);
           if (data)
@@ -56,7 +56,7 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
       this.http.post('http://localhost:3000/block', {
         first: this.my_id,
         second: this.id
-      }).subscribe(() => {
+      }, {withCredentials: true}).subscribe(() => {
         (this.data.blocked as any[]).push(this.id);
         this.blocked = true;
       });
@@ -66,7 +66,7 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
       this.http.post('http://localhost:3000/unblock', {
         first: this.my_id,
         second: this.id
-      }).subscribe(() => {
+      }, {withCredentials: true}).subscribe(() => {
         const index = (this.data.blocked as any[]).findIndex(val => val == this.id);
         if (index >= 0)
         {
@@ -80,7 +80,7 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
       this.http.patch('http://localhost:3000/friend', {
         first: this.my_id,
         second: this.id
-      }).subscribe({
+      }, {withCredentials: true}).subscribe({
         next: data => {
         console.log("deleted friend");
         this.friend = false;
@@ -92,7 +92,7 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
     }
   
     addFriend() {
-        this.http.post('http://localhost:3000/friend', {first: this.my_id, second: this.id}).subscribe({
+        this.http.post('http://localhost:3000/friend', {first: this.my_id, second: this.id}, {withCredentials: true}).subscribe({
             next: data => {
                 console.log("sent friend request", data);
                 this.friend = true;

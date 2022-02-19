@@ -7,51 +7,9 @@
 </style>
 
 <h1> Invite friend to channel </h1>
-<div style="max-height: 200px; overflow-y: scroll; overflow-x: hidden;">
+<form (ngSubmit)="inviteFriend(input.value)">
     
-        <div class="friend"> 
-            <div style="position: absolute; top: 50%; transform: translate(0, -50%);">
-                friendName
-            </div>
-            <mat-icon style="cursor: pointer; color: blue; right: 0%; position: absolute; top: 50%; transform: translate(0, -50%);"> send </mat-icon>
-        </div>
-    
-        <div class="friend"> 
-            <div style="position: absolute; top: 50%; transform: translate(0, -50%);">
-                friendName
-            </div>
-            <mat-icon (click)="inviteFriend('friendName', 'channelName')" style="cursor: pointer; color: blue; right: 0%; position: absolute; top: 50%; transform: translate(0, -50%);"> send </mat-icon>
-        </div>
-    
-        <div class="friend"> 
-            <div style="position: absolute; top: 50%; transform: translate(0, -50%);">
-                friendName
-            </div>
-            <mat-icon (click)="inviteFriend('friendName', 'channelName')" style="cursor: pointer; color: blue; right: 0%; position: absolute; top: 50%; transform: translate(0, -50%);"> send </mat-icon>
-        </div>
-    
-        <div class="friend"> 
-            <div style="position: absolute; top: 50%; transform: translate(0, -50%);">
-                friendName
-            </div>
-            <mat-icon (click)="inviteFriend('friendName', 'channelName')" style="cursor: pointer; color: blue; right: 0%; position: absolute; top: 50%; transform: translate(0, -50%);"> send </mat-icon>
-        </div>
-    
-        <div class="friend"> 
-            <div style="position: absolute; top: 50%; transform: translate(0, -50%);">
-                friendName
-            </div>
-            <mat-icon (click)="inviteFriend('friendName', 'channelName')" style="cursor: pointer; color: blue; right: 0%; position: absolute; top: 50%; transform: translate(0, -50%);"> send </mat-icon>
-        </div>
-    
-        <div class="friend"> 
-            <div style="position: absolute; top: 50%; transform: translate(0, -50%);">
-                friendName
-            </div>
-            <mat-icon (click)="inviteFriend('friendName', 'channelName')" style="cursor: pointer; color: blue; right: 0%; position: absolute; top: 50%; transform: translate(0, -50%);"> send </mat-icon>
-        </div>
-    
-    
-    
-    
-</div>
+    <input type="text" #input placeholder="Enter username.." autocomplete="off">
+    <button> Invite </button>
+</form>
+<div #output></div>

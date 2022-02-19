@@ -2,18 +2,50 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MessageBody } from '@nestjs/websockets';
 import { BanService } from 'src/ban/ban.service';
+import { ModeratorService } from 'src/moderator/moderator.service';
+import { MuteService } from 'src/mute/mute.service';
+import { PrivateInviteService } from 'src/private-invite/private-invite.service';
+import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { ChannelEntity } from './entity/channels.entity';
 
 @Injectable()
 export class ChannelsService {
-    constructor(@InjectRepository(ChannelEntity) private repo: Repository<ChannelEntity>) {}
+    constructor(@InjectRepository(ChannelEntity) private repo: Repository<ChannelEntity>,
+    private modService: ModeratorService,
+    private privateInvService: PrivateInviteService,
+    @Inject('BAN_SERVICE') private banService: BanService,
+    @Inject('MUTE_SERVICE') private muteService: MuteService,
+    @Inject('USER_SERVICE') private userService: UserService) {}
 
-    async getAll() {
+    async checkOwner(userID: string, data: any) {
+        if (!data || !data.chat_id)
+            return false;
+        const chan = await this.getChannelById(data.chat_id);
+        if (!chan || chan.creator_id != userID)
+            return false;
+        return true;
+    }
+
+    async checkModerator(userID: string, data: any) {
+        if (!data || !data.chat_id)
+            return false;
+        
+        const chan = await this.modService.isModerator(data.chat_id, userID);
+        if (!chan)
+            return false;
+        return true;
+    }
+
+    async getAll(userID: string) {
         let tmp = await this.repo.find();
-        tmp.map(data => {
-            data['moderator'] = true;
-        });
+        for (let data of tmp){
+            const tab = await this.modService.getModeratorsByChatID(data.id);
+            if (tab.find(val => val.user_id == userID))
+                data['moderator'] = true;
+            else
+                data['moderator'] = false;
+        }
         return tmp;
         
     }
@@ -22,9 +54,11 @@ export class ChannelsService {
         return await this.repo.findOne({id: id});
     }
 
+    async getChannelByName(name: string) {
+        return await this.repo.findOne({name: name});
+    }
+
     async checkPassword(password: string, chat_id: string) {
-        console.log("lol");
-        
         const tmp = await this.repo.findOne({id: chat_id});
         if (tmp && tmp.access == 1 && tmp.password)
         {
@@ -37,13 +71,123 @@ export class ChannelsService {
         return false;
     }
 
-    async updateById(data: any) {
-        return await this.repo.update({id: data.id}, data);
+    async checkAccess(userID: string, chatID: string) {
+        const channel = await this.getChannelById(chatID);
+        if (!channel)
+            return 1;
+        if (await this.banService.isBanned(userID, chatID))
+            return 2;
+        else if (await this.modService.isModerator(chatID, userID))
+            return 0;
+        if (channel.access == 2)
+        {
+            if (await this.privateInvService.isInvited(userID, chatID))
+                return 0;
+            return 1;
+        }
+        return 0;
     }
 
-    async createChannel(data: any) {
-        const result = this.repo.create(data);
+    async updateById(userID: string, data: any) {
+        return await this.repo.update({id: data.id}, {...data, creator_id: userID});
+    }
 
-        this.repo.save(result);
+    async createChannel(userID: string, data: any) {
+        const result = this.repo.create({...data, creator_id: userID});
+        
+        if (!result)
+            return ;
+        const tmp = await this.repo.save(result) as any; 
+        return await this.modService.createModerator(userID, {user_id: data.creator_id, chat_id: tmp.id});
+    }
+
+    async createModerator(userID: string, data: any) {
+        if (!await this.checkOwner(userID, data))
+            return ;
+
+        return await this.modService.createModerator(userID, data);
+    }
+
+    async deleteModerator(userID: string, data: any) {
+        if (!await this.checkOwner(userID, data))
+            return ;
+        else if (await this.checkOwner(data.user_id, data))
+            return ;
+
+        return await this.modService.deleteModerator(userID, data);
+    }
+
+    async deleteAllModerator(userID: string, data: any) {
+        if (!await this.checkOwner(userID, data))
+            return ;
+
+        return await this.modService.deleteAllModerator(userID, data);
+    }
+
+    async createMute(userID: string, data: any) {
+        if (!(await this.checkModerator(userID, data)))
+            return;
+        else if (await this.checkOwner(data.user_id, data))
+            return;
+        
+        return await this.muteService.addMute(data);
+    }
+
+    async deleteMute(userID: string, data: any) {
+        if (!await this.checkModerator(userID, data))
+            return ;
+        return await this.muteService.deleteMute(data);
+    }
+
+    async getMute(chatID: string, userID: string) {
+        return await this.muteService.getMute(chatID, userID);
+    }
+
+    async banUser(userID: string, data: any) {
+        if (!await this.checkModerator(userID, data))
+            return ;
+        else if (await this.checkOwner(data.user_id, data))
+            return ;
+
+        return await this.banService.banUser(data);
+    }
+
+    async getBanByUser(userID: string) {
+        return await this.banService.getBanByUser(userID);
+    }
+
+    async isBanned(userID: string, chatID: string) {
+        return await this.banService.isBanned(userID, chatID);
+    }
+
+    async deleteBan(userID: string, data: any) {
+        if (!data || !data.chat_id || !data.user_id)
+            return ;
+        if (!this.checkModerator(userID, data))
+            return ;
+        return await this.banService.deleteBan(data.user_id, data.chat_id);
+    }
+
+    async inviteToChannel(userID: string, data: any) {
+        if (!await this.checkModerator(userID, data))
+            return ;
+        const chan = this.repo.findOne({id: data.chat_id});
+        if (!chan)
+            return;
+        return await this.privateInvService.createInvite(data);
+    }
+
+    async inviteToChannelByName(userID: string, userName: string, data: any) {
+        const user = await this.userService.getUserByName(userName);
+
+        if (!await this.checkModerator(userID, data))
+            return 2;
+        if (!user)
+            return 1;
+        const chan = this.repo.findOne({id: data.chat_id});
+        if (!chan)
+            return 3;
+        await this.privateInvService.createInvite({user_id: user.id, chat_id: data.chat_id, emitter: userID});
+        return 0;
     }
 }

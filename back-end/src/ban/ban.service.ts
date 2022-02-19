@@ -11,13 +11,8 @@ export class BanService {
         return await this.repo.find({user_id: userID}); 
     }
 
-    async checkAccess(data: any) {
-        const tmp = await this.getBanByUser(data.user_id);
-        if (tmp.find(val => {
-            return val.chat_id == data.chat_id;
-        }))
-            return false;
-        return true;
+    async isBanned(userID: string, chatID: string) {
+        return await this.repo.findOne({user_id: userID, chat_id: chatID});
     }
 
     async banUser(data: any) {
@@ -26,5 +21,9 @@ export class BanService {
         const tmp = this.repo.create(data);
         await this.repo.save(tmp);
         return true;
+    }
+
+    async deleteBan(userID: string, chatID: string) {
+        return await this.repo.delete({chat_id: chatID, user_id: userID});
     }
 }

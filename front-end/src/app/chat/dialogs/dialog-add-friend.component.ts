@@ -12,7 +12,7 @@ export class DialogAddFriend {
     @ViewChild('error') error: ElementRef<HTMLDivElement>;
 
     submitFriend(username: string) {
-        this.http.get('http://localhost:3000/user/name/' + username).subscribe({
+        this.http.get('http://localhost:3000/user/name/' + username, {withCredentials: true}).subscribe({
             next: data => {
                 if (!data)
                     this.error.nativeElement.textContent = 'Could not find user';
@@ -22,7 +22,7 @@ export class DialogAddFriend {
                     this.http.post('http://localhost:3000/friend', {
                         first: this.data.my_id,
                         second: (data as any).id
-                    }).subscribe({next: data => {
+                    }, {withCredentials: true}).subscribe({next: data => {
                         this.dialog.close();    
                     }});
                 }

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ActiveUsersModule } from 'src/active-users/active-users.module';
 import { ChannelsModule } from 'src/channels/channels.module';
 import { ChatHistoryModule } from 'src/chat-history/chat-history.module';
+import { MuteModule } from 'src/mute/mute.module';
 import { PrivateModule } from 'src/private/private.module';
 import { UserModule } from 'src/user/user.module';
 import { ChatGateway } from './chat.gateway';

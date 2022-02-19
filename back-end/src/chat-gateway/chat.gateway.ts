@@ -1,4 +1,4 @@
-import { Inject, Injectable, OnModuleInit, Req } from "@nestjs/common";
+import { HttpCode, Inject, Injectable, OnModuleInit, Req } from "@nestjs/common";
 import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 
 import { stringify } from "querystring";
@@ -7,6 +7,7 @@ import { Socket, Server } from "socket.io";
 import { ActiveUsersService } from "src/active-users/active-users.service";
 import { ChannelsService } from "src/channels/channels.service";
 import { ChatHistoryService } from "src/chat-history/chat-history.service";
+import { MuteService } from "src/mute/mute.service";
 import { PrivateService } from "src/private/private.service";
 import { UserService } from "src/user/user.service";
 
@@ -114,6 +115,16 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         
         if (data.chat.public)
         {
+            const mute = await this.chanService.getMute(data.chat.id ,data.user_id);
+            if (mute) {
+                const tmp = new Date();                
+                if (tmp < mute.date)
+                {
+                    client.emit('mute', {date: mute.date});                    
+                    return ;
+                }
+            }
+            
             const id = await this.history.create({user_id: data.user_id, message: data.message, type: data.type, chat_id: data.chat.id});
             this.server.to(data.chat.id).emit('message', {id: id.id, user_id: data.user_id, username: user.name, message: data.message, type: data.type});
             return ;
@@ -151,7 +162,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
                 else if (tmp.access == 0)
                     this.switchChannel(client, data.chat.id);
                 else
-                    return false;
+                {
+                    //check if user has access
+                    this.switchChannel(client, data.chat.id);
+                }
                 return true;
             }
             return false;

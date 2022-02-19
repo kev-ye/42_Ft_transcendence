@@ -35,7 +35,7 @@ export class UserComponent implements OnInit {
 
         this.connected = true;
 
-        this.http.get('http://localhost:3000/ladder/' + this.user.id).subscribe({
+        this.http.get('http://localhost:3000/ladder/' + this.user.id, {withCredentials: true}).subscribe({
           next: (data: any) => {
             this.user.ladder = data.points;
           },
@@ -104,7 +104,7 @@ export class DialogChangeUsername implements OnInit {
   @ViewChild('statusText') private statusText: ElementRef<HTMLDivElement>;
 
   changeUsername(newUsername: string) {
-    this.http.put('http://localhost:3000/user/update', {id: this.userID, name: newUsername}).subscribe({
+    this.http.put('http://localhost:3000/user/update', {id: this.userID, name: newUsername}, {withCredentials: true}).subscribe({
       next: data => {
         console.log("Changed successfully username");
         this.dialogRef.close(true);
@@ -120,7 +120,7 @@ export class DialogChangeUsername implements OnInit {
     if (username)
     {
       //look for username in database and see if available
-      this.http.get('http://localhost:3000/user/name/' + username).subscribe({
+      this.http.get('http://localhost:3000/user/name/' + username, {withCredentials: true}).subscribe({
         next: data => {
           if (!data)
           {
@@ -209,7 +209,7 @@ export class DialogChangeImage {
         }
         let fd = new FormData();
         fd.append('image', image);
-        this.http.post<FormData>('http://localhost:3000/image/upload/' + this.data.user_id, fd, {headers: {extension: ext}}).subscribe((res) => {
+        this.http.post<FormData>('http://localhost:3000/image/upload/' + this.data.user_id, fd, {headers: {extension: ext}, withCredentials: true}).subscribe((res) => {
           
         });
       }

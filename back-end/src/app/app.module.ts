@@ -19,6 +19,7 @@ import { ActiveUsersModule } from 'src/active-users/active-users.module';
 import { AppGateway } from 'src/gateways/app.gateway';
 import { BanModule } from 'src/ban/ban.module';
 import { ChatGatewayModule } from 'src/chat-gateway/chat-gateway.module';
+import { MuteModule } from 'src/mute/mute.module';
 
 
 @Module({
@@ -48,7 +49,8 @@ import { ChatGatewayModule } from 'src/chat-gateway/chat-gateway.module';
 	ActiveUsersModule,
 	ChatGatewayModule,
 	BanModule,
-	BlockModule
+	BlockModule,
+	MuteModule
 	],
 	providers: [
 		AppGateway

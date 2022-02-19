@@ -16,7 +16,9 @@ export class PrivateService {
         const tmp = await this.repo.find({where : [
             {from: data.first, to: data.second},
             {from: data.second, to: data.first}
-        ]});
+        ], order: {date: 'DESC'}});
+        tmp.splice(20);
+        tmp.reverse();
         let result = [];
         tmp.forEach(val => {
             result.push({user_id: val.from, message: val.message, type: val.type});

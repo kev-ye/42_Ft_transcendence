@@ -45,24 +45,22 @@ import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
           this.error.nativeElement.textContent = "Please enter same password"
           return ;
         }
-        this.http.put('http://localhost:3000/channels', {id: this.data.id, access: this.access, password: passwordOne}).subscribe({next:
+        this.http.put('http://localhost:3000/channels', {id: this.data.id, access: this.access, password: passwordOne}, {withCredentials: true}).subscribe({next:
                   data => {
-                      console.log("Created channel");
                       this.dialogRef.close(true);
               },
             error: data => {
-              console.log("Could not create channel"); 
+              this.error.nativeElement.textContent = "Could not create channel";
             }});
         return ;
       }
-      this.http.put('http://localhost:3000/channels', {id: this.data.id, access: this.access}).subscribe({next: 
+      this.http.put('http://localhost:3000/channels', {id: this.data.id, access: this.access}, {withCredentials: true}).subscribe({next: 
               data => {
-                  console.log("Updated channel");
                   this.dialogRef.close(true);
                   
               },
               error: data => {
-                console.log("Could not update channel");
+                this.error.nativeElement.textContent = "Could not update channel"
               }});
     }
   }

@@ -1,4 +1,4 @@
-import { Inject, UseGuards } from "@nestjs/common";
+import { Inject, Req, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway } from "@nestjs/websockets";
 import { Socket } from "socket.io";
@@ -34,7 +34,8 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect{
     }
 
     async handleConnection(client: any, ...args: any[]) {
-
+        console.log("test CONNECTION");
+        
         /*console.log("add: ", client.id);
         await this.activeService.addUser({id: client.id});
         */

@@ -10,7 +10,6 @@ import { ChatHistoryEntity } from './entity/chat_history.entity';
   imports: [
     TypeOrmModule.forFeature([ChatHistoryEntity]),
     UserModule,
-    ChannelsModule
   ],
   controllers: [ChatHistoryController],
   providers: [

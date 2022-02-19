@@ -22,6 +22,8 @@ import { DialogSpectator } from './chat/dialogs/dialog-spectator.component';
 import { DialogUser } from './chat/dialogs/dialog-user.component';
 import { DialogBanned } from './chat/dialogs/dialog-banned.component';
 import { DialogAddFriend } from './chat/dialogs/dialog-add-friend.component';
+import { DialogMuted } from './chat/dialogs/dialog-muted.component';
+import { DialogMute } from './chat/dialogs/dialog-mute.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +41,9 @@ import { DialogAddFriend } from './chat/dialogs/dialog-add-friend.component';
     DialogUser,
     DialogChannelSettings,
     DialogBanned,
-    DialogAddFriend
+    DialogAddFriend,
+    DialogMuted,
+    DialogMute
     
   ],
   imports: [

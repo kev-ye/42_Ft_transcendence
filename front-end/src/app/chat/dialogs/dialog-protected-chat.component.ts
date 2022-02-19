@@ -19,7 +19,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
     }
   
     submitPassword(password: string) {
-      this.http.post('http://localhost:3000/channels/password/' + this.chat_id, {password: password}).subscribe({
+      this.http.post('http://localhost:3000/channels/password/' + this.chat_id, {password: password}, {withCredentials: true}).subscribe({
         next: data => {
           if (data)
             this.dialog.close({success: true, password: password});

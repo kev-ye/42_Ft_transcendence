@@ -1,13 +1,16 @@
-import { Column, Entity, PrimaryColumn } from "typeorm";
+import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('mute')
 export class MuteEntity {
-    @PrimaryColumn('uuid')
+    @PrimaryGeneratedColumn('uuid')
     id: string;
 
     @Column()
-    first: string;
+    user_id: string;
 
     @Column()
-    second: string;
+    chat_id: string;
+
+    @Column()
+    date: Date;
 }

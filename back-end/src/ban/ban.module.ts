@@ -8,7 +8,7 @@ import { ChatGateway } from 'src/chat-gateway/chat.gateway';
 import { ChatGatewayModule } from 'src/chat-gateway/chat-gateway.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([BanEntity]), ChatGatewayModule],
+  imports: [TypeOrmModule.forFeature([BanEntity])],
   providers: [
     {
       provide: 'BAN_SERVICE',
