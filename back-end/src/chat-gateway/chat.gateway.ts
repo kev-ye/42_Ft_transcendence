@@ -92,7 +92,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     @SubscribeMessage('user')
-    async getUserFromSocker(@MessageBody() data: any, @ConnectedSocket() client: Socket)
+    async getUserFromSocket(@MessageBody() data: any, @ConnectedSocket() client: Socket)
     {
         console.log("update user", data);
         
@@ -109,6 +109,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         console.log("received message", data);
         
         const user = await this.userService.getUserById(data.user_id);
+        console.log("testMESSAGE", client);
         
         if (!user)
             return ;
@@ -130,7 +131,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
             return ;
         }
         
-        const id = await this.privateService.postMessage({from: data.user_id, to: data.chat.id, type: data.type, message: data.message});
+        const id = await this.privateService.postMessage(data.user_id, {to: data.chat.id, type: data.type, message: data.message});
 
         if (data.user_id < data.chat.id)
             this.server.to(data.user_id + " | " + data.chat.id).emit('message', {id: id, user_id: data.user_id, username: user.name, message: data.message, type: data.type});

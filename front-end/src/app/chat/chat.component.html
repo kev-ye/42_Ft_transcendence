@@ -7,7 +7,7 @@
         border-top-right-radius: 15px;
         border-bottom-right-radius: 15px;
         position: fixed;
-        overflow-y: scroll;
+        overflow-y: hidden;
         overflow-x: hidden;
     }
 
@@ -135,7 +135,7 @@
                     </p>
                 </ng-template>
             
-            <div *ngIf="!chat.show" id="roomsList" style="height: 600px; overflow-x: hidden;">
+            <div *ngIf="!chat.show" id="roomsList" style="height: 600px; overflow-x: hidden; overflow-y: scroll;">
                 <div style="height: 25px; position: relative;">
 
                     <div (click)="createChat()" style="position: absolute; left: 50%; top: 50%;cursor: pointer; transform: translate(-50%, -50%);" (click)="createChat()">

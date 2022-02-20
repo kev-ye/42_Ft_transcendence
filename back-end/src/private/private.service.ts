@@ -7,8 +7,8 @@ import { PrivateMessageEntity } from './entity/private_message.entity';
 export class PrivateService {
     constructor(@InjectRepository(PrivateMessageEntity) private repo: Repository<PrivateMessageEntity>) {}
 
-    async postMessage(data: {from: string, to: string, type: number, message?: string}) {
-        const tmp = this.repo.create(data);
+    async postMessage(userID: string, data: {to: string, type: number, message?: string}) {
+        const tmp = this.repo.create({from: userID, ...data});
         return await this.repo.save(tmp);
     }
 

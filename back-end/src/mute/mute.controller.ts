@@ -23,7 +23,7 @@ export class MuteController {
 
         return await this.service.addMute({user_id: data.user_id, chat_id: data.chat_id, date: date}); 
     }
- 
+ x
     @Get(':chatID/:userID')
     async getMute(@Param('chatID') chatID: string, @Param('userID') userID: string) {
         return await this.service.getMute(chatID, userID); 
