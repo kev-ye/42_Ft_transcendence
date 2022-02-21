@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserEntity } from 'src/user/entity/user.entity';
-import { Connection } from 'typeorm';
 import { PassportModule } from '@nestjs/passport';
 
 /* Custom imports */
@@ -22,19 +20,18 @@ import { ChatGatewayModule } from 'src/chat-gateway/chat-gateway.module';
 import { MuteModule } from 'src/mute/mute.module';
 import { ModeratorModule } from 'src/moderator/moderator.module';
 
-
 @Module({
   imports: [ 
 	TypeOrmModule.forRoot({ 
 		type: 'postgres',
 		host: 'localhost',
 		port: 5432,
-		username: 'postgres',
-		password: 'postgres',
+		username: "postgres",
+		password: "postgres",
 		database: 'test',
 		synchronize: true,
 		// logging: false,
-		 dropSchema: false, // don't use in prod
+		dropSchema: false, // don't use in prod
 		entities: [ "./dist/**/*.entity.js" ]
 		}),
 	UserModule,
@@ -57,7 +54,6 @@ import { ModeratorModule } from 'src/moderator/moderator.module';
 	providers: [
 		AppGateway
 	],
+
 })
-export class AppModule {
-	constructor(private connection: Connection) {}
-}
+export class AppModule {}

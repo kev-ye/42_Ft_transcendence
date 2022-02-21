@@ -8,12 +8,10 @@ import { Socket, Server } from "socket.io";
 import { ActiveUsersService } from "src/active-users/active-users.service";
 import { ChannelsService } from "src/channels/channels.service";
 import { ChatHistoryService } from "src/chat-history/chat-history.service";
-import { WsAuthGuard } from "src/guards/WsAuthGuard.service";
 import { MuteService } from "src/mute/mute.service";
 import { PrivateService } from "src/private/private.service";
 import { UserService } from "src/user/user.service";
 
-@UseGuards(WsAuthGuard)
 @WebSocketGateway(3001, {cors: {
     origin: 'http://localhost:4200',
     methods: ["GET", "POST"],

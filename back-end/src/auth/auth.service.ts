@@ -7,8 +7,7 @@ import { LimitedUserDto, UserDto } from 'src/user/dto/user.dto';
 export class AuthService {
   constructor(@Inject('USER_SERVICE') private readonly userService: UserService) {}
 
-  public async valideUser(user: LimitedUserDto): Promise<void> {
-    await this.userService.updateUserByAuth(user);
+  public async ftValidUser(user: LimitedUserDto): Promise<UserDto> {
+    return await this.userService.updateUserByAuth(user);
   }
-
 }

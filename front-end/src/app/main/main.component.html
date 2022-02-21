@@ -1,16 +1,13 @@
-
-<mat-toolbar [ngClass]="{
-    'container': true,
-    'container_logout': false
-  }">
-  <div>
-    <button mat-raised-button mat-icon-button class="item" (click)="openChat()">
-      <mat-icon>people</mat-icon>
-    </button>
-    <button mat-raised-button mat-icon-button class="item" >
-      <mat-icon>sports_esports</mat-icon>
-    </button>
-  </div>
+<script src="../service/user_api/user-api.service.ts"></script>
+<mat-toolbar [ngClass]="'container'">
+<div>
+  <button mat-raised-button mat-icon-button class="item" (click)="openChat()">
+    <mat-icon>people</mat-icon>
+  </button>
+  <button mat-raised-button mat-icon-button class="item" >
+    <mat-icon>sports_esports</mat-icon>
+  </button>
+</div>
 
 <span>{{ title }}</span>
 
@@ -29,3 +26,16 @@
 
 <app-chat *ngIf="chatVisibility" style="position: fixed;" [socketID]="socket.id" @chat></app-chat>
 <app-user *ngIf="userVisibility" style="position: fixed; right: 0%;" @user> </app-user>
+<!-- <p class="main">main</p> -->
+
+<!-- <button (click)="toTF()" >Go to two_factor page</button> -->
+<!-- <p class="main">main</p> -->
+<app-game></app-game>
+
+<div>
+	<img [src]="qrCode" alt="QR-code" *ngIf="twoFaActive"/>
+</div>
+<button (click)="turnOnTwoFa()" *ngIf="!twoFaActive">Turn on 2Fa</button>
+<button (click)="turnOffTwoFa()" *ngIf="twoFaActive">Turn off 2Fa</button>
+
+<p class="main">main</p>

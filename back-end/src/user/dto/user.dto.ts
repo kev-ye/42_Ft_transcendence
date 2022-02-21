@@ -1,31 +1,30 @@
-
 export interface UserDto {
-	id: string;
-	login: string;
-	name: string;
-	avatar: string;
-	fortyTwoAvatar: string;
-	email: string;
-  online: string;
-	twoFactor: boolean;
-	twoFactorId: string;
-	// friends: string[];
-	// history: HistoryDto[]; // ?
-	// xp: number;
-	// level: number;
-	// updated: Date;
+  id: string;
+  login: string;
+  name: string;
+  avatar: string;
+  fortyTwoAvatar: string;
+  email: string;
+  online: number; // 0: logout | 1: login | 2: in Game
+  twoFactorSecret: string;
+  twoFactorQR: string;
+  // friends: string[];
+  // history: HistoryDto[]; // ?
+  // xp: number;
+  // level: number;
+  // updated: Date;
 }
 
 export interface LimitedUserDto {
   id: string;
-	login: string;
-	name: string;
-	avatar: string;
-	fortyTwoAvatar: string;
-	email: string;
-  online: string;
-	twoFactor: boolean;
-	twoFactorId: string;
+  login: string;
+  name: string;
+  avatar: string;
+  fortyTwoAvatar: string;
+  email: string;
+  online: number; // 0: logout | 1: login | 2: in Game
+  twoFactorSecret: string;
+  twoFactorQR: string;
 }
 
 export interface HistoryDto {
