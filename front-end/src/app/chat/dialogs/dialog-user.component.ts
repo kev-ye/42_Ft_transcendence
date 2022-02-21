@@ -11,7 +11,6 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
       this.username = data.username;
       this.id = data.id;
       this.my_id = data.my_id;
-      console.log("data for userDialog ", data.blocked);
       
       (data.friends as any[]).forEach(val => {
         if (val.id == this.id)
@@ -20,12 +19,10 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 
       (data.blocked as any[]).forEach(element => {
         if (element == this.id)
-        {
-          console.log("element is blocked");
           this.blocked = true;
-          
-        }
       });
+
+      //this.link = `http://localhost:3000/image/`
       
     }
   
@@ -36,19 +33,25 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
   
     ngOnInit(): void {
       this.http.get('http://localhost:3000/user/id/' + this.id, {withCredentials: true}).subscribe({
-        next: data => {
-          console.log("fetched user id = " + this.id, data);
+        next: (data: any) => {
+          console.log("fetched user details", data);
+          
           if (data)
             this.user = data;
           else
             this.error = true;
+          if (data.avatar && data.avatar != "")
+            this.link = `http://localhost:3000/image/${data.avatar}`
+          else
+            this.link = `http://localhost:3000/image`
         },
         error: data => {
-          console.log("could not fetch user " + this.id);
           this.error = true;
+          
+        },
+        complete: () => {
         }
       });
-      console.log('error : ', this.error);
       
     }
 
@@ -104,4 +107,5 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
     my_id: string = "";
     id: string = "";
     username: string = "";
+    link: string = "";
   }

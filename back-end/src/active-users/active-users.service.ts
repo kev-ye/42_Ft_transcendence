@@ -17,16 +17,22 @@ export class ActiveUsersService implements OnModuleInit {
         return await this.repo.find({user_id: userID});
     }
 
-    async getByChatId(chat_id: string) {
+    async getUsersByChatId(chat_id: string) {
         let tmp: any[] = await this.repo.find({where: {chat_id: chat_id}});
         let result: any[] = [];
         for (let val of tmp)
         {
             const user = await this.userService.getUserById(val.user_id);
+            
             if (user)
-                result.push({name: user.name, id: user.id})
+            result.push({name: user.name, id: user.id})
         }
+        console.log("testActiveUsers", result);
         return result;
+    }
+
+    async getUserBySocketId(socketID: string) {
+        return await this.repo.findOne({where: {id: socketID}})
     }
 
     async removeUserBySocketId(id: string) {

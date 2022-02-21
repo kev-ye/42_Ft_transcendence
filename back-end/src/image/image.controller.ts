@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Inject, Param, Patch, Post, Response, StreamableFile, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Controller, Delete, Get, Inject, Logger, Param, Patch, Post, Response, StreamableFile, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as fs from 'fs';
 import { diskStorage } from 'multer';
@@ -41,8 +41,8 @@ export class ImageController {
         return new StreamableFile(file);
     }
 
-    @Get(':id')
-    async getImage(@Param('id') id: string, @Response({passthrough: true}) res: any)
+    @Get('user/:id')
+    async getImageFromUser(@Param('id') id: string, @Response({passthrough: true}) res: any)
     {
         const user = await this.userService.getUserById(id)
         
@@ -52,10 +52,29 @@ export class ImageController {
             try {
                 file = fs.createReadStream(join('../uploads/', user.avatar))
             } catch {
+                Logger.error("Could not load picture")
                 file = fs.createReadStream('./static/default_avatar.png')    
             }
         } else 
             file = fs.createReadStream('./static/default_avatar.png')
+    
+            res.set('Content-Disposition', 'inline');//'attachment; filename=' + user.picture)
+            return new StreamableFile(file);
+    }
+
+    @Get(':id')
+    async getImage(@Param('id') id: string, @Response({passthrough: true}) res: any)
+    {
+        const user = await this.userService.getUserById(id)
+        
+        let file;
+        
+            try {
+                file = fs.createReadStream(join('../uploads/', id))
+            } catch {
+                Logger.error("Could not load picture")
+                file = fs.createReadStream('./static/default_avatar.png')    
+            }
     
             res.set('Content-Disposition', 'inline');//'attachment; filename=' + user.picture)
             return new StreamableFile(file);

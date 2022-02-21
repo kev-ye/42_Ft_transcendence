@@ -8,7 +8,7 @@ export class FriendController {
     constructor(@Inject('FRIEND_SERVICE') private service: FriendService) {}
 
     @Post()
-    async addFriend(@MessageBody() data: {first: number, second: number}) {
+    async addFriend(@MessageBody() data: {first: string, second: string}) {
         return await this.service.addFriend(data);
     }
 
@@ -20,7 +20,7 @@ export class FriendController {
     }
 
     @Get(':id')
-    async getFriends(@Param('id') id: number) {        
+    async getFriends(@Param('id') id: string) {        
         return await this.service.getFriends(id);
     }
 

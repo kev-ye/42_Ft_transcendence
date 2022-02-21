@@ -31,7 +31,7 @@ export class UserComponent implements OnInit {
         const tmp = data as any;
         this.user = tmp;
         this.user.username = tmp.name;
-        this.user.avatar = "http://localhost:3000/image/" + this.user.id;
+        this.user.avatar = "http://localhost:3000/image/user/" + this.user.id;
 
         this.connected = true;
 
@@ -152,7 +152,7 @@ export class DialogChangeUsername implements OnInit {
 export class DialogChangeImage {
   constructor(@Inject(MAT_DIALOG_DATA) private data: any, private http: HttpClient,
   private dialogRef: MatDialogRef<DialogChangeImage>) {
-    this.link = "http://localhost:3000/image/" + data.user_id;
+    this.link = "http://localhost:3000/image/user/" + data.user_id;
   }
 
   link: string = "";
@@ -182,9 +182,7 @@ export class DialogChangeImage {
     if (!this.file.nativeElement.files)
       return ;
 
-    if (this.file.nativeElement.files?.length > 0)
-      console.log("submitting", this.file.nativeElement.files.item(0));
-    else
+    if (!this.file.nativeElement.files?.length)
     {
       console.log("No file was loaded");
       return ;
@@ -216,8 +214,12 @@ export class DialogChangeImage {
       else
         console.log("Bad extension 2: " + index);
       this.dialogRef.close(this.link);
+  }
 
+  async deleteImage() {
+    this.http.delete(`http://localhost:3000/image/${this.data.user_id}`).subscribe( () => {
+      this.dialogRef.close('http://localhost:3000/image/');
+    })
 
-    
   }
 }

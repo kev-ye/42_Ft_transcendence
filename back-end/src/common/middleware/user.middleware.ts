@@ -3,6 +3,7 @@ import { Request, Response, NextFunction } from "express";
 
 export class UserMiddleWare implements NestMiddleware {
 	
+	
 	use(req: Request, res: Response, next: NextFunction) {
 		const exists : boolean = true; // TODO: check if user exists
 		

@@ -15,7 +15,7 @@ export class BanService {
         return await this.repo.findOne({user_id: userID, chat_id: chatID});
     }
 
-    async banUser(data: any) {
+    async banUser(data: {chat_id: string, user_id: string}) {
         if (await this.repo.findOne({where: {chat_id: data.chat_id, user_id: data.user_id}}))
             return false;
         const tmp = this.repo.create(data);
@@ -25,5 +25,9 @@ export class BanService {
 
     async deleteBan(userID: string, chatID: string) {
         return await this.repo.delete({chat_id: chatID, user_id: userID});
+    }
+
+    async deleteAllByChatId(chatID: string) {
+        return await this.repo.delete({chat_id: chatID});
     }
 }

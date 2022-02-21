@@ -4,6 +4,7 @@ import * as cookieParser from 'cookie-parser';
 import * as session from 'express-session';
 import * as pgSession from 'connect-pg-simple';
 import * as pg from 'pg';
+import { UserMiddleWare } from './common/middleware/user.middleware';
 
 
 async function bootstrap() {

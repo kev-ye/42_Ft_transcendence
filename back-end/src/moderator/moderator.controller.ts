@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Param, Post, Req } from '@nestjs/common';
+import { Controller, Delete, Get, Logger, Param, Patch, Post, Req } from '@nestjs/common';
 import { MessageBody } from '@nestjs/websockets';
 import { ModeratorService } from './moderator.service';
 
@@ -18,17 +18,19 @@ export class ModeratorController {
         return await this.service.createModerator(userID, data);
     }
 
-    @Delete()
+    @Patch()
     async deleteModerator(@MessageBody() data: any, @Req() req: any) {
         const userID = req.session.userId;
+        Logger.log("Trying delete moderator")
+
 
         return await this.service.deleteModerator(userID, data);
     }
 
-    @Delete()
+    @Patch('all')
     async deleteAllModerators(@MessageBody() data: any, @Req() req: any) {
         const userID = req.session.userId;
 
-        return await this.service.deleteAllModerator(userID, data);
+        return await this.service.deleteAllModerator(data);
     }
 }

@@ -19,4 +19,8 @@ export class PrivateInviteService {
     async isInvited(userID: string, chatID: string) {
         return await this.repo.findOne({user_id: userID, chat_id: chatID});
     }
+
+    async deleteAllByChat(chatID: string) {
+        await this.repo.delete({chat_id: chatID});
+    }
 }

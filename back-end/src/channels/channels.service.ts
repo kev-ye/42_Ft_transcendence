@@ -1,7 +1,9 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MessageBody } from '@nestjs/websockets';
 import { BanService } from 'src/ban/ban.service';
+import { BlockService } from 'src/block/block.service';
+import { ChatHistoryService } from 'src/chat-history/chat-history.service';
 import { ModeratorService } from 'src/moderator/moderator.service';
 import { MuteService } from 'src/mute/mute.service';
 import { PrivateInviteService } from 'src/private-invite/private-invite.service';
@@ -16,9 +18,11 @@ export class ChannelsService {
     private privateInvService: PrivateInviteService,
     @Inject('BAN_SERVICE') private banService: BanService,
     @Inject('MUTE_SERVICE') private muteService: MuteService,
-    @Inject('USER_SERVICE') private userService: UserService) {}
+    @Inject('USER_SERVICE') private userService: UserService,
+    @Inject('CHAT_HISTORY_SERVICE') private historyService: ChatHistoryService,
+    @Inject('BLOCK_SERVICE') private blockService: BlockService) {}
 
-    async checkOwner(userID: string, data: any) {
+    async checkOwner(userID: string, data: {chat_id: string}) {
         if (!data || !data.chat_id)
             return false;
         const chan = await this.getChannelById(data.chat_id);
@@ -27,7 +31,7 @@ export class ChannelsService {
         return true;
     }
 
-    async checkModerator(userID: string, data: any) {
+    async checkModerator(userID: string, data: {chat_id: string}) {
         if (!data || !data.chat_id)
             return false;
         
@@ -81,9 +85,8 @@ export class ChannelsService {
             return 0;
         if (channel.access == 2)
         {
-            if (await this.privateInvService.isInvited(userID, chatID))
-                return 0;
-            return 1;
+            if (!await this.privateInvService.isInvited(userID, chatID))
+                return 1;
         }
         return 0;
     }
@@ -101,30 +104,38 @@ export class ChannelsService {
         return await this.modService.createModerator(userID, {user_id: data.creator_id, chat_id: tmp.id});
     }
 
-    async createModerator(userID: string, data: any) {
+    async createModerator(userID: string, data: {user_id: string, chat_id: string}) {
+        Logger.log("Trying to mod user")
         if (!await this.checkOwner(userID, data))
             return ;
 
         return await this.modService.createModerator(userID, data);
     }
 
-    async deleteModerator(userID: string, data: any) {
+    async deleteModerator(userID: string, data: {chat_id: string, user_id: string}) {
         if (!await this.checkOwner(userID, data))
+        {
+            Logger.log("Deleting moderator request made by non-owner")
             return ;
+
+        }
         else if (await this.checkOwner(data.user_id, data))
+        {
+            Logger.log("Deleting moderator request made on owner")
             return ;
+        }
 
         return await this.modService.deleteModerator(userID, data);
     }
 
-    async deleteAllModerator(userID: string, data: any) {
+    async deleteAllModerator(userID: string, data: {chat_id: string, user_id: string}) {
         if (!await this.checkOwner(userID, data))
             return ;
 
-        return await this.modService.deleteAllModerator(userID, data);
+        return await this.modService.deleteAllModerator(data);
     }
 
-    async createMute(userID: string, data: any) {
+    async createMute(userID: string, data: {chat_id: string, user_id: string, date: Date}) {
         if (!(await this.checkModerator(userID, data)))
             return;
         else if (await this.checkOwner(data.user_id, data))
@@ -143,7 +154,7 @@ export class ChannelsService {
         return await this.muteService.getMute(chatID, userID);
     }
 
-    async banUser(userID: string, data: any) {
+    async banUser(userID: string, data: {user_id: string, chat_id: string}) {
         if (!await this.checkModerator(userID, data))
             return ;
         else if (await this.checkOwner(data.user_id, data))
@@ -189,5 +200,13 @@ export class ChannelsService {
             return 3;
         await this.privateInvService.createInvite({user_id: user.id, chat_id: data.chat_id, emitter: userID});
         return 0;
+    }
+
+    async deleteChannel(userID: string, chatID: string) {
+        await this.modService.deleteAllModerator({chat_id: chatID});
+        await this.muteService.deleteAllByChatId(chatID);
+        await this.privateInvService.deleteAllByChat(chatID);
+        await this.historyService.deleteByChatID(chatID);
+        return await this.banService.deleteAllByChatId(chatID);
     }
 }

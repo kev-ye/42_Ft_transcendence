@@ -8,7 +8,7 @@ export class ActiveUsersController {
 
     @Get(':id') 
     async getUsersInChat(@Param('id') id: string) {
-        return await this.service.getByChatId(id);
+        return await this.service.getUsersByChatId(id);
     }
 
     @Delete()

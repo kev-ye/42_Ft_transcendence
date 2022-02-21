@@ -21,6 +21,10 @@ export class MuteService {
         //return await this.repo.delete({first: data.first, second: data.second});
     }
 
+    async deleteAllByChatId(chat_id: string) {
+        return await this.repo.delete({chat_id: chat_id});
+    }
+
     async getMute(chatID: string, userID: string) {
         return await this.repo.findOne({chat_id: chatID, user_id: userID});
     }

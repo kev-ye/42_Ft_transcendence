@@ -1,7 +1,7 @@
 <style>
     .picture {
-        max-width: 300px;
-        max-height: 300px;
+        max-width: 200px;
+        max-height: 200px;
         border: solid black 1px;
         position: absolute;
         left: 50%;
@@ -19,6 +19,7 @@
 <br>
 <form>
     <input type="file" name="newImage" (change)="changeImage($event)" #file>
-
+    <br>
     <button type="button" (click)="submitImage()"> Submit image </button>
+    <button type="button" (click)="deleteImage()"> Delete </button>
 </form>

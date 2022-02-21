@@ -1,6 +1,8 @@
 import { HttpClient } from "@angular/common/http";
 import { Component, OnInit, Inject } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from "@angular/material/dialog";
+import { timeout } from "rxjs";
+import { Socket } from "socket.io-client";
 import { DialogMute } from "./dialog-mute.component";
 import { DialogUser } from "./dialog-user.component";
 
@@ -28,10 +30,6 @@ import { DialogUser } from "./dialog-user.component";
           let result: any[] = [];
           for (let tmp of this.users)
           {
-            if (result.find(val => {
-              return val.user_id == tmp.user_id;
-            }))
-              continue;
             result.push(tmp);
           }
           this.users = result;
@@ -51,7 +49,7 @@ import { DialogUser } from "./dialog-user.component";
         chat_id: this.data.chat.id,
         user_id: usr.id
       }, {withCredentials: true}).subscribe({next: res => {
-        this.moderators.push(res);
+        this.moderators.push({chat_id: this.data.chat.id, user_id: usr.id});
       }});
     }
 
@@ -60,7 +58,9 @@ import { DialogUser } from "./dialog-user.component";
         chat_id: this.data.chat.id,
         user_id: usr.id
       }, {withCredentials: true}).subscribe({next: res => {
-        const index = this.moderators.findIndex(val => val.user_id == usr.user_id);
+        const index = this.moderators.findIndex(val => val.user_id == usr.id);
+        console.log("removing moderator index", index);
+        
         if (index >= 0)
           this.moderators.splice(index);
       }});
@@ -82,6 +82,8 @@ import { DialogUser } from "./dialog-user.component";
     banUser(usr: any) {
       console.log("banning ", {user_id: usr.id, chat_id: this.data.chat.id});
       
+      const sock: Socket = this.data.socket;
+      /*
       this.http.post(`http://localhost:3000/channels/ban`,
       {
         user_id: usr.id, 
@@ -90,6 +92,15 @@ import { DialogUser } from "./dialog-user.component";
       .subscribe({next: () => {
         this.fetchUsers();
       }}) //todo
+      */
+     sock.emit('ban', {
+       user_id: usr.id,
+       chat_id: this.data.chat.id
+     });
+     setTimeout(() => {
+       this.fetchUsers();
+     }, 1000);
+     
     }
   
     openUserProfile(user: any) {

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BanModule } from 'src/ban/ban.module';
+import { BlockModule } from 'src/block/block.module';
 import { ChatHistoryModule } from 'src/chat-history/chat-history.module';
 import { ModeratorModule } from 'src/moderator/moderator.module';
 import { MuteModule } from 'src/mute/mute.module';
@@ -16,9 +17,11 @@ import { ChannelEntity } from './entity/channels.entity';
     TypeOrmModule.forFeature([ChannelEntity]),
     ModeratorModule,
     BanModule,
+    BlockModule,
     MuteModule,
     PrivateInviteModule,
-    UserModule
+    UserModule,
+    ChatHistoryModule
   ],
   controllers: [ChannelsController],
   providers: [{

@@ -1,6 +1,7 @@
-import { Controller, Delete, Get, Inject, Param, Patch, Post, Put, Req, Res } from '@nestjs/common';
+import { Controller, Delete, Get, Inject, Param, Patch, Post, Put, Req, Res, UseGuards } from '@nestjs/common';
 import { MessageBody } from '@nestjs/websockets';
 import { Response } from 'express';
+import { WsAuthGuard } from 'src/guards/WsAuthGuard.service';
 import { ChannelsService } from './channels.service';
 
 @Controller('channels')

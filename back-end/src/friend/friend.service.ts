@@ -12,7 +12,7 @@ export class FriendService {
         
     }
 
-    async addFriend(data: {first: number, second: number}) {
+    async addFriend(data: {first: string, second: string}) {
         const tmp = await this.repo.findOne({
             where: [{first: data.first, second: data.second}, {first: data.second, second: data.first}]
         });
@@ -41,16 +41,19 @@ export class FriendService {
 
 
     //return list of user IDs who are friends with 'id'
-    async getFriends(id: number) {
+    async getFriends(id: string) {
         const tmp = await this.repo.find({
             where: [{first: id}, {second: id}]
         });
         let result = [];
         tmp.forEach(value => {
-            if (value.first == id)
-                result.push({friend: value.second, status: value.status});
-            else
-                result.push({friend: value.first, status: value.status});
+            if (value.status)
+            {
+                if (value.first == id)
+                    result.push({friend: value.second, status: value.status});
+                else
+                    result.push({friend: value.first, status: value.status});
+            }
         });
 
         let final: any[] = [];

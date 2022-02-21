@@ -20,6 +20,7 @@ import { AppGateway } from 'src/gateways/app.gateway';
 import { BanModule } from 'src/ban/ban.module';
 import { ChatGatewayModule } from 'src/chat-gateway/chat-gateway.module';
 import { MuteModule } from 'src/mute/mute.module';
+import { ModeratorModule } from 'src/moderator/moderator.module';
 
 
 @Module({
@@ -50,7 +51,8 @@ import { MuteModule } from 'src/mute/mute.module';
 	ChatGatewayModule,
 	BanModule,
 	BlockModule,
-	MuteModule
+	MuteModule,
+	ModeratorModule
 	],
 	providers: [
 		AppGateway
