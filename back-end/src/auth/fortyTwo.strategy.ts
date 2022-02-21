@@ -5,7 +5,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-oauth2';
 import { lastValueFrom } from 'rxjs';
 
-import { LimitedUserDto } from 'src/user/dto/user.dto';
+import { UserDto } from 'src/user/dto/user.dto';
 import { AuthService } from './auth.service';
 
 @Injectable()
@@ -40,7 +40,7 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
 
     const { id, login, email, image_url } = (await getUser).data;
 
-    const user: LimitedUserDto = {
+    let user: UserDto = {
       id: id.toString(),
       login: login,
       name: '',
@@ -52,7 +52,7 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
       twoFactorQR: '',
     };
 
-    if (login) await this.authService.ftValidUser(user);
+    if (login) user = await this.authService.ftValidUser(user);
 
     return cb(null, user);
   }
