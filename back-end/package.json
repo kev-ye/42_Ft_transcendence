@@ -40,7 +40,6 @@
     "mysql2": "^2.3.3",
     "node-2fa": "^2.0.3",
     "passport": "^0.5.2",
-    "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",
     "passport-oauth2": "^1.6.1",
     "pg": "^8.7.1",

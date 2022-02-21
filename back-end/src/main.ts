@@ -11,10 +11,15 @@ async function bootstrap() {
     credentials: true,
   };
   const pgPool = new pg.Pool({
-    database: 'test',
-    user: 'yek',
+    host: 'postgres',
+    // database: 'test',
+    // user: 'yek',
+    // port: 5432,
+    // password: '',
+    database: 'db',
+    user: 'user',
     port: 5432,
-    password: '',
+    password: 'password',
   });
   const MAX_AGE: number = 60 * 60 * 24 * 1000; // one day
   const connectPgSession = pgSession(session);
@@ -48,6 +53,7 @@ async function bootstrap() {
     req.session.touch();
     next();
   });
+  app.setGlobalPrefix('api');
   await app.listen(3000);
   console.log(`Application is running on: ${await app.getUrl()}`);
 }
