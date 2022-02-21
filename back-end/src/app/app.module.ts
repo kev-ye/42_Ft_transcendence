@@ -13,26 +13,26 @@ import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   imports: [
-	TypeOrmModule.forRoot({
-		type: 'postgres',
-		host: 'localhost',
-		port: 5432,
-		username: 'bsellem',
-		password: 'bsellem',
-		database: 'test',
-		synchronize: true,
-		// logging: false,
-		dropSchema: true, // drop & recreate each tables - don't use in production
-		entities: [ "./dist/**/*.entity.js" ]
-		}),
-		UserModule,
-		FriendModule,
-		BlockModule,
-		ChatHistoryModule,
-		LadderModule,
-		PrivateModule,
-    PassportModule,
-    AuthModule
-	]
+    TypeOrmModule.forRoot({
+        type: 'postgres',
+        host: 'localhost',
+        port: 5432,
+        username: 'bsellem',
+        password: '',
+        database: 'test',
+        synchronize: true,
+        // logging: false,
+        dropSchema: true, // drop & recreate each tables - don't use in production
+        entities: [ "./dist/**/*.entity.js" ]
+      }),
+      UserModule,
+      FriendModule,
+      BlockModule,
+      ChatHistoryModule,
+      LadderModule,
+      PrivateModule,
+      PassportModule,
+      AuthModule,
+  ],
 })
 export class AppModule {}

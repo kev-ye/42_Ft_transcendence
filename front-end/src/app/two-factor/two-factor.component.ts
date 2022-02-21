@@ -1,20 +1,21 @@
-import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { FormGroup, FormControl, Validators, Form } from '@angular/forms';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+
+import { Subscription } from "rxjs";
 
 import { GlobalConsts } from '../common/global';
-import { Router } from '@angular/router';
 import { UserApiService } from '../service/user_api/user-api.service';
+import { UserAuthService } from "../service/user_auth/user-auth.service";
 
 @Component({
   selector: 'app-two-factor',
   templateUrl: './two-factor.component.html',
   styleUrls: ['./two-factor.component.css']
 })
-export class TwoFactorComponent implements OnInit {
+export class TwoFactorComponent implements OnInit, OnDestroy {
 	title: string =  GlobalConsts.siteTitle;
-	twoFaActive: boolean = false;
-	img: string = '';
+
 	twoFactorForm: FormGroup = new FormGroup({
 		token: new FormControl('', [
 			Validators.required,
@@ -22,65 +23,42 @@ export class TwoFactorComponent implements OnInit {
 		])
 	})
 
+	private subscription: Subscription = new Subscription();
+
   constructor(
 		private router: Router,
-		private userApi: UserApiService) { }
+		private userApi: UserApiService,
+		private userAuth: UserAuthService) { }
 
   ngOnInit(): void {
-		this.userApi.getUser()
-			.subscribe({
-				next: (v) => {
-					if (v.twoFactorSecret) {
-						console.log('twoFa:', this.twoFaActive);
-						this.twoFaActive = true;
-					}
-					else
-						this._generateNewTF();
-				},
-				error: (e) => console.log('Init error:', e),
-				complete: () => console.log('Init done')
-			});
+		this.subscription.add(this.userApi.getUser().subscribe({
+			next: (v) => {
+				if (!v.twoFactorSecret)
+					this.router.navigate(['main']).then();
+			},
+			error: (e) => {
+				console.error('Error: two-fa init:', e);
+				this.router.navigate(['main']).then();
+			},
+			complete: () => console.info('Complete: two-fa init done')
+		}));
   }
 
-	turnOff(): void {
-		this.userApi.twoFaTurnOff()
-			.subscribe({
-				next: (v) => {
-					this.twoFaActive = false;
-				},
-				error: (e) => console.log('Turn off error:', e),
-				complete: () => console.log('Turn off done')
-			});
+	ngOnDestroy() {
+		this.subscription.unsubscribe();
 	}
 
-	verif(): void {
-		this.userApi.twoFaVerif(this.twoFactorForm.value)
-			.subscribe({
-				next: (v) => {
-					if (v.delta === 0)
-						this.router.navigate(['main']);
-					else
-						window.alert((v.delta === -1)? 'Your token has expired' : 'Your Token is invalid');
-				},
-				error: (e) => console.log('Verif error:', e),
-				complete: () => console.log('Verif done')
-			});
-	}
-
-/*
- * Private function
- */
-
-	private _generateNewTF() {
-		this.userApi.twoFaGenerate()
-			.subscribe({
-				next: (v) => {
-					console.log('info:', v);
-					this.img = v.qr;
-				},
-				error: (e) => console.log('Generate error:', e),
-				complete: () => console.log('Generate done')
-			});
+	verify(): void {
+		this.subscription.add(this.userAuth.twoFaVerify(this.twoFactorForm.value).subscribe({
+			next: (v) => {
+				if (v.delta === 0)
+					this.router.navigate(['main']).then(_ => {});
+				else
+					window.alert((v.delta === -1)? 'Your token has expired' : 'Your Token is invalid');
+			},
+			error: (e) => console.log('Error: two-fa verify: ', e),
+			complete: () => console.log('Complete: two-fa verify done')
+		}));
 	}
 
 }

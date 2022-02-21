@@ -1,8 +1,0 @@
-<div class="item">
-	<h3 *ngIf="this.visibility">{{ this.title }}</h3>
-	<mat-icon *ngIf="this.visibility" (click)="toggleVisibility()">create</mat-icon>
-
-	<input *ngIf="!this.visibility" type="text" [(ngModel)]="this.title" [value]="this.title" contenteditable="true"
-		autofocus>
-	<mat-icon *ngIf="!this.visibility" (click)="onToggle()">check</mat-icon>
-</div>

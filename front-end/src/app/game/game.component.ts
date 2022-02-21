@@ -52,6 +52,7 @@ export class GameComponent implements OnInit {
 		x: this.game.WIDTH - this.paddle.WIDTH,
 		y: (this.game.HEIGHT / 2) - (this.paddle.HEIGHT / 2)
 	}
+	
 
 	constructor() {
 		this.start();

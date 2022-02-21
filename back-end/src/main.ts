@@ -16,7 +16,7 @@ async function bootstrap() {
     port: 5432,
     password: '',
   });
-  const MAX_AGE: number = 60 * 60 * 24 * 1000; // ms
+  const MAX_AGE: number = 60 * 60 * 24 * 1000; // one day
   const connectPgSession = pgSession(session);
   const app = await NestFactory.create(AppModule);
 
@@ -29,9 +29,8 @@ async function bootstrap() {
         createTableIfMissing: true,
         pruneSessionInterval: 60,
         // tableName: 'session'
-        // ttl: 60,
       }),
-      secret: 'transcendance-session-id-secret',
+      secret: 'transcendence-session-id-secret',
       name: '__pong_session_id__',
       resave: false,
       saveUninitialized: false,
@@ -44,7 +43,12 @@ async function bootstrap() {
       rolling: true,
     }),
   );
+  app.use(function (req, res, next) {
+    // req.session._garbage = Date();
+    req.session.touch();
+    next();
+  });
   await app.listen(3000);
   console.log(`Application is running on: ${await app.getUrl()}`);
 }
-bootstrap();
+bootstrap().then();

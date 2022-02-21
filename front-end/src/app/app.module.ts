@@ -15,10 +15,8 @@ import { UserSubscriptionComponent } from './user-subscription/user-subscription
 // import { GameComponent } from './game/game.component';
 // import { LoginCallbackComponent } from './login-callback/login-callback.component';
 // import { NotFoundComponent } from './not-found/not-found.component';
-import { UserPreferenceComponent } from './user-preference/user-preference.component';
 
 import { SharedMaterialModule } from './common/shared-material.module';
-import { EditableItemComponent } from './editable-item/editable-item.component';
 import { TwoFactorComponent } from './two-factor/two-factor.component';
 import { GameComponent } from './game/game.component';
 
@@ -28,8 +26,6 @@ import { GameComponent } from './game/game.component';
     MainComponent,
     UserLoginComponent,
     UserSubscriptionComponent,
-    UserPreferenceComponent,
-    EditableItemComponent,
     UserSubscriptionComponent,
     TwoFactorComponent,
     GameComponent,
