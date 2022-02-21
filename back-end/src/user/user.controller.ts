@@ -1,17 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Put,
-  Delete,
-  Req,
-  Res,
-  Redirect,
-  Header,
-  UseGuards,
-  Param,
-  Body,
-} from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Req, Res , Param, Body, UseGuards, Header, Head, Redirect, Session, Inject} from "@nestjs/common";
 import { AuthGuard } from '@nestjs/passport';
 
 import { UserDto, LimitedUserDto } from './dto/user.dto';
@@ -21,7 +8,7 @@ import * as twoFa from 'node-2fa';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(@Inject('USER_SERVICE') private readonly userService: UserService) {}
 
   @Get()
   getUsers(): Promise<LimitedUserDto[]> {
@@ -30,7 +17,7 @@ export class UserController {
 
   @Get('id')
   @Header('Access-Control-Allow-Origin', 'http://localhost:4200')
-  async getUserById(@Req() req: any, @Res() res: any): Promise<void> {
+  async getUserByCredentials(@Req() req: any, @Res() res: any): Promise<void> {
     // console.log('get id:', req.session.userId);
     const id = req.session.userId;
     const user = await this.userService.getUserById(id);
@@ -41,6 +28,11 @@ export class UserController {
         'Error message': 'Unauthorized Access',
       });
   }
+
+  @Get('id/:id')
+	async getUserById(@Param('id') id: string) {
+		return await this.userService.getUserById(id);
+	}
 
   @Get('login/:login')
   getUserByLogin(@Param('login') login: string): Promise<LimitedUserDto> {

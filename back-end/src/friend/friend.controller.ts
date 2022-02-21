@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Inject, Param, Post } from '@nestjs/common';
+import { Controller, Delete, Get, Inject, Param, Patch, Post } from '@nestjs/common';
 import { FriendService } from './friend.service';
 import { MessageBody } from '@nestjs/websockets'
 import { Interval } from '@nestjs/schedule';
@@ -8,11 +8,11 @@ export class FriendController {
     constructor(@Inject('FRIEND_SERVICE') private service: FriendService) {}
 
     @Post()
-    async addFriend(@MessageBody() data: {first: number, second: number}) {
+    async addFriend(@MessageBody() data: {first: string, second: string}) {
         return await this.service.addFriend(data);
     }
 
-    @Delete()
+    @Patch()
     async deleteFriend(@MessageBody() data: {first: number, second: number}) {
         console.log("Deleting", data.first, data.second);
         
@@ -20,7 +20,7 @@ export class FriendController {
     }
 
     @Get(':id')
-    async getFriends(@Param('id') id: number) {
+    async getFriends(@Param('id') id: string) {        
         return await this.service.getFriends(id);
     }
 

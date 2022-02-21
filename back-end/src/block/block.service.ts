@@ -8,7 +8,7 @@ import { BlockEntity } from './entity/block.entity';
 export class BlockService {
     constructor(@InjectRepository(BlockEntity) private repo: Repository<BlockEntity>) {}
 
-    async blockUser(data: {first: number, second: number}) {
+    async blockUser(data: {first: string, second: string}) {
         if (await this.repo.findOne({
             where: [
                 {first: data.first, second: data.second},
@@ -51,5 +51,10 @@ export class BlockService {
             result.push(data.second);
         })
         return result;
+    }
+
+    async deleteBlockByUserID(userID: string) {
+        await this.repo.delete({first: userID});
+        return await this.repo.delete({second: userID});
     }
 }

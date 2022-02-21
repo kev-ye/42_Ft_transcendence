@@ -9,7 +9,7 @@ describe('FriendController', () => {
       controllers: [FriendController],
     }).compile();
 
-    controller = module.get<FriendController>(FriendController);
+    controller = module.get<FriendController>(FriendController); 
   });
 
   it('should be defined', () => {

@@ -2,17 +2,17 @@ import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeor
 
 //table for channels' message history
 
-@Entity('channels_history_table')
+@Entity('channels_history')
 export class ChatHistoryEntity {
     
     @PrimaryGeneratedColumn('uuid')
     id: string; //auto-generated id
 
     @Column()
-    user_id: number; //user (identified by his 42 id) who sent message
+    user_id: string; //user (identified by his 42 id) who sent message
 
     @Column('text')
-    chat_id: number; //chat_id where the message was sent
+    chat_id: string; //chat_id where the message was sent
 
     @CreateDateColumn()
     created: Date; //auto-generated date

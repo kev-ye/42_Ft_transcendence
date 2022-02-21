@@ -1,0 +1,79 @@
+<style>
+    .background {
+        background-color: rgb(83, 83, 83);
+        border-top-left-radius: 15px;
+        border-bottom-left-radius: 15px;
+        width: 200px;
+    }
+
+    .avatar {
+        border-radius: 50%;
+        max-width: 100px;
+        max-height: 100px;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .category {
+        text-align: center;
+        text-decoration: underline;
+    }
+
+    .information {
+        text-align: center;
+    }
+
+    .username {
+        font-size: 1.2em;
+        text-align: center;
+    }
+
+    .username:hover {
+        text-decoration: underline;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .avatar {
+        transition: .25s ease;
+        cursor: pointer;
+    }
+
+    .avatar:hover  {
+        opacity: 0.5;
+    }
+</style>
+
+
+<div class="background">
+
+    <div *ngIf="connected">
+
+        <div class="container" style="position: relative; height: 100px; padding-top: 15px;">
+            <img [src]="user.avatar" alt="" class="avatar" (click)="openImageDialog()">
+        </div>
+
+        <h1 class="username" (click)="openUsername()"> {{ user.username }} </h1>
+
+        <div style="line-height: 0.1em">
+            <h3 class="category"> Login </h3>
+            <h4 class="information"> {{ user.login }}</h4>
+            <br>
+        </div>
+        
+        <div style="line-height: 0.1em; margin-bottom: 15px;">
+            <h3 class="category"> Ladder points </h3>
+            <h4 class="information"> {{ user.ladder }}</h4>
+        </div>
+
+        <br>
+    </div>
+    <div *ngIf="!connected">
+        <h1>
+            Trying to connect to back-end server..
+        </h1>
+    </div>
+    
+</div>

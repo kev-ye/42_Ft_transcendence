@@ -1,7 +1,7 @@
 import { Column, CreateDateColumn, Entity, PrimaryColumn } from 'typeorm';
 
 // table for users
-@Entity('users_table')
+@Entity('users')
 export class UserEntity {
   @PrimaryColumn({ unique: true })
   id: string; // 42 id

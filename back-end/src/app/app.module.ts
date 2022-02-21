@@ -9,7 +9,14 @@ import { FriendModule } from '../friend/friend.module';
 import { ChatHistoryModule } from '../chat-history/chat-history.module';
 import { LadderModule } from '../ladder/ladder.module';
 import { PrivateModule } from '../private/private.module';
+import { ChannelsModule } from 'src/channels/channels.module';
+import { ImageModule } from 'src/image/image.module';
 import { AuthModule } from 'src/auth/auth.module';
+import { ActiveUsersModule } from 'src/active-users/active-users.module';
+import { BanModule } from 'src/ban/ban.module';
+import { ChatGatewayModule } from 'src/chat-gateway/chat-gateway.module';
+import { MuteModule } from 'src/mute/mute.module';
+import { ModeratorModule } from 'src/moderator/moderator.module';
 
 @Module({
   imports: [
@@ -33,8 +40,19 @@ import { AuthModule } from 'src/auth/auth.module';
     ChatHistoryModule,
     LadderModule,
     PrivateModule,
-    PassportModule,
-    AuthModule,
-  ],
+	ChannelsModule,
+	ImageModule,
+	PassportModule,
+	AuthModule,
+	ActiveUsersModule,
+	ChatGatewayModule,
+	BanModule,
+	BlockModule,
+	MuteModule,
+	ModeratorModule
+	],
+	providers: [
+	],
+
 })
 export class AppModule {}
