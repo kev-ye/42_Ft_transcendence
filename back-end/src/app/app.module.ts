@@ -10,11 +10,9 @@ import { ChatHistoryModule } from '../chat-history/chat-history.module';
 import { LadderModule } from '../ladder/ladder.module';
 import { PrivateModule } from '../private/private.module';
 import { ChannelsModule } from 'src/channels/channels.module';
-import { ChatGateway } from 'src/chat-gateway/chat.gateway';
 import { ImageModule } from 'src/image/image.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { ActiveUsersModule } from 'src/active-users/active-users.module';
-import { AppGateway } from 'src/gateways/app.gateway';
 import { BanModule } from 'src/ban/ban.module';
 import { ChatGatewayModule } from 'src/chat-gateway/chat-gateway.module';
 import { MuteModule } from 'src/mute/mute.module';
@@ -52,7 +50,6 @@ import { ModeratorModule } from 'src/moderator/moderator.module';
 	ModeratorModule
 	],
 	providers: [
-		AppGateway
 	],
 
 })
