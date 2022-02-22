@@ -1,6 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Component, Inject, ViewChild, ElementRef } from "@angular/core";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { GlobalConsts } from "src/app/common/global";
 
 @Component({
     templateUrl: './html/dialog-channel-settings.html'
@@ -45,7 +46,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
           this.error.nativeElement.textContent = "Please enter same password"
           return ;
         }
-        this.http.put('http://localhost:3000/channels', {id: this.data.id, access: this.access, password: passwordOne}, {withCredentials: true}).subscribe({next:
+        this.http.put(`${GlobalConsts.userApi}/channels`, {id: this.data.id, access: this.access, password: passwordOne}, {withCredentials: true}).subscribe({next:
                   data => {
                       this.dialogRef.close(true);
               },
@@ -54,7 +55,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
             }});
         return ;
       }
-      this.http.put('http://localhost:3000/channels', {id: this.data.id, access: this.access}, {withCredentials: true}).subscribe({next: 
+      this.http.put(`${GlobalConsts.userApi}/channels`, {id: this.data.id, access: this.access}, {withCredentials: true}).subscribe({next: 
               data => {
                   this.dialogRef.close(true);
                   

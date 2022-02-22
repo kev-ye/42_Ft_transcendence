@@ -1,6 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Component, ElementRef, Inject, OnInit, ViewChild } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { GlobalConsts } from "src/app/common/global";
 
 @Component({
     selector: "dialog-protected-chat",
@@ -19,7 +20,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
     }
   
     submitPassword(password: string) {
-      this.http.post('http://localhost:3000/channels/password/' + this.chat_id, {password: password}, {withCredentials: true}).subscribe({
+      this.http.post(`${GlobalConsts.userApi}/channels/password/` + this.chat_id, {password: password}, {withCredentials: true}).subscribe({
         next: data => {
           if (data)
             this.dialog.close({success: true, password: password});

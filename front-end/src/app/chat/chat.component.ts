@@ -12,6 +12,7 @@ import { DialogBanned } from './dialogs/dialog-banned.component';
 import { DialogAddFriend } from './dialogs/dialog-add-friend.component';
 import { DialogMuted } from './dialogs/dialog-muted.component';
 import { DialogAccessChat } from './dialogs/dialog-access-chat.component';
+import { GlobalConsts } from '../common/global';
 
 @Component({
 	selector: 'app-chat',
@@ -22,7 +23,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 	
 	constructor(public dialog: MatDialog, private http: HttpClient) { }
 	
-	chat: {show: boolean, public: boolean, id: string, user_id: string, name: string, moderator: boolean, creator_id: string} = {show: false, public: true, name: "", id: "", user_id: "", moderator: true, creator_id: '79139'};
+	chat: {show: boolean, public: boolean, access: number, id: string, user_id: string, name: string, moderator: boolean, creator_id: string} = {show: false, public: true, name: "", id: "", user_id: "", moderator: true, creator_id: '79139', access: 0};
 	messages: {id: string, username: string, user_id: string, type: number, message?: string}[] = [];
 	
 	scroll: boolean = false;
@@ -59,7 +60,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 	}
 	
 	fetchChannels() {
-		this.http.get('http://localhost:3000/channels/', {withCredentials: true}).subscribe({next: data => {
+		this.http.get(`${GlobalConsts.userApi}/channels/`, {withCredentials: true}).subscribe({next: data => {
 		console.log("fetched channels", data);
 		this.channelList = data as any[];
 	},
@@ -69,7 +70,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 }
 
 deleteFriend(friend: any) {
-	this.http.patch('http://localhost:3000/friend',
+	this.http.patch(`${GlobalConsts.userApi}/friend`,
 	{
 		first: this.user.id,
 		second: friend.id
@@ -112,7 +113,7 @@ openChannelSettings() {
 
 fetchPrivateMessage(friend: any) {
 	this.messages = [];
-	this.http.get('http://localhost:3000/private/' + this.user.id + "/" + friend.id, {withCredentials: true}).subscribe(data => {
+	this.http.get(`${GlobalConsts.userApi}/private/` + this.user.id + "/" + friend.id, {withCredentials: true}).subscribe(data => {
 	console.log("fetched private history", data);
 	this.messages = data as {id: string, username: string, user_id: string, type: number, message?: string}[];
 	
@@ -125,7 +126,7 @@ fetchPrivateMessage(friend: any) {
 }
 
 fetchChannelHistory(channel: any) {
-	this.http.get('http://localhost:3000/history/' + channel.id, {headers: {password: this.password}, withCredentials: true}).subscribe(data => {
+	this.http.get(`${GlobalConsts.userApi}/history/` + channel.id, {headers: {password: this.password}, withCredentials: true}).subscribe(data => {
 	console.log("fetched history", data);
 	
 	this.messages = data as {id: string, user_id: string, type: number, username: string, message?: string}[];
@@ -146,7 +147,7 @@ fetchChannelHistory(channel: any) {
 }
 
 fetchBlockedUsers() {
-	this.http.get('http://localhost:3000/block/' + this.user.id, {withCredentials: true}).subscribe(data => {
+	this.http.get(`${GlobalConsts.userApi}/block/` + this.user.id, {withCredentials: true}).subscribe(data => {
 	this.blocked = data as any[];
 });
 }
@@ -182,7 +183,7 @@ ngOnInit(): void {
 		})
 	})
 	
-	this.http.get('http://localhost:3000/user/id', {withCredentials: true}).subscribe((data: any) => {
+	this.http.get(`${GlobalConsts.userApi}/user/id`, {withCredentials: true}).subscribe((data: any) => {
 	this.user.id = data.id;
 	this.fetchBlockedUsers();
 })
@@ -230,7 +231,7 @@ getStatusColor(friend: any) {
 }
 
 addFriend(friend: any) {
-	this.http.post('http://localhost:3000/friend/', {
+	this.http.post(`${GlobalConsts.userApi}/friend/`, {
 	first: this.user.id,
 	second: friend.id
 }, {withCredentials: true}).subscribe({
@@ -295,7 +296,7 @@ sendMessage() {
 		}
 		
 		connectRoom(channel: any) {
-			this.http.get('http://localhost:3000/channels/access/' + channel.id,
+			this.http.get(`${GlobalConsts.userApi}/channels/access/` + channel.id,
 			{withCredentials: true})
 			.subscribe({next: (data) => {
 				console.log("received response from connectRoom:", data);
@@ -308,6 +309,7 @@ sendMessage() {
 					this.chat.show = true;
 					this.chat.creator_id = channel.creator_id;
 					this.chat.moderator = channel.moderator;
+					this.chat.access = channel.access;
 					this.scroll = true;
 				} else if (data == 2) //user is banned
 				{
@@ -358,7 +360,7 @@ sendMessage() {
 		}
 		
 		fetchFriends() {
-			this.http.get('http://localhost:3000/friend/' + this.user.id, {withCredentials: true}).subscribe({next:
+			this.http.get(`${GlobalConsts.userApi}/friend/` + this.user.id, {withCredentials: true}).subscribe({next:
 			data => {
 				console.log("fetched friends", data);
 				this.friendList = data as any[];

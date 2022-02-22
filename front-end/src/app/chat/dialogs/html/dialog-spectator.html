@@ -3,7 +3,7 @@
     
     <div *ngFor="let usr of users"> {{ usr.name }}
         <button (click)="openUserProfile(usr)"> Profile </button>
-        <div style="display: inline;" *ngIf="data.chat.moderator && usr.id != data.chat.creator_id">
+        <div style="display: inline;" *ngIf="data.chat.moderator && usr.id != data.chat.creator_id && usr.id != data.user_id">
             <button (click)="banUser(usr)"> Ban from chat </button>
             <button (click)="muteUser(usr)"> Mute </button>
             <div *ngIf="data.chat.creator_id == data.my_id">

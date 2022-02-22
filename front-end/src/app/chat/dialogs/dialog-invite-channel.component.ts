@@ -1,6 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Component, ElementRef, Inject, ViewChild } from "@angular/core";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { GlobalConsts } from "src/app/common/global";
 
   @Component({
     selector: "dialog-invite",
@@ -13,7 +14,7 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 
     inviteFriend(friend: string) {
       //invite friend to channel
-      this.http.post('http://localhost:3000/channels/invite/name', {
+      this.http.post(`${GlobalConsts.userApi}/channels/invite/name`, {
         chat_id: this.data.chat.id,
         name: friend
       }, {withCredentials: true}).subscribe({next: res=> {

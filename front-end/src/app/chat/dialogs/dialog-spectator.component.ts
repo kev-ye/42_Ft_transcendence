@@ -3,6 +3,7 @@ import { Component, OnInit, Inject } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from "@angular/material/dialog";
 import { timeout } from "rxjs";
 import { Socket } from "socket.io-client";
+import { GlobalConsts } from "src/app/common/global";
 import { DialogMute } from "./dialog-mute.component";
 import { DialogUser } from "./dialog-user.component";
 
@@ -13,7 +14,7 @@ import { DialogUser } from "./dialog-user.component";
   export class DialogSpectator implements OnInit{
     constructor(private http: HttpClient, @Inject(MAT_DIALOG_DATA) public data: any, public dialogRef: MatDialogRef<DialogSpectator>, public dialog: MatDialog) {
       console.log("data spectator", data);
-      http.get('http://localhost:3000/moderator/' + data.chat.id).subscribe(data => {
+      http.get(`${GlobalConsts.userApi}/moderator/` + data.chat.id).subscribe(data => {
         this.moderators = data as any[];
         console.log("moderators", this.moderators);
         
@@ -23,14 +24,15 @@ import { DialogUser } from "./dialog-user.component";
     public users: any[] = [];
   
     fetchUsers() {
-      this.http.get("http://localhost:3000/active-users/" + this.data.chat.id, {withCredentials: true}).subscribe(val => {
+      this.http.get(`${GlobalConsts.userApi}/active-users/` + this.data.chat.id, {withCredentials: true}).subscribe(val => {
           console.log("fetched active users ", val);
           
           this.users = val as any[];
           let result: any[] = [];
           for (let tmp of this.users)
           {
-            result.push(tmp);
+            if (result.findIndex(data => data.id == tmp.id) == -1)
+              result.push(tmp);
           }
           this.users = result;
       })
@@ -45,7 +47,7 @@ import { DialogUser } from "./dialog-user.component";
     modUser(usr: any) {
       console.log("modding", usr);
       
-      this.http.post('http://localhost:3000/channels/moderator', {
+      this.http.post(`${GlobalConsts.userApi}/channels/moderator`, {
         chat_id: this.data.chat.id,
         user_id: usr.id
       }, {withCredentials: true}).subscribe({next: res => {
@@ -54,7 +56,7 @@ import { DialogUser } from "./dialog-user.component";
     }
 
     unmodUser(usr: any) {
-      this.http.patch('http://localhost:3000/channels/moderator', {
+      this.http.patch(`${GlobalConsts.userApi}/channels/moderator`, {
         chat_id: this.data.chat.id,
         user_id: usr.id
       }, {withCredentials: true}).subscribe({next: res => {
@@ -84,7 +86,7 @@ import { DialogUser } from "./dialog-user.component";
       
       const sock: Socket = this.data.socket;
       /*
-      this.http.post(`http://localhost:3000/channels/ban`,
+      this.http.post(`${GlobalConsts.userApi}/channels/ban`,
       {
         user_id: usr.id, 
         chat_id: this.data.chat.id 

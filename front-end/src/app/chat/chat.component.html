@@ -163,7 +163,7 @@
                         {{ chat.name }}
                     </div>
                     <mat-icon (click)="openFriendList()" style="position: absolute; top: 0%; left: 0%; cursor: pointer;"> keyboard_arrow_left </mat-icon>
-                    <mat-icon (click)="inviteFriend()" class="btn" style="bottom: 0%; right: 0%; margin-right: 15px;"> person_add</mat-icon>
+                    <mat-icon (click)="inviteFriend()" *ngIf="chat.access == 2" class="btn" style="bottom: 0%; right: 0%; margin-right: 15px;"> person_add</mat-icon>
                     <mat-icon (click)="openSpec()" class="btn" style="bottom: 0%; left: 0%; margin-left: 15px;"> remove_red_eye </mat-icon>
                 </div>
                 <div style="height: 75%; width: 100%; position: relative; background-color: rgb(201, 201, 201); overflow-x: hidden; overflow-y: scroll; -ms-overflow-style: none; scrollbar-width: none;" #framePublic>

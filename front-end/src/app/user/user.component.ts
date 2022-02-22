@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { GlobalConsts } from '../common/global';
 
 
 @Component({
@@ -20,7 +21,8 @@ export class UserComponent implements OnInit {
 
   refreshUserDetails() {
     //load data from backend server
-    this.http.get('http://localhost:3000/user/id/', {withCredentials: true}).subscribe({
+
+    this.http.get(`${GlobalConsts.userApi}/user/id/`, {withCredentials: true}).subscribe({
       next: data => {
         if (!data)
         {
@@ -31,11 +33,11 @@ export class UserComponent implements OnInit {
         const tmp = data as any;
         this.user = tmp;
         this.user.username = tmp.name;
-        this.user.avatar = "http://localhost:3000/image/user/" + this.user.id;
+        this.user.avatar = `${GlobalConsts.userApi}/image/user/` + this.user.id;
 
         this.connected = true;
 
-        this.http.get('http://localhost:3000/ladder/' + this.user.id, {withCredentials: true}).subscribe({
+        this.http.get(`${GlobalConsts.userApi}/ladder/` + this.user.id, {withCredentials: true}).subscribe({
           next: (data: any) => {
             this.user.ladder = data.points;
           },
@@ -104,7 +106,7 @@ export class DialogChangeUsername implements OnInit {
   @ViewChild('statusText') private statusText: ElementRef<HTMLDivElement>;
 
   changeUsername(newUsername: string) {
-    this.http.put('http://localhost:3000/user/update', {id: this.userID, name: newUsername}, {withCredentials: true}).subscribe({
+    this.http.put(`${GlobalConsts.userApi}/user/update`, {id: this.userID, name: newUsername}, {withCredentials: true}).subscribe({
       next: data => {
         console.log("Changed successfully username");
         this.dialogRef.close(true);
@@ -120,7 +122,7 @@ export class DialogChangeUsername implements OnInit {
     if (username)
     {
       //look for username in database and see if available
-      this.http.get('http://localhost:3000/user/name/' + username, {withCredentials: true}).subscribe({
+      this.http.get(`${GlobalConsts.userApi}/user/name/` + username, {withCredentials: true}).subscribe({
         next: data => {
           if (!data)
           {
@@ -152,7 +154,7 @@ export class DialogChangeUsername implements OnInit {
 export class DialogChangeImage {
   constructor(@Inject(MAT_DIALOG_DATA) private data: any, private http: HttpClient,
   private dialogRef: MatDialogRef<DialogChangeImage>) {
-    this.link = "http://localhost:3000/image/user/" + data.user_id;
+    this.link = `${GlobalConsts.userApi}/image/user/` + data.user_id;
   }
 
   link: string = "";
@@ -207,7 +209,7 @@ export class DialogChangeImage {
         }
         let fd = new FormData();
         fd.append('image', image);
-        this.http.post<FormData>('http://localhost:3000/image/upload/' + this.data.user_id, fd, {headers: {extension: ext}, withCredentials: true}).subscribe((res) => {
+        this.http.post<FormData>(`${GlobalConsts.userApi}/image/upload/` + this.data.user_id, fd, {headers: {extension: ext}, withCredentials: true}).subscribe((res) => {
           
         });
       }
@@ -217,8 +219,8 @@ export class DialogChangeImage {
   }
 
   async deleteImage() {
-    this.http.delete(`http://localhost:3000/image/${this.data.user_id}`).subscribe( () => {
-      this.dialogRef.close('http://localhost:3000/image/');
+    this.http.delete(`${GlobalConsts.userApi}/image/${this.data.user_id}`).subscribe( () => {
+      this.dialogRef.close(`${GlobalConsts.userApi}/image/`);
     })
 
   }
