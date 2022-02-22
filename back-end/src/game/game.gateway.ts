@@ -33,12 +33,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async handleConnection(client: any, ...args: any[]) {
       await this.playerService.createPlayer(client.id);
       client.emit('user');
+      //client must send his user details when he receives this signal
   }
 
   async handleDisconnect(client: any) {
       await this.playerService.deletePlayerBySocketId(client.id);
   }
 
+
+  //client sends his user details so we update player DB
   @SubscribeMessage('user')
   async updateUser(@MessageBody() data: any, @ConnectedSocket() client: Socket) {
     await this.playerService.setUserIdBySocketId(client.id, data.id);
@@ -53,7 +56,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       return ;
     }
     client.join(data.game_id);
-    client.emit('joinedGame', {game_id: data.game_id});
+    client.emit('joinedGame', {game_id: data.game_id}); //show game to user when he receives this signal
+
+    //todo: send gameReady when 2 players are in the room
+    //todo: send startGame
+  }
+
+  @SubscribeMessage('disconnectGame')
+  async disconnectFromGame(@MessageBody() data: {game_id: string}, @ConnectedSocket() client: Socket) {
+    client.leave(data.game_id);
   }
   
 }

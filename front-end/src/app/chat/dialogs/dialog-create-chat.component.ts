@@ -1,6 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Component, Inject, ViewChild, ElementRef } from "@angular/core";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { GlobalConsts } from "src/app/common/global";
 
 @Component({
   selector: "dialog-create-chat",
@@ -48,7 +49,7 @@ export class DialogCreateChat {
         this.error.nativeElement.textContent = "Please enter same password"
         return ;
       }
-      this.http.post('http://localhost:3000/channels', {name: name, access: this.access, password: passwordOne, creator_id: this.user_id}, {withCredentials: true}).subscribe({next:
+      this.http.post(`${GlobalConsts.userApi}/channels`, {name: name, access: this.access, password: passwordOne, creator_id: this.user_id}, {withCredentials: true}).subscribe({next:
       data => {
         this.dialogRef.close(true);
       },
@@ -60,7 +61,7 @@ export class DialogCreateChat {
     }
     console.log("Dadas");
     
-    this.http.post('http://localhost:3000/channels', {name: name, access: this.access, creator_id: this.user_id}, {withCredentials: true}).subscribe({next: 
+    this.http.post(`${GlobalConsts.userApi}/channels`, {name: name, access: this.access, creator_id: this.user_id}, {withCredentials: true}).subscribe({next: 
     data => {
       console.log("teest");
       
