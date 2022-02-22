@@ -17,6 +17,9 @@ import { BanModule } from 'src/ban/ban.module';
 import { ChatGatewayModule } from 'src/chat-gateway/chat-gateway.module';
 import { MuteModule } from 'src/mute/mute.module';
 import { ModeratorModule } from 'src/moderator/moderator.module';
+import { GameGateway } from 'src/game/game.gateway';
+import { PlayersModule } from 'src/players/players.module';
+import { GameModule } from 'src/game/game.module';
 
 @Module({
   imports: [ 
@@ -47,7 +50,9 @@ import { ModeratorModule } from 'src/moderator/moderator.module';
 	BanModule,
 	BlockModule,
 	MuteModule,
-	ModeratorModule
+	ModeratorModule,
+	GameModule,
+	PlayersModule
 	],
 	providers: [
 	],

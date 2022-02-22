@@ -22,6 +22,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @WebSocketServer()
     server: Server;
 
+    
+
     onModuleInit() {
     }
 
@@ -146,9 +148,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         type: number,
         chat: {public: boolean, id: string}})
     {
+        console.log("message received");
+        
         const tmp = await this.activeService.getUserBySocketId(client.id);
         if (!tmp || !tmp.user_id || !data.chat.id || data.chat.id != tmp.chat_id)
             return ;
+            console.log("mid message received");
+            
         
         
         const user = await this.userService.getUserById(tmp.user_id);
