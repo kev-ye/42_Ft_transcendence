@@ -1,6 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Component, OnInit, Inject } from "@angular/core";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { GlobalConsts } from "src/app/common/global";
 
 @Component({
     selector: "dialog-user",
@@ -22,7 +23,7 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
           this.blocked = true;
       });
 
-      //this.link = `http://localhost:3000/image/`
+      //this.link = `${GlobalConsts.userApi}/image/`
       
     }
   
@@ -32,7 +33,7 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
     error: boolean = false;
   
     ngOnInit(): void {
-      this.http.get('http://localhost:3000/user/id/' + this.id, {withCredentials: true}).subscribe({
+      this.http.get(`${GlobalConsts.userApi}/user/id/` + this.id, {withCredentials: true}).subscribe({
         next: (data: any) => {
           console.log("fetched user details", data);
           
@@ -41,9 +42,9 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
           else
             this.error = true;
           if (data.avatar && data.avatar != "")
-            this.link = `http://localhost:3000/image/${data.avatar}`
+            this.link = `${GlobalConsts.userApi}/image/${data.avatar}`
           else
-            this.link = `http://localhost:3000/image`
+            this.link = `${GlobalConsts.userApi}/image`
         },
         error: data => {
           this.error = true;
@@ -56,7 +57,7 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
     }
 
     blockUser() {
-      this.http.post('http://localhost:3000/block', {
+      this.http.post(`${GlobalConsts.userApi}/block`, {
         first: this.my_id,
         second: this.id
       }, {withCredentials: true}).subscribe(() => {
@@ -66,7 +67,7 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
     }
 
     unblockUser() {
-      this.http.post('http://localhost:3000/unblock', {
+      this.http.post(`${GlobalConsts.userApi}/unblock`, {
         first: this.my_id,
         second: this.id
       }, {withCredentials: true}).subscribe(() => {
@@ -80,7 +81,7 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
     }
 
     deleteFriend() {
-      this.http.patch('http://localhost:3000/friend', {
+      this.http.patch(`${GlobalConsts.userApi}/friend`, {
         first: this.my_id,
         second: this.id
       }, {withCredentials: true}).subscribe({
@@ -95,7 +96,7 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
     }
   
     addFriend() {
-        this.http.post('http://localhost:3000/friend', {first: this.my_id, second: this.id}, {withCredentials: true}).subscribe({
+        this.http.post(`${GlobalConsts.userApi}/friend`, {first: this.my_id, second: this.id}, {withCredentials: true}).subscribe({
             next: data => {
                 console.log("sent friend request", data);
                 this.friend = true;

@@ -1,6 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Component, Inject } from "@angular/core";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { GlobalConsts } from "src/app/common/global";
 
 @Component({
     templateUrl: './html/dialog-mute.html'
@@ -14,7 +15,7 @@ export class DialogMute {
             time.value = 3600;
         else if (time.value < 1)
             time.value = 1;
-        this.http.post('http://localhost:3000/channels/mute', { 
+        this.http.post(`${GlobalConsts.userApi}/channels/mute`, { 
             seconds: time.value,
             user_id: this.data.user_id,
             chat_id: this.data.chat_id
