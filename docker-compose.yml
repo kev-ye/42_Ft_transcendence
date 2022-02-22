@@ -33,7 +33,7 @@ services:
       target: development
     command: npm run start
     volumes:
-      - ./front-end:/pong/frontend/src/app
+      - ./front-end:/pong/front-end/src/app
       - /pong/front-end/src/app/node_modules
     ports:
       - "4200:4200"
