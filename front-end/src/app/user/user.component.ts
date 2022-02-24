@@ -24,8 +24,7 @@ export class UserComponent implements OnInit {
 
     this.http.get(`${GlobalConsts.userApi}/user/id/`, {withCredentials: true}).subscribe({
       next: data => {
-        if (!data)
-        {
+        if (!data) {
           console.log("Could not fetch user details");
           return ;
         }
@@ -43,11 +42,11 @@ export class UserComponent implements OnInit {
           },
           error: data => {
             console.log("Could not fetch user ladder points");
-            
+
         }});
     }, error: data => {
       console.log("Could not fetch user details");
-      
+
     }});
   }
 
@@ -83,8 +82,8 @@ export class UserComponent implements OnInit {
         this.refreshUserDetails();
     })
   }
-  
-  
+
+
 
 
 }
@@ -118,7 +117,7 @@ export class DialogChangeUsername implements OnInit {
   }
 
   inputEvent(username: string) {
-    
+
     if (username)
     {
       //look for username in database and see if available
@@ -126,7 +125,7 @@ export class DialogChangeUsername implements OnInit {
         next: data => {
           if (!data)
           {
-            this.statusText.nativeElement.textContent = username + " is available";    
+            this.statusText.nativeElement.textContent = username + " is available";
             this.change = true;
           }
           else
@@ -175,12 +174,12 @@ export class DialogChangeImage {
           this.link = reader.result.toString();
       };
     }
-    
+
   }
 
 
   submitImage() {
-    
+
     if (!this.file.nativeElement.files)
       return ;
 
@@ -196,12 +195,12 @@ export class DialogChangeImage {
 
       let ext: string = "";
       let index: number = 0;
-      
+
       if ((index = ((image.name as string).lastIndexOf('.'))) > 0)
       {
         ext = (image.name as string).substring(index).toUpperCase();
         console.log("extension " + ext);
-        
+
         if (ext != ".PNG" && ext != ".JPG")
         {
           console.log("Bad extension 1: " + ext);
@@ -210,7 +209,7 @@ export class DialogChangeImage {
         let fd = new FormData();
         fd.append('image', image);
         this.http.post<FormData>(`${GlobalConsts.userApi}/image/upload/` + this.data.user_id, fd, {headers: {extension: ext}, withCredentials: true}).subscribe((res) => {
-          
+
         });
       }
       else

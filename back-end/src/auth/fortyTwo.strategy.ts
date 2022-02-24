@@ -53,7 +53,6 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
     };
 
     if (login) user = await this.authService.ftValidUser(user);
-
     return cb(null, user);
   }
 }

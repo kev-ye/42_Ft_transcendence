@@ -18,11 +18,12 @@
           <mat-error *ngIf="subscriptionForm.get('name')?.hasError('pattern')">only letters</mat-error>
           <mat-error *ngIf="subscriptionForm.get('name')?.hasError('minlength')">min 6 caracters.</mat-error>
         </mat-form-field>
+				  <button mat-button color="warm" (click)="nameVerify()">check name</button>
         <div>
           <button mat-button matStepperNext color="primary">Next to Avatar</button>
         </div>
       </mat-step>
-      
+
       <!-- avatar step -->
       <mat-step label="Avatar" optional>
         <button mat-button matStepperPrevious color="warn">Back to Info</button>
@@ -30,13 +31,13 @@
       </mat-step>
 
     </form>
-      
+
     <!-- submit step -->
     <mat-step label="Done" optional>
       <button mat-button matStepperPrevious color="warn">Back to Avatar</button>
       <button type="submit" mat-button color="primary" (click)="createUser()">Done</button>
       <!-- <button type="submit" mat-button color="primary">Done</button> -->
     </mat-step>
-    
+
   </mat-vertical-stepper>
 </div>

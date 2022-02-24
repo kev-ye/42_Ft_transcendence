@@ -1,7 +1,7 @@
 # Stage 1: build
 FROM node:16.13.2 AS development
 
-WORKDIR /pong/front-end/src/app
+WORKDIR /pong/front-end/
 
 COPY package*.json ./
 

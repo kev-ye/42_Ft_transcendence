@@ -39,10 +39,10 @@ export class AppComponent implements OnInit, OnDestroy {
 		this.subscription?.unsubscribe();
 	}
 
-	// @HostListener('window:beforeunload')
-	// beforeExitWindow(): boolean {
-	// 	if (this.router.url !== '/user_login')
-	// 		return navigator.sendBeacon(`${GlobalConsts.userApi}/user/auth/logout`);
-	// 	return true;
-	// }
+	@HostListener('window:beforeunload')
+	beforeExitWindow(): boolean {
+		if (this.router.url !== '/user_login')
+			return navigator.sendBeacon(`${GlobalConsts.userApi}/user/auth/logout`);
+		return true;
+	}
 }

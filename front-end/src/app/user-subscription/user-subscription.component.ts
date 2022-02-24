@@ -22,7 +22,7 @@ export class UserSubscriptionComponent implements OnInit, OnDestroy {
     ])
   });
 
-	private subscription?: Subscription;
+	private subscription: Subscription = new Subscription();
 
 	constructor(
 		private router: Router,
@@ -31,16 +31,16 @@ export class UserSubscriptionComponent implements OnInit, OnDestroy {
   ngOnInit(): void {}
 
 	ngOnDestroy() {
-		this.subscription?.unsubscribe();
+		this.subscription.unsubscribe();
 	}
 
 	createUser() {
 		const confirm$: boolean = confirm(`Create account with name: ${this.subscriptionForm.value.name} ?`)
 		if (confirm$)
-			this.subscription = this.userApi.createUser(this.subscriptionForm.value.name).subscribe({
+			this.subscription.add(this.userApi.createUser(this.subscriptionForm.value.name).subscribe({
 				next: (v) => {
 					console.log('name:', this.subscriptionForm.value.name);
-					if (v.name === this.subscriptionForm.value.name)
+					if (v && v.name === this.subscriptionForm.value.name)
 						this.router.navigate(['main']).then();
 					else
 						alert('something wrong, try again!');
@@ -50,6 +50,21 @@ export class UserSubscriptionComponent implements OnInit, OnDestroy {
 					this.router.navigate(['user_login']).then();
 				},
 				complete: () => console.info('Complete: create user done')
-			});
+			}));
   }
+
+	nameVerify() {
+		this.subscription.add(this.userApi.nameVerify(this.subscriptionForm.value.name).subscribe({
+			next: (v) => {
+				console.log('name:', this.subscriptionForm.value.name);
+				console.log('result:', v);
+				if (v)
+					alert('User name valid');
+				else
+					alert('User name no valid');
+			},
+			error: (e) => console.error('Error: create user:', e),
+			complete: () => {}
+		}));
+	}
 }

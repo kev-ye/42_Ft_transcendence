@@ -3,7 +3,7 @@
 FROM node:16.13.2 AS development
 
 # Specify Working directory inside container
-WORKDIR /pong/src/app
+WORKDIR /pong/back-end
 
 # Copy package-lock.json & package.json from host to inside container working directory
 COPY package*.json ./
@@ -25,9 +25,9 @@ ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
 
 # Set work dir
-WORKDIR /pong/src/app
+WORKDIR /pong/back-end
 
-COPY --from=development /pong/src/app/ .
+COPY --from=development /pong/back-end .
 
 EXPOSE 3000
 

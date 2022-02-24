@@ -25,13 +25,7 @@ import { ModeratorModule } from 'src/moderator/moderator.module';
       url: process.env.DATABASE_URL,
       autoLoadEntities: true,
       synchronize: true,
-      // host: 'localhost',
-      // port: 5432,
-      // username: 'yek',
-      // password: '',
-      // database: 'test',
-      // // logging: false,
-      dropSchema: true, // don't use in production
+      dropSchema: false, // don't use in production
       // entities: ['./dist/**/*.entity.js'],
     }),
     UserModule,
@@ -40,19 +34,17 @@ import { ModeratorModule } from 'src/moderator/moderator.module';
     ChatHistoryModule,
     LadderModule,
     PrivateModule,
-	ChannelsModule,
-	ImageModule,
-	PassportModule,
-	AuthModule,
-	ActiveUsersModule,
-	ChatGatewayModule,
-	BanModule,
-	BlockModule,
-	MuteModule,
-	ModeratorModule
-	],
-	providers: [
-	],
-
+    ChannelsModule,
+    ImageModule,
+    PassportModule,
+    AuthModule,
+    ActiveUsersModule,
+    ChatGatewayModule,
+    BanModule,
+    BlockModule,
+    MuteModule,
+    ModeratorModule,
+  ],
+  providers: [],
 })
 export class AppModule {}
