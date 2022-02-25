@@ -31,29 +31,33 @@ import { Subscription } from "rxjs";
 })
 export class MainComponent implements OnInit, OnDestroy {
   title: string = GlobalConsts.siteTitle;
-  
+
   chatVisibility: boolean = true;
   userVisibility: boolean = true;
   twoFaActive: boolean = false;
   qrCode: string = '';
-  
+
   /*
   * NOTE: all subscribe need unsub in ngDestroy for no leak!!!!
   * But we don't need unsub all of httpClient
   */
   private subscription: Subscription = new Subscription();
-  
+
   constructor(
     private router: Router,
     private userApi: UserApiService,
     private userAuth: UserAuthService,
     private http: HttpClient) { }
-    
+
     public socket: Socket;
-    
-    
+
+
     ngOnInit() {
-      this.socket = io('http://localhost:3002/', {withCredentials: true});
+      this.socket = io('/', {
+				path: 'chat2',
+				withCredentials: true
+			});
+
       this.subscription.add(this.userApi.getUser().subscribe({
         next: (v) => {
           if (v.twoFactorSecret) {
@@ -65,11 +69,11 @@ export class MainComponent implements OnInit, OnDestroy {
         complete: () => console.info('Complete: get user in main')
       }))
     }
-    
+
     ngOnDestroy() {
       this.subscription.unsubscribe();
     }
-    
+
     logOut(): void {
       const confirm$: boolean = confirm('Are you sure?');
       if (confirm$) {
@@ -91,9 +95,9 @@ export class MainComponent implements OnInit, OnDestroy {
         this.chatVisibility = false;
       else
         this.chatVisibility = true;
-  
+
     }
-  
+
     openUser() {
       if (this.userVisibility)
         this.userVisibility = false;
@@ -102,9 +106,9 @@ export class MainComponent implements OnInit, OnDestroy {
     }
 
     openLadder() {
-      
+
     }
-    
+
     //// test function prepared for parameter
     turnOnTwoFa() {
       this.subscription.add(this.userAuth.twoFaGenerate().subscribe({
@@ -120,7 +124,7 @@ export class MainComponent implements OnInit, OnDestroy {
         complete: () => console.info('Complete: two-fa generate done')
       }));
     }
-    
+
     turnOffTwoFa() {
       this.subscription.add(this.userAuth.twoFaTurnOff().subscribe({
         next: _ => {
@@ -135,4 +139,3 @@ export class MainComponent implements OnInit, OnDestroy {
       }));
     }
   }
-  

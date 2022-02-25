@@ -20,12 +20,12 @@ import { GlobalConsts } from '../common/global';
 	styleUrls: ['./chat.component.css']
 })
 export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
-	
+
 	constructor(public dialog: MatDialog, private http: HttpClient) { }
-	
+
 	chat: {show: boolean, public: boolean, access: number, id: string, user_id: string, name: string, moderator: boolean, creator_id: string} = {show: false, public: true, name: "", id: "", user_id: "", moderator: true, creator_id: '79139', access: 0};
 	messages: {id: string, username: string, user_id: string, type: number, message?: string}[] = [];
-	
+
 	scroll: boolean = false;
 	friendList: any[] = [];
 	focus: string = "";
@@ -33,20 +33,20 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 	colorMap: Map<string, string> = new Map<string, string>();
 	socket: Socket;
 	blocked: any[] = [];
-	
+
 	user: any = {}
 	password: string = "";
-	
+
 	@Input('socketID') socketID: string = "";
-	
+
 	@ViewChild('input') input: ElementRef<HTMLInputElement>;
-	
+
 	@ViewChild('inputPrivate') inputPrivate: ElementRef<HTMLInputElement>;
-	
+
 	@ViewChild('framePublic') framePublic: ElementRef<HTMLDivElement>;
 	@ViewChild('framePrivate') framePrivate: ElementRef<HTMLDivElement>;
-	
-	
+
+
 	ngAfterViewChecked(): void {
 		if (this.scroll)
 		{
@@ -58,7 +58,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 			this.scroll = false;
 		}
 	}
-	
+
 	fetchChannels() {
 		this.http.get(`${GlobalConsts.userApi}/channels/`, {withCredentials: true}).subscribe({next: data => {
 		console.log("fetched channels", data);
@@ -78,7 +78,7 @@ deleteFriend(friend: any) {
 		next: data => {
 			console.log("Deleted friend");
 			this.fetchFriends();
-			
+
 		}, error: data => {
 			console.log("Could not delete friend");
 		}
@@ -108,7 +108,7 @@ openChannelSettings() {
 	tmp.afterClosed().subscribe(() => {
 		this.fetchChannels();
 	})
-	
+
 }
 
 fetchPrivateMessage(friend: any) {
@@ -116,7 +116,7 @@ fetchPrivateMessage(friend: any) {
 	this.http.get(`${GlobalConsts.userApi}/private/` + this.user.id + "/" + friend.id, {withCredentials: true}).subscribe(data => {
 	console.log("fetched private history", data);
 	this.messages = data as {id: string, username: string, user_id: string, type: number, message?: string}[];
-	
+
 	this.messages.forEach(msg => {
 		if (this.blocked.find(val => val == msg.user_id))
 		msg.message = '<message blocked>'
@@ -128,20 +128,20 @@ fetchPrivateMessage(friend: any) {
 fetchChannelHistory(channel: any) {
 	this.http.get(`${GlobalConsts.userApi}/history/` + channel.id, {headers: {password: this.password}, withCredentials: true}).subscribe(data => {
 	console.log("fetched history", data);
-	
+
 	this.messages = data as {id: string, user_id: string, type: number, username: string, message?: string}[];
-	
+
 	this.messages.forEach(msg => {
 		if (this.blocked.find(val => val == msg.user_id))
 		msg.message = '<message blocked>'
 	})
-	
+
 	this.chat.id = channel.id;
 	this.chat.name = channel.name;
 	this.chat.public = true;
-	
-	
-	
+
+
+
 	this.generateRandomColors();
 });
 }
@@ -153,12 +153,15 @@ fetchBlockedUsers() {
 }
 
 ngOnInit(): void {
-	this.socket = io('http://localhost:3001', {withCredentials: true});
-	
+	this.socket = io('/', {
+		path: 'chat1',
+		withCredentials: true
+	});
+
 	this.socket.on('user', () => {
 		this.socket.emit('user', {user_id: this.user.id});
 	})
-	
+
 	this.socket.on('mod', (data: string) => {
 		if (this.chat.id == data)
 			this.chat.moderator = true;
@@ -174,7 +177,7 @@ ngOnInit(): void {
 		if (chan >= 0)
 			this.channelList[chan].moderator = false;
 	})
-	
+
 	this.socket.on('mute', data => {
 		this.dialog.open(DialogMuted, {
 			data: {
@@ -182,7 +185,7 @@ ngOnInit(): void {
 			}
 		})
 	})
-	
+
 	this.http.get(`${GlobalConsts.userApi}/user/id`, {withCredentials: true}).subscribe((data: any) => {
 	this.user.id = data.id;
 	this.fetchBlockedUsers();
@@ -196,10 +199,10 @@ this.socket.on('message', (data: {
 	type: number
 }) => {
 	data.user_id = String(data.user_id);
-	
+
 	if (this.blocked.find(val => val == data.user_id))
 	data.message = '<message blocked>'
-	
+
 	this.messages.push({id: data.id, username: data.username, message: data.message, user_id: data.user_id, type: data.type});
 	if (this.messages.length > 25)
 	this.messages.splice(0, 1);
@@ -244,15 +247,15 @@ addFriend(friend: any) {
 }
 
 generateRandomColors() {
-	
+
 	this.messages.forEach(val => {
 		const tmp: string = val.user_id as string;
 		if (!this.colorMap.has(tmp))
 		this.colorMap.set(tmp, '#' + Math.floor(Math.random() * 16777215).toString(16));
-		
+
 	});
-	
-	
+
+
 }
 
 
@@ -278,14 +281,14 @@ sendMessage() {
 				this.inputPrivate.nativeElement.value = "";
 			}
 		}
-		
+
 		openPrivate(friend: any) {
 			console.log("Opening chat " + friend.id + " with ", friend);
 			console.log("user:", this.user);
-			
+
 			this.socket.emit('connectRoom', {user_id: this.user.id, chat: {public: false, id: friend.id}});
 			this.fetchPrivateMessage(friend);
-			
+
 			this.chat.id = friend.id;
 			this.chat.name = friend.username;
 			this.chat.public = false;
@@ -294,13 +297,13 @@ sendMessage() {
 			else
 			this.chat.show = false;
 		}
-		
+
 		connectRoom(channel: any) {
 			this.http.get(`${GlobalConsts.userApi}/channels/access/` + channel.id,
 			{withCredentials: true})
 			.subscribe({next: (data) => {
 				console.log("received response from connectRoom:", data);
-				
+
 				if (data == 0)
 				{
 					this.socket.emit('connectRoom', {user_id: this.user.id, chat: {public: true, id: channel.id}, password: this.password});
@@ -317,13 +320,13 @@ sendMessage() {
 				} else if (data == 1) {
 					this.dialog.open(DialogAccessChat);
 				}
-				
+
 			}});
 		}
-		
+
 		openPublic(channel: any) {
 			console.log("opening channel", channel);
-			
+
 			if (channel.access == 1) //protected channel
 			{
 				const tmp = this.dialog.open(DialogProtectedChat, {
@@ -331,7 +334,7 @@ sendMessage() {
 						id: channel.id
 					}
 				});
-				
+
 				tmp.afterClosed().subscribe(data => {
 					if (data && data.password)
 					this.password = data.password;
@@ -350,46 +353,46 @@ sendMessage() {
 				this.chat.show = false;
 			}
 		}
-		
+
 		focusFriend(username: string) {
 			this.focus = username;
 		}
-		
+
 		unfocusFriend() {
 			this.focus = "";
 		}
-		
+
 		fetchFriends() {
 			this.http.get(`${GlobalConsts.userApi}/friend/` + this.user.id, {withCredentials: true}).subscribe({next:
 			data => {
 				console.log("fetched friends", data);
 				this.friendList = data as any[];
 			},
-			error: 
+			error:
 			data => {
 				console.error("could not fetch friends");
 			}})
 		}
-		
+
 		openFriendList(event?: any) {
 			this.chat.show = false;
-			
+
 			this.fetchChannels();
 			this.fetchFriends();
 			/*this.friendList.sort((a, b) => {
 				return b.status - a.status;
 			})
 			*/
-			
+
 			this.socket.emit('disconnectRoom')
 		}
-		
+
 		openUserDialog(message?: any) {
 			if (message)
 			{
-				
+
 				console.log("opening dialog", message);
-				
+
 				const tmp = this.dialog.open(DialogUser, {
 					data: {
 						username: message.username,
@@ -402,7 +405,7 @@ sendMessage() {
 				tmp.afterClosed().subscribe(() => {
 					this.fetchBlockedUsers();
 					console.log("fetching blocked", this.blocked);
-					
+
 				});
 			}
 			else
@@ -416,15 +419,15 @@ sendMessage() {
 						blocked: this.blocked
 					}
 				});
-				
+
 				tmp.afterClosed().subscribe(() => {
 					this.fetchBlockedUsers();
 					console.log("fetching blocked 2", this.blocked);
-					
+
 				})
 			}
 		}
-		
+
 		openSpec() {
 			const tmp = this.dialog.open(DialogSpectator, {
 				data :
@@ -437,13 +440,13 @@ sendMessage() {
 					//channel name to send and moderator status
 				}
 			});
-			
+
 			tmp.afterClosed().subscribe(() => {
 				this.fetchBlockedUsers();
 			});
-			
+
 		}
-		
+
 		inviteFriend() {
 			this.dialog.open(DialogInvite, {
 				data: {
@@ -451,7 +454,7 @@ sendMessage() {
 				}
 			})
 		}
-		
+
 		createChat() {
 			//todo implement creating chat
 			const tmp = this.dialog.open(DialogCreateChat, {
@@ -463,5 +466,5 @@ sendMessage() {
 				this.fetchChannels();
 			})
 		}
-		
+
 	}

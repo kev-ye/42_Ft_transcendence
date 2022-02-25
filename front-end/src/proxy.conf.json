@@ -3,5 +3,15 @@
 		"target": "http://back-end:3000",
 		"secure": false,
 		"changeOrigin": true
-	}
+	},
+	"/chat1": {
+		"target": "http://back-end:3001",
+		"secure": false,
+		"changeOrigin": true
+	},
+	"/chat2": {
+		"target": "http://back-end:3002",
+		"secure": false,
+		"changeOrigin": true
+	},
 }

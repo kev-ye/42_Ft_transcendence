@@ -11,15 +11,18 @@ COPY package*.json ./
 # Install deps inside container
 RUN npm install
 
+# Bundle App sources
+COPY . .
+
 RUN npm run build
 
-EXPOSE 3000
+EXPOSE 3000 3001 3002
 
 ################
 ## PRODUCTION ##
 ################
 # Build another image named production
-FROM node:latest AS production
+FROM node:16.13.2 AS production
 
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}

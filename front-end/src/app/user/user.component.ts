@@ -82,10 +82,6 @@ export class UserComponent implements OnInit {
         this.refreshUserDetails();
     })
   }
-
-
-
-
 }
 
 @Component({

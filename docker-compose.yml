@@ -11,9 +11,11 @@ services:
     # Mount our host dir to the docker container
     # Mount api directory (./back-end) to (:) docker container (/pong/src/app)
     # Reflect File changes from host to container
+    restart: always
     volumes:
       - ./back-end:/pong/back-end/
       - back-end-node-modules:/pong/back-end/node_modules/
+      - back-end-node-uploads:/pong/uploads
     # Run in dev mode: npm run start:dev
     command: npm run start:dev
     depends_on:
@@ -24,6 +26,12 @@ services:
       PORT: 3000
     ports:
       - "3000:3000"
+      - "3001:3001"
+      - "3002:3002"
+    networks:
+      - front_net
+      - back_net
+      - db_net
 
   # Our Angular Frontend
   front-end:
@@ -31,18 +39,21 @@ services:
       dockerfile: Dockerfile
       context: ./front-end
       target: development
-    command: npm run start
+    restart: always
     volumes:
       - ./front-end:/pong/front-end/
       - front-end-node-modules:/pong/front-end/node_modules
+    command: npm run start
     ports:
       - "4200:4200"
-    links:
-      - back-end
+    networks:
+      - front_net
+      - back_net
 
   # Our Postgres Database for NestJS to connect to
   postgres:
     image: postgres:latest
+    restart: always
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
@@ -51,19 +62,35 @@ services:
       - psql-data:/var/lib/postgresql/data
     ports:
       - "35000:5432"
+    networks:
+      - db_net
 
   # The Postgres Admin tool if we want to run some custom queries and so on against our Database
   postgres_admin:
     image: dpage/pgadmin4
+    restart: always
     depends_on:
       - postgres
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: password
+    volumes:
+      - psql-data:/var/lib/postgres_admin
     ports:
       - "5050:80"
+    networks:
+      - db_net
 
 volumes:
   back-end-node-modules:
+  back-end-node-uploads:
   front-end-node-modules:
   psql-data:
+
+networks:
+  front_net:
+    driver: bridge
+  back_net:
+    driver: bridge
+  db_net:
+    driver: bridge
