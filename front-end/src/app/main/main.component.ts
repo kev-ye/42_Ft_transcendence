@@ -53,8 +53,8 @@ export class MainComponent implements OnInit, OnDestroy {
 
 
     ngOnInit() {
-      this.socket = io('/', {
-				path: 'chat2',
+			// set 3002 -> 3001 clean error on front
+      this.socket = io('http://localhost:3001/', {
 				withCredentials: true
 			});
 

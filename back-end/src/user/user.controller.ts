@@ -11,6 +11,7 @@ import {
   Header,
   Redirect,
   Inject,
+  Param,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -36,12 +37,33 @@ export class UserController {
   @Header('Access-Control-Allow-Origin', 'http://localhost:4200')
   async getUserByCredentials(@Req() req: any, @Res() res: any): Promise<void> {
     const id = req.session.userId;
-    const user = await this.userService.getUserById(id);
+    const user: UserDto = await this.userService.getUserById(id);
 
     if (user) res.status(200).json(user);
     else
       res.status(403).json({
         Forbidden: `Can't found user by id: ${id}`,
+      });
+  }
+
+  @Get('name/:name')
+  @UseGuards(UserGuard)
+  @Header('Access-Control-Allow-Origin', 'http://localhost:4200')
+  async getUserByName(
+    @Req() req: any,
+    @Res() res: any,
+    @Param('name') name: string,
+  ): Promise<void> {
+    const id = req.session.userId;
+    const user: UserDto = await this.userService.getUserById(id);
+
+    if (user) {
+      const getUserByName: UserDto = await this.userService.getUserByName(name);
+      if (getUserByName) res.status(200).json(user);
+      else res.status(200).json(null);
+    } else
+      res.status(403).json({
+        Forbidden: `Can't found user by name: ${name}`,
       });
   }
 
@@ -75,6 +97,13 @@ export class UserController {
   @Header('Access-Control-Allow-Origin', 'http://localhost:4200')
   async nameVerify(@Body() name: any): Promise<boolean> {
     return await this.userService.nameFormatVerify(name.name);
+  }
+
+  @Put('update')
+  @UseGuards(UserGuard)
+  @Header('Access-Control-Allow-Origin', 'http://localhost:4200')
+  updateUserById(@Body() user: UserDto): Promise<UserDto> {
+    return this.userService.updateUser(user);
   }
 
   /*

@@ -19,6 +19,10 @@ export class UserService {
     return (await this._getCompleteUsers()).find((user) => user.id === id);
   }
 
+  async getUserByName(name: string): Promise<UserDto> {
+    return (await this._getCompleteUsers()).find((user) => user.name === name);
+  }
+
   async createUser(tmpUser: UserDto, name: string): Promise<UserDto | null> {
     console.log('name:', name);
     if (!(await this.nameFormatVerify(name))) return null;
