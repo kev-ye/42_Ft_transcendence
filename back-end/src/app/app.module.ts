@@ -23,20 +23,22 @@ import { GameModule } from 'src/game/game.module';
 import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
-  imports: [ 
-	TypeOrmModule.forRoot({ 
-		type: 'postgres',
-		host: 'localhost',
-		port: 5432,
-		username: "postgres",
-		password: "postgres",
-		database: 'test',
-		synchronize: true,
-		// logging: false,
-		dropSchema: false, // don't use in prod
-		entities: [ "./dist/**/*.entity.js" ]
-		}),
-	UserModule,
+  imports: [
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      url: process.env.DATABASE_URL,
+      autoLoadEntities: true,
+      synchronize: true,
+      // host: 'localhost',
+      // port: 5432,
+      // username: 'yek',
+      // password: '',
+      // database: 'test',
+      // // logging: false,
+      dropSchema: true, // don't use in production
+      // entities: ['./dist/**/*.entity.js'],
+    }),
+    UserModule,
     FriendModule,
     BlockModule,
     ChatHistoryModule,
