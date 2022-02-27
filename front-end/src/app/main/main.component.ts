@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { UserApiService } from '../service/user_api/user-api.service';
 import { UserAuthService } from '../service/user_auth/user-auth.service';
 import { GlobalConsts } from '../common/global';
-import { io, Socket } from 'socket.io-client';
 import { HttpClient } from '@angular/common/http';
 import { Subscription } from "rxjs";
 
@@ -47,13 +46,9 @@ export class MainComponent implements OnInit, OnDestroy {
     private router: Router,
     private userApi: UserApiService,
     private userAuth: UserAuthService,
-    private http: HttpClient) { }
-    
-    public socket: Socket;
-    
+    private http: HttpClient) { }    
     
     ngOnInit() {
-      this.socket = io('http://localhost:3002/', {withCredentials: true});
       this.subscription.add(this.userApi.getUser().subscribe({
         next: (v) => {
           if (v.twoFactorSecret) {

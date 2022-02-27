@@ -14,6 +14,8 @@ RUN npm install
 RUN npm run build
 
 EXPOSE 3000
+EXPOSE 3001
+EXPOSE 3002
 
 ################
 ## PRODUCTION ##
@@ -30,6 +32,8 @@ WORKDIR /pong/src/app
 COPY --from=development /pong/src/app/ .
 
 EXPOSE 3000
+EXPOSE 3001
+EXPOSE 3002
 
 # run app
 CMD [ "node", "dist/main"]
