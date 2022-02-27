@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PlayersModule } from 'src/players/players.module';
 import { GameEntity } from './entity/game.entity';

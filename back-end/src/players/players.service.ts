@@ -23,8 +23,20 @@ export class PlayersService implements OnModuleInit {
         return tmp;
     }
 
+    async getPlayerBySocketId(socketID: string) {
+        return await this.repo.findOne({socket_id: socketID});
+    }
+
     async getPlayerByUserId(userID: string) {
         return await this.repo.find({user_id: userID});
+    }
+
+    async getLookingPlayers() {
+        return await this.repo.find({where: {status: 1}});
+    }
+
+    async setGameID(userID: string, gameID: string) {
+        return await this.repo.update({user_id: userID}, {game_id: gameID});
     }
 
     async deletePlayerByUserId(userID: string) {
@@ -43,5 +55,9 @@ export class PlayersService implements OnModuleInit {
         const tmp = this.repo.findOne({socket_id: socketID});
         if (tmp)
             this.repo.update({socket_id: socketID}, {user_id: userID});
+    }
+
+    async updatePlayer(criteria: any, data: any) {
+        return await this.repo.update(criteria, data);
     }
 }

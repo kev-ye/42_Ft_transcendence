@@ -20,6 +20,7 @@ import { ModeratorModule } from 'src/moderator/moderator.module';
 import { GameGateway } from 'src/game/game.gateway';
 import { PlayersModule } from 'src/players/players.module';
 import { GameModule } from 'src/game/game.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [ 
@@ -52,7 +53,8 @@ import { GameModule } from 'src/game/game.module';
 	MuteModule,
 	ModeratorModule,
 	GameModule,
-	PlayersModule
+	PlayersModule,
+	ScheduleModule.forRoot()
 	],
 	providers: [
 	],
