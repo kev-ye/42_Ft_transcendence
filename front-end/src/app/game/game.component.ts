@@ -61,7 +61,7 @@ export class GameComponent implements OnInit {
 	
 
 	constructor() {
-		this.start()
+		// this.start()
 	}
 	
 	ngOnInit() : void {
