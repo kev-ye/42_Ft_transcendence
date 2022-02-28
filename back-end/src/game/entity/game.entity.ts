@@ -1,15 +1,24 @@
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('games')
 export class GameEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string; //this id is being used as room name to communicate with players
 
+    @CreateDateColumn()
+    created: Date;
+
     @Column({nullable: true})
     first: string;  //first player's socket ID
 
     @Column({nullable: true})
     second: string; //second player's socket ID
+
+    @Column({nullable: true})
+    first_user: string;
+
+    @Column({nullable: true})
+    second_user: string;
 
     @Column({default: 0})
     first_score: number;
@@ -27,6 +36,13 @@ export class GameEntity {
 
     @Column({default: 5})
     limit_game: number;
+
+    @Column({default: 0})
+    game_state: number;
+
+    //0: waiting
+    //1: playing
+    //2: finished
 
     @Column({nullable: true})
     creator_id: string; //userID of game's creator

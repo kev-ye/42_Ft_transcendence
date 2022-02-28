@@ -35,6 +35,10 @@ export class PlayersService implements OnModuleInit {
         return await this.repo.find({where: {status: 1}});
     }
 
+    async getPlayersInGame(gameID: string) {
+        return await this.repo.find({game_id: gameID});
+    }
+
     async setGameID(userID: string, gameID: string) {
         return await this.repo.update({user_id: userID}, {game_id: gameID});
     }
