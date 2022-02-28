@@ -1,7 +1,6 @@
 .game {
 	display: block;
-	margin: 0px auto;
-	fill: rgb(20, 20, 20);
+	margin: 80px auto 0 auto;
 }
 
 .game .score {
@@ -23,4 +22,52 @@
 
 .game .player {
 	fill: rgb(230, 230, 230);
+}
+
+#game-preferences {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	margin: 40px auto;
+}
+
+#game-preferences .preferences {
+	padding: 0 20px;
+}
+
+.btn {
+	color: black;
+	font-family:'Courier New', Courier, monospace;
+	font-size: 14px;
+	font-weight: 800;
+	padding: 15px 25px;
+	border: 3px solid transparent;
+	border-radius: 5px;
+	background-color: rgb(180, 210, 236);
+	box-shadow: 0px 2px 18px rgba(0, 0, 0, 0.13);
+	transition: all 0.2s ease-in-out;
+}
+
+.btn:hover {
+	cursor: pointer;
+	color: white;
+	background-color: rgb(50, 50, 50);
+	border: 3px solid grey;
+}
+
+.btn-dark {
+	color: black;
+	background-color: red;
+	border: 3px solid black;
+}
+
+.btn-dark:hover {
+	color: white;
+	background-color: red;
+	border: 3px solid grey;
+}
+
+.btn:active {
+	color: grey;
 }
