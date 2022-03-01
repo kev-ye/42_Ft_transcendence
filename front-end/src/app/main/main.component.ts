@@ -32,8 +32,8 @@ import { Subscription } from "rxjs";
 export class MainComponent implements OnInit, OnDestroy {
   title: string = GlobalConsts.siteTitle;
 
-  chatVisibility: boolean = true;
-  userVisibility: boolean = true;
+  chatVisibility: boolean = false;
+  userVisibility: boolean = false;
   twoFaActive: boolean = false;
   qrCode: string = '';
 
