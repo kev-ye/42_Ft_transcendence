@@ -1,7 +1,8 @@
+# Development compose
 version: "3.8"
 
 services:
-  # Our NestJS Api
+  # NestJs
   back-end:
     build:
       dockerfile: Dockerfile
@@ -16,19 +17,18 @@ services:
     depends_on:
       - postgres
     environment:
-      DATABASE_URL: postgres://user:password@postgres:5432/db
-      NODE_ENV: development
+      DATABASE_URL: ${DATABASE_URL}
+      NODE_ENV: ${NODE_ENV_DEV}
       PORT: 3000
     ports:
       - "3000:3000"
       - "3001:3001"
-      - "3002:3002"
     networks:
       - front_net
       - back_net
       - db_net
 
-  # Our Angular Frontend
+  # Angular APP
   front-end:
     build:
       dockerfile: Dockerfile
@@ -45,14 +45,14 @@ services:
       - front_net
       - back_net
 
-  # Our Postgres Database for NestJS to connect to
+  # Postgres Database for NestJS to connect to
   postgres:
-    image: postgres:latest
+    image: postgres:${IMAGE_V}
     restart: always
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: db
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - psql-data:/var/lib/postgresql/data
     ports:
@@ -67,10 +67,10 @@ services:
     depends_on:
       - postgres
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: password
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
     volumes:
-      - psql-data:/var/lib/postgres_admin
+      - psql-admin:/var/lib/postgres_admin
     ports:
       - "5050:80"
     networks:
@@ -81,6 +81,7 @@ volumes:
   back-end-uploads:
   front-end-node-modules:
   psql-data:
+  psql-admin:
 
 networks:
   front_net:

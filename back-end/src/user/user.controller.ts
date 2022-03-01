@@ -113,7 +113,7 @@ export class UserController {
   async ftLogIn(): Promise<void> {}
 
   @Get('auth/42/callback')
-  @Redirect('http://localhost:80/main') // modify to :80 when prod
+  @Redirect('http://localhost:4200/main') // modify to :80 when prod
   @UseGuards(AuthGuard('42'))
   ftAuthCallback(@Req() req: any): void {
     const user: LimitedUserDto = req.user;
@@ -123,7 +123,7 @@ export class UserController {
   }
 
   @Get('isLogin')
-  async isLogin(@Req() req: any) {
+  async isLogin(@Req() req: any): Promise<boolean> {
     const id = req.session.userId;
     const user = await this.userService.getUserById(id);
 
