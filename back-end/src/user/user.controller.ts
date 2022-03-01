@@ -34,7 +34,6 @@ export class UserController {
 
   @Get('id')
   @UseGuards(UserGuard)
-  @Header('Access-Control-Allow-Origin', 'http://localhost:4200')
   async getUserByCredentials(@Req() req: any, @Res() res: any): Promise<void> {
     const id = req.session.userId;
     const user: UserDto = await this.userService.getUserById(id);
@@ -48,7 +47,6 @@ export class UserController {
 
   @Get('name/:name')
   @UseGuards(UserGuard)
-  @Header('Access-Control-Allow-Origin', 'http://localhost:4200')
   async getUserByName(
     @Req() req: any,
     @Res() res: any,
@@ -69,7 +67,6 @@ export class UserController {
 
   @Put('create')
   @UseGuards(UserGuard)
-  @Header('Access-Control-Allow-Origin', 'http://localhost:4200')
   async createUser(
     @Req() req: any,
     @Res() res: any,
@@ -94,14 +91,12 @@ export class UserController {
 
   @Post('create/verify')
   @UseGuards(UserGuard)
-  @Header('Access-Control-Allow-Origin', 'http://localhost:4200')
   async nameVerify(@Body() name: any): Promise<boolean> {
     return await this.userService.nameFormatVerify(name.name);
   }
 
   @Put('update')
   @UseGuards(UserGuard)
-  @Header('Access-Control-Allow-Origin', 'http://localhost:4200')
   updateUserById(@Body() user: UserDto): Promise<UserDto> {
     return this.userService.updateUser(user);
   }
@@ -118,7 +113,7 @@ export class UserController {
   async ftLogIn(): Promise<void> {}
 
   @Get('auth/42/callback')
-  @Redirect('http://localhost:4200/main')
+  @Redirect('http://localhost:80/main') // modify to :80 when prod
   @UseGuards(AuthGuard('42'))
   ftAuthCallback(@Req() req: any): void {
     const user: LimitedUserDto = req.user;
@@ -146,7 +141,6 @@ export class UserController {
 
   @Post('auth/logout')
   @UseGuards(UserGuard)
-  @Header('Access-Control-Allow-Origin', 'http://localhost:4200')
   async logOut(@Req() req: any, @Res() res: any) {
     const user: UserDto = await this.userService.getUserById(
       req.session.userId,
@@ -167,7 +161,6 @@ export class UserController {
 
   @Post('auth/2fa/generate')
   @UseGuards(UserGuard)
-  @Header('Access-Control-Allow-Origin', 'http://localhost:4200')
   async twoFaGenerate(@Req() req: any, @Res() res: any): Promise<void> {
     const user: UserDto = await this.userService.getUserById(
       req.session.userId,
@@ -191,7 +184,6 @@ export class UserController {
 
   @Delete('auth/2fa/turnoff')
   @UseGuards(UserGuard)
-  @Header('Access-Control-Allow-Origin', 'http://localhost:4200')
   async twoFaTurnOff(@Req() req: any, @Res() res: any): Promise<void> {
     const user: UserDto = await this.userService.getUserById(
       req.session.userId,
@@ -213,7 +205,6 @@ export class UserController {
 
   @Post('auth/2fa/verify')
   @UseGuards(UserGuard)
-  @Header('Access-Control-Allow-Origin', 'http://localhost:4200')
   async twoFaVerify(
     @Req() req: any,
     @Res() res: any,

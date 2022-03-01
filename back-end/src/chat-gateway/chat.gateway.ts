@@ -18,7 +18,7 @@ import { UserService } from 'src/user/user.service';
 
 @WebSocketGateway(3001, {
   cors: {
-    origin: ['http://localhost:4200'],
+    origin: ['http://localhost', 'http://localhost:80'], // modify to :80 when prod
     methods: ['GET', 'POST'],
     credentials: true,
   },

@@ -30,9 +30,15 @@ ENV NODE_ENV=${NODE_ENV}
 # Set work dir
 WORKDIR /pong/back-end
 
-COPY --from=development /pong/back-end .
+COPY package*.json ./
 
-EXPOSE 3000
+RUN npm install
+
+COPY . .
+
+COPY --from=development /pong/back-end/dist ./dist
+
+EXPOSE 3000 3001 3002
 
 # run app
 CMD [ "node", "dist/main"]
