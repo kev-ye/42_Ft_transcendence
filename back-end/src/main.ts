@@ -1,15 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
-import * as cookieParser from 'cookie-parser';
 import * as session from 'express-session';
 import * as pgSession from 'connect-pg-simple';
 import * as pg from 'pg';
 
 async function bootstrap() {
-  const corsOptions = {
-    origin: 'http://localhost:4200',
-    credentials: true,
-  };
   const pgPool = new pg.Pool({
     host: 'postgres',
     database: 'db',
@@ -21,8 +16,6 @@ async function bootstrap() {
   const connectPgSession = pgSession(session);
   const app = await NestFactory.create(AppModule);
 
-  app.enableCors(corsOptions);
-  app.use(cookieParser());
   app.use(
     session({
       store: new connectPgSession({
