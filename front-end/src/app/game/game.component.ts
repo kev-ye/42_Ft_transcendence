@@ -66,8 +66,9 @@ export class GameComponent implements OnInit {
 
 		this.ball.xIncrement = this.ball_t.SPEED * (Math.random() < 0.5 ? -1 : 1);
 		this.ball.yIncrement = this.ball_t.SPEED * Math.random();
-		if (this.ball.yIncrement < this.ball_t.SPEED)
+		if (this.ball.yIncrement < this.ball_t.SPEED * 0.2)
 			this.ball.yIncrement = this.ball_t.SPEED / 2;
+		console.log(this.ball.yIncrement)
 	}
 
 	start() : void {

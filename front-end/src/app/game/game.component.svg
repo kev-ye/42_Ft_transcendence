@@ -2,8 +2,14 @@
 
 	<!-- Scores -->
 	<div class="score-wrapper">
-		<p class="score">{{ player1.score | number:"2.0-0" }}</p>
-		<p class="score">{{ player2.score | number:"2.0-0" }}</p>
+		<p class="score"
+			[ngClass]="player1.score >= player2.score ? 'score-winner' : 'score-loser'">
+			{{ player1.score | number:"2.0-0" }}
+		</p>
+		<p class="score"
+			[ngClass]="player1.score <= player2.score ? 'score-winner' : 'score-loser'">
+			{{ player2.score | number:"2.0-0" }}
+		</p>
 	</div>
 
 	<div id="game-wrapper">
