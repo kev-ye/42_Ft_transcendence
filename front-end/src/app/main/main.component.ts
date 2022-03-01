@@ -58,16 +58,16 @@ export class MainComponent implements OnInit, OnDestroy {
 				withCredentials: true
 			});
 
-      this.subscription.add(this.userApi.getUser().subscribe({
-        next: (v) => {
-          if (v.twoFactorSecret) {
-            this.twoFaActive = true;
-            this.qrCode = v.twoFactorQR;
-          }
-        },
-        error: (e) => console.error('Error: get user in main:', e),
-        complete: () => console.info('Complete: get user in main')
-      }))
+    //   this.subscription.add(this.userApi.getUser().subscribe({
+    //     next: (v) => {
+    //       if (v.twoFactorSecret) {
+    //         this.twoFaActive = true;
+    //         this.qrCode = v.twoFactorQR;
+    //       }
+    //     },
+    //     error: (e) => console.error('Error: get user in main:', e),
+    //     complete: () => console.info('Complete: get user in main')
+    //   }))
     }
 
     ngOnDestroy() {
@@ -109,33 +109,4 @@ export class MainComponent implements OnInit, OnDestroy {
 
     }
 
-    //// test function prepared for parameter
-    turnOnTwoFa() {
-      this.subscription.add(this.userAuth.twoFaGenerate().subscribe({
-        next: (v) => {
-          console.log('info:', v);
-          this.qrCode = v.qr;
-          this.twoFaActive = true;
-        },
-        error: (e) => {
-          console.error('Error: two-fa generate:', e);
-          alert('Something wrong, try again!');
-        },
-        complete: () => console.info('Complete: two-fa generate done')
-      }));
-    }
-
-    turnOffTwoFa() {
-      this.subscription.add(this.userAuth.twoFaTurnOff().subscribe({
-        next: _ => {
-          this.qrCode = '';
-          this.twoFaActive = false;
-        },
-        error: (e) => {
-          console.error('Error: two-fa: turn off:', e);
-          alert('Something wrong, try again!');
-        },
-        complete: () => console.info('Complete: two-fa turn off done')
-      }));
-    }
   }

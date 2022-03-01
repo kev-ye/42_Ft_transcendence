@@ -2,6 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GlobalConsts } from '../common/global';
+import { Router } from '@angular/router';
+import { UserApiService } from '../service/user_api/user-api.service';
+import { UserAuthService } from '../service/user_auth/user-auth.service';
+import { Subscription } from "rxjs";
 
 
 @Component({
@@ -11,13 +15,21 @@ import { GlobalConsts } from '../common/global';
 })
 export class UserComponent implements OnInit {
 
-  constructor(public dialog: MatDialog, private http: HttpClient) {
-  }
-
-  user: any;
-
-  changeUsername: boolean = false;
-  connected: boolean = false;
+	private subscription: Subscription = new Subscription();
+	
+	user: any;
+	
+	changeUsername: boolean = false;
+	connected: boolean = false;
+	
+	twoFaActive: boolean = false;
+	qrCode: string = '';
+	
+constructor(public dialog: MatDialog,
+		private http: HttpClient,
+		private router: Router,
+		private userApi: UserApiService,
+		private userAuth: UserAuthService) { }
 
   refreshUserDetails() {
     //load data from backend server
@@ -52,6 +64,21 @@ export class UserComponent implements OnInit {
 
   ngOnInit(): void {
     this.refreshUserDetails();
+	
+	this.subscription.add(this.userApi.getUser().subscribe({
+        next: (v) => {
+          if (v.twoFactorSecret) {
+            this.twoFaActive = true;
+            this.qrCode = v.twoFactorQR;
+          }
+        },
+        error: (e) => console.error('Error: get user in main:', e),
+        complete: () => console.info('Complete: get user in main')
+      }))
+  }
+
+  ngOnDestroy() {
+	this.subscription.unsubscribe();
   }
 
   openImageDialog() {
@@ -82,6 +109,36 @@ export class UserComponent implements OnInit {
         this.refreshUserDetails();
     })
   }
+
+      //// test function prepared for parameter
+	  turnOnTwoFa() {
+		this.subscription.add(this.userAuth.twoFaGenerate().subscribe({
+		  next: (v) => {
+			console.log('info:', v);
+			this.qrCode = v.qr;
+			this.twoFaActive = true;
+		  },
+		  error: (e) => {
+			console.error('Error: two-fa generate:', e);
+			alert('Something wrong, try again!');
+		  },
+		  complete: () => console.info('Complete: two-fa generate done')
+		}));
+	  }
+  
+	  turnOffTwoFa() {
+		this.subscription.add(this.userAuth.twoFaTurnOff().subscribe({
+		  next: _ => {
+			this.qrCode = '';
+			this.twoFaActive = false;
+		  },
+		  error: (e) => {
+			console.error('Error: two-fa: turn off:', e);
+			alert('Something wrong, try again!');
+		  },
+		  complete: () => console.info('Complete: two-fa turn off done')
+		}));
+	  }
 }
 
 @Component({
