@@ -3,9 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { BanService } from './ban.service';
 import { BanEntity } from './entity/ban.entity';
 import { BanController } from './ban.controller';
-import { AppModule } from 'src/app/app.module';
-import { ChatGateway } from 'src/chat-gateway/chat.gateway';
-import { ChatGatewayModule } from 'src/chat-gateway/chat-gateway.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([BanEntity])],
