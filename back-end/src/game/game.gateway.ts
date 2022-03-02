@@ -12,7 +12,19 @@ export const YSPEED_MIN = 0.1;
 export const PLAYER_HEIGHT = 10; //percentage
 export const SPEED_COEF = 10;
 
-@WebSocketGateway(3002, {cors: 'http://localhost:4200'})
+@WebSocketGateway(3002, {
+  path: '/game/socket.io',
+  namespace: 'game',
+  cors: {
+    origin: [
+      'http://localhost',
+      'http://localhost:80',
+      'http://localhost:4200',
+    ],
+    methods: ['GET', 'POST'],
+    credentials: true,
+  },
+})
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(private playerService: PlayersService,
     private service: GameService) {}

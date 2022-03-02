@@ -35,7 +35,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
 	user: any = {}
 	password: string = "";
-	
+
 	@ViewChild('input') input: ElementRef<HTMLInputElement>;
 
 	@ViewChild('inputPrivate') inputPrivate: ElementRef<HTMLInputElement>;
@@ -147,7 +147,8 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 	}
 
 	ngOnInit(): void {
-		this.socket = io('http://localhost:3001/', {
+		this.socket = io('/chat', {
+			path: '/chat/socket.io',
 			withCredentials: true
 		});
 
