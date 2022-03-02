@@ -17,6 +17,10 @@ import { BanModule } from 'src/ban/ban.module';
 import { ChatGatewayModule } from 'src/chat-gateway/chat-gateway.module';
 import { MuteModule } from 'src/mute/mute.module';
 import { ModeratorModule } from 'src/moderator/moderator.module';
+import { GameGateway } from 'src/game/game.gateway';
+import { PlayersModule } from 'src/players/players.module';
+import { GameModule } from 'src/game/game.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -34,17 +38,22 @@ import { ModeratorModule } from 'src/moderator/moderator.module';
     ChatHistoryModule,
     LadderModule,
     PrivateModule,
-    ChannelsModule,
-    ImageModule,
-    PassportModule,
-    AuthModule,
-    ActiveUsersModule,
-    ChatGatewayModule,
-    BanModule,
-    BlockModule,
-    MuteModule,
-    ModeratorModule,
-  ],
-  providers: [],
+	ChannelsModule,
+	ImageModule,
+	PassportModule,
+	AuthModule,
+	ActiveUsersModule,
+	ChatGatewayModule,
+	BanModule,
+	BlockModule,
+	MuteModule,
+	ModeratorModule,
+	GameModule,
+	PlayersModule,
+	ScheduleModule.forRoot()
+	],
+	providers: [
+	],
+
 })
 export class AppModule {}

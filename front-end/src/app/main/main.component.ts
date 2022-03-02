@@ -4,9 +4,9 @@ import { Router } from '@angular/router';
 import { UserApiService } from '../service/user_api/user-api.service';
 import { UserAuthService } from '../service/user_auth/user-auth.service';
 import { GlobalConsts } from '../common/global';
-import { io, Socket } from 'socket.io-client';
 import { HttpClient } from '@angular/common/http';
 import { Subscription } from "rxjs";
+import { io, Socket } from 'socket.io-client';
 
 @Component({
   selector: 'app-main',
@@ -53,12 +53,6 @@ export class MainComponent implements OnInit, OnDestroy {
 
 
     ngOnInit() {
-			// set 3002 -> 3001 clean error on front
-      this.socket = io('/chat', {
-				path: '/chat/socket.io',
-				withCredentials: true
-			});
-
     //   this.subscription.add(this.userApi.getUser().subscribe({
     //     next: (v) => {
     //       if (v.twoFactorSecret) {

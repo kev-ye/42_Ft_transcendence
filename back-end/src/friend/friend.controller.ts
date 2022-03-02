@@ -23,9 +23,4 @@ export class FriendController {
   async getFriends(@Param('id') id: string) {
     return await this.service.getFriends(id);
   }
-
-  @Interval(1000)
-  checkInterval() {
-    console.log('Interval');
-  }
 }

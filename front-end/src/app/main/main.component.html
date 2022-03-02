@@ -24,7 +24,7 @@
   </div>
 </mat-toolbar>
 
-<app-chat *ngIf="chatVisibility" style="position: fixed;" [socketID]="socket.id" @chat></app-chat>
+<app-chat *ngIf="chatVisibility" style="position: fixed;" @chat></app-chat>
 <app-user *ngIf="userVisibility" style="position: fixed; right: 0%;" @user> </app-user>
 <!-- <p class="main">main</p> -->
 

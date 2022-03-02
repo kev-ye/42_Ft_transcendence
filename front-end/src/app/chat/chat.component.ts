@@ -36,8 +36,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 	user: any = {}
 	password: string = "";
 
-	@Input('socketID') socketID: string = "";
-
 	@ViewChild('input') input: ElementRef<HTMLInputElement>;
 
 	@ViewChild('inputPrivate') inputPrivate: ElementRef<HTMLInputElement>;
