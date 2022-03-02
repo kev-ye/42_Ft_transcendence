@@ -9,15 +9,15 @@ import { BanController } from './ban.controller';
   providers: [
     {
       provide: 'BAN_SERVICE',
-      useClass: BanService
-    }
+      useClass: BanService,
+    },
   ],
   exports: [
     {
       provide: 'BAN_SERVICE',
-      useClass: BanService
-    }
+      useClass: BanService,
+    },
   ],
-  controllers: [BanController]
+  controllers: [BanController],
 })
 export class BanModule {}

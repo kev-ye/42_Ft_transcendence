@@ -149,7 +149,8 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 	}
 
 	ngOnInit(): void {
-		this.socket = io('http://localhost:3001/', {
+		this.socket = io('/chat', {
+			path: '/chat/socket.io',
 			withCredentials: true
 		});
 
