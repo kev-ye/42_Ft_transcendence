@@ -71,7 +71,7 @@ services:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
     volumes:
-      - psql-admin:/var/lib/postgres_admin
+      - psql-admin:/var/lib/pgadmin
     ports:
       - "5050:80"
     networks:

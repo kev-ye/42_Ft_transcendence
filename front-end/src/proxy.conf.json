@@ -9,7 +9,7 @@
 		"secure": false,
 		"changeOrigin": true
 	},
-	"game": {
+	"/game": {
 		"target": "http://back-end:3002",
 		"secure": false,
 		"changeOrigin": true
