@@ -25,64 +25,6 @@ export class GameService {
 
     games: Map<string, any> = new Map<string, any>();
 
-    async startGame(gameID: string) {
-        //wait 3 seconds to star
-        setTimeout(() => { }, 3);
-
-        let game = await this.getGameById(gameID);
-        if (!game)
-            return ;
-        let stats = {
-            first: 0, //position of first player
-            second: 0, //position of second player
-            speed: this.generateRandomSpeed(), //ball's speed
-            pos: { //ball's position
-                x: 0,
-                y: 0
-            },
-            power: 0, //todo: implement powerups
-            score: {first: 0, second: 0}
-
-        };
-            
-        const tmp = setInterval(() => {
-            stats.pos.x += stats.speed.x;
-            stats.pos.y += stats.speed.y;
-
-            if (stats.pos.x == -50)
-            {
-                stats.speed = this.generateRandomSpeed();
-                stats.second++;
-                if (stats.score.second >= game.limit_game)
-                {
-                    this.playerWins(game.second);
-                    this.playerLoses(game.first);
-                }
-            }
-            else if (stats.pos.x == 50)
-            {
-                stats.speed = this.generateRandomSpeed();
-                stats.first++;
-                if (stats.score.first >= game.limit_game)
-                {
-                    this.playerWins(game.first);
-                    this.playerLoses(game.second);
-                }
-            }
-        }, TIME_TO_REFRESH);
-    }
-
-    generateRandomSpeed(): { x: number; y: number; } {
-        let x = Math.random() - 0.5;
-        let y = Math.random() - 0.5;
-        
-        if (Math.abs(x) < XSPEED_MIN)
-            x = x < 0 ? -XSPEED_MIN : XSPEED_MIN;
-        if (Math.abs(y) < YSPEED_MIN)
-            x = x < 0 ? -YSPEED_MIN : YSPEED_MIN;
-        return {x: x, y: y};
-    }
-
     async setPlayerState(socketID: string, value: number) {
         const tmp = await this.repo.findOne({where: [{first: socketID}, {second: socketID}]});
         if (!tmp)
@@ -98,6 +40,10 @@ export class GameService {
             this.games.set(tmp.id, {...this.games.get(tmp.id), second_state: value});
         }
         return tmp;
+    }
+
+    async startGame(gameID: string) {
+        await this.repo.update({id: gameID}, {game_state: 1});
     }
 
     async getGameById(id: string) {
@@ -133,44 +79,18 @@ export class GameService {
                 
                 tmp.second = socketID;
                 this.games.set(tmp.id, {...this.games.get(tmp.id), second: socketID});
-                this.startGame(tmp.id);
+                //this.startGame(tmp.id);
             }
             else
                 return false;
+            await this.playerService.updatePlayer({socket_id: socketID}, {game_id: gameID});
             await this.repo.update({id: tmp.id}, tmp);
             return true;
         }
         return false;
     }
 
-    async playerLoses(socketID: string) {
-
-    }
-
-    async playerWins(socketID: string) {
-
-    }
-
     async handleDisconnect(socketID: string) {
-        const player = await this.playerService.getPlayerBySocketId(socketID);
-        if (!player || !player.game_id)
-            return ;
-        const game = await this.repo.findOne({id: player.game_id});
-        if (game)
-        {
-            if (game.game_state == 1 && (game.first == socketID || game.second == socketID))
-            {
-                if (game.first == socketID)
-                {
-                    this.playerLoses(game.first);
-                    this.playerWins(game.second);
-                } else
-                {
-                    this.playerWins(game.first);
-                    this.playerLoses(game.second);
-                }
-            }
-        }
     }
 
     async forfeitGame(socketID: string, gameID: string) {
