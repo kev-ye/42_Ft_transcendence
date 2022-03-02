@@ -10,8 +10,6 @@ services:
       target: production
     restart: always
     volumes:
-      - back-end-dist:/pong/back-end/dist
-      - back-end-node-modules:/pong/back-end/node_modules/
       - back-end-uploads:/pong/uploads
     command: npm run start:prod
     depends_on:
@@ -23,6 +21,7 @@ services:
     ports:
       - "3000:3000"
       - "3001:3001"
+      - "3002:3002"
     networks:
       - front_net
       - back_net
@@ -35,9 +34,6 @@ services:
       context: ./front-end
       target: production
     restart: always
-    volumes:
-      - front-end-dist:/usr/share/nginx/html/front-end/
-      - front-end-node-modules:/pong/front-end/node_modules
     command: nginx -g "daemon off;"
     depends_on:
       - back-end
@@ -72,18 +68,14 @@ services:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
     volumes:
-      - psql-admin:/var/lib/postgres_admin
+      - psql-admin:/var/lib/pgadmin
     ports:
       - "5050:80"
     networks:
       - db_net
 
 volumes:
-  back-end-dist:
-  back-end-node-modules:
   back-end-uploads:
-  front-end-dist:
-  front-end-node-modules:
   psql-data:
   psql-admin:
 

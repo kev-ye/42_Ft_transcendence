@@ -17,6 +17,8 @@ import { PrivateService } from 'src/private/private.service';
 import { UserService } from 'src/user/user.service';
 
 @WebSocketGateway(3001, {
+  path: '/chat/socket.io',
+  namespace: 'chat',
   cors: {
     origin: [
       'http://localhost',

@@ -53,11 +53,6 @@ export class MainComponent implements OnInit, OnDestroy {
 
 
     ngOnInit() {
-			// set 3002 -> 3001 clean error on front
-      this.socket = io('http://localhost:3001/', {
-				withCredentials: true
-			});
-
     //   this.subscription.add(this.userApi.getUser().subscribe({
     //     next: (v) => {
     //       if (v.twoFactorSecret) {
