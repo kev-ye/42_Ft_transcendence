@@ -112,10 +112,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       await this.service.joinGame(user.socket_id, gameID);
       await this.playerService.setGameID(user.socket_id, gameID);
       
-      this.startGame(gameID);
-      
-      //todo: send gameReady when 2 players are in the room
-      //todo: send startGame
+      this.startGame(gameID);      
     }
     
     @SubscribeMessage('connectGame')

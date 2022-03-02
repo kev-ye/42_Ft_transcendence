@@ -4,7 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { GlobalConsts } from "src/app/common/global";
 
 @Component({
-    templateUrl: './dialog-change-username.html'
+    templateUrl: './html/dialog-change-username.html'
   })
   export class DialogChangeUsername implements OnInit {
   

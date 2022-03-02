@@ -4,7 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { GlobalConsts } from "src/app/common/global";
 
 @Component({
-    templateUrl: "./dialog-change-image.html"
+    templateUrl: "./html/dialog-change-image.html"
   })
   export class DialogChangeImage {
     constructor(@Inject(MAT_DIALOG_DATA) private data: any, private http: HttpClient,
