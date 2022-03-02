@@ -1,78 +1,111 @@
-import { Controller, Get, Post, Put, Delete, Req, Res , Param, Body, UseGuards, Header, Head, Redirect, Session, Inject} from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Req,
+  Res,
+  Body,
+  UseGuards,
+  Header,
+  Redirect,
+  Inject,
+  Param,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-
-import { UserDto, LimitedUserDto } from './dto/user.dto';
-import { UserService } from './user.service';
 
 import * as twoFa from 'node-2fa';
 
+import { UserDto, LimitedUserDto } from './dto/user.dto';
+import { UserService } from './user.service';
+import { UserGuard } from '../auth/user.guard';
+
 @Controller('user')
 export class UserController {
-  constructor(@Inject('USER_SERVICE') private readonly userService: UserService) {}
+  constructor(
+    @Inject('USER_SERVICE') private readonly userService: UserService,
+  ) {}
 
   @Get()
-  getUsers(): Promise<LimitedUserDto[]> {
-    return this.userService.getUsers();
+  async getUsers(): Promise<UserDto[]> {
+    return await this.userService.getUsers();
   }
 
   @Get('id')
-  @Header('Access-Control-Allow-Origin', 'http://localhost:4200')
+  @UseGuards(UserGuard)
   async getUserByCredentials(@Req() req: any, @Res() res: any): Promise<void> {
-    // console.log('get id:', req.session.userId);
     const id = req.session.userId;
-    const user = await this.userService.getUserById(id);
+    const user: UserDto = await this.userService.getUserById(id);
 
     if (user) res.status(200).json(user);
     else
-      res.status(401).json({
-        'Error message': 'Unauthorized Access',
+      res.status(403).json({
+        Forbidden: `Can't found user by id: ${id}`,
       });
   }
 
-  @Get('id/:id')
-	async getUserById(@Param('id') id: string) {
-		return await this.userService.getUserById(id);
-	}
-
-  @Get('login/:login')
-  getUserByLogin(@Param('login') login: string): Promise<LimitedUserDto> {
-    return this.userService.getUserByLogin(login);
-  }
-
   @Get('name/:name')
-  getUserByName(@Param('name') name: string): Promise<UserDto> {
-    return this.userService.getUserByName(name);
+  @UseGuards(UserGuard)
+  async getUserByName(
+    @Req() req: any,
+    @Res() res: any,
+    @Param('name') name: string,
+  ): Promise<void> {
+    const id = req.session.userId;
+    const user: UserDto = await this.userService.getUserById(id);
+
+    if (user) {
+      const getUserByName: UserDto = await this.userService.getUserByName(name);
+      if (getUserByName) res.status(200).json(user);
+      else res.status(200).json(null);
+    } else
+      res.status(403).json({
+        Forbidden: `Can't found user by name: ${name}`,
+      });
   }
 
-  @Post('create')
-  createUser(@Body() user: LimitedUserDto): Promise<UserDto> {
-    return this.userService.createUser(user);
-  }
-
-  @Put('create/first')
-  @Header('Access-Control-Allow-Origin', 'http://localhost:4200')
-  async firstUserCreate(@Req() req: any, @Body() name: any): Promise<UserDto> {
-    // console.log('id:', req.session.userId);
+  @Put('create')
+  @UseGuards(UserGuard)
+  async createUser(
+    @Req() req: any,
+    @Res() res: any,
+    @Body() name: any,
+  ): Promise<void> {
     const id: string = req.session.userId;
+    const user: UserDto = await this.userService.getUserById(id);
 
-    return await this.userService.firstUserCreate(id, name.name);
+    if (user) {
+      const newUser: UserDto | null = await this.userService.createUser(
+        user,
+        name.name,
+      );
+      console.log('user:', newUser);
+      if (!newUser) res.status(201).json({});
+      else res.status(201).json(newUser);
+    } else
+      res.status(403).json({
+        Forbidden: `Can't found user by id: ${id}`,
+      });
+  }
+
+  @Post('create/verify')
+  @UseGuards(UserGuard)
+  async nameVerify(@Body() name: any): Promise<boolean> {
+    return await this.userService.nameFormatVerify(name.name);
   }
 
   @Put('update')
+  @UseGuards(UserGuard)
   updateUserById(@Body() user: UserDto): Promise<UserDto> {
-    return this.userService.updateUserById(user);
-  }
-
-  @Get('delete/:id')
-  deleteUserById(@Param('id') id: string) {
-    return this.userService.deleteUserById(id);
+    return this.userService.updateUser(user);
   }
 
   /*
    * Auth
    */
 
-  // login/logout
+  /*  login/logout */
 
   @Get('auth/42/login')
   @UseGuards(AuthGuard('42'))
@@ -80,16 +113,17 @@ export class UserController {
   async ftLogIn(): Promise<void> {}
 
   @Get('auth/42/callback')
-  @Redirect('http://localhost:4200/main')
+  @Redirect('http://localhost:4200/main') // modify to :80 when prod
   @UseGuards(AuthGuard('42'))
   ftAuthCallback(@Req() req: any): void {
     const user: LimitedUserDto = req.user;
 
+    // set session when user exist
     if (user) req.session.userId = user.id;
   }
 
   @Get('isLogin')
-  async isLogin(@Req() req: any) {
+  async isLogin(@Req() req: any): Promise<boolean> {
     const id = req.session.userId;
     const user = await this.userService.getUserById(id);
 
@@ -97,14 +131,16 @@ export class UserController {
   }
 
   @Get('isLogin/refresh')
-  isLoginRefresh() {
-    // console.log('test');
-    // console.log('Refresh:', req.session.cookie._expires);
-    return { ok: 'Refresh' };
+  @UseGuards(UserGuard)
+  isLoginRefresh(@Res() res: any) {
+    // refresh session expire time
+    res.status(200).json({
+      ok: 'Refresh',
+    });
   }
 
   @Post('auth/logout')
-  @Header('Access-Control-Allow-Origin', 'http://localhost:4200')
+  @UseGuards(UserGuard)
   async logOut(@Req() req: any, @Res() res: any) {
     const user: UserDto = await this.userService.getUserById(
       req.session.userId,
@@ -121,10 +157,10 @@ export class UserController {
     });
   }
 
-  // Two-factor authentication
+  /* Two-factor authentication */
 
   @Post('auth/2fa/generate')
-  @Header('Access-Control-Allow-Origin', 'http://localhost:4200')
+  @UseGuards(UserGuard)
   async twoFaGenerate(@Req() req: any, @Res() res: any): Promise<void> {
     const user: UserDto = await this.userService.getUserById(
       req.session.userId,
@@ -147,7 +183,7 @@ export class UserController {
   }
 
   @Delete('auth/2fa/turnoff')
-  @Header('Access-Control-Allow-Origin', 'http://localhost:4200')
+  @UseGuards(UserGuard)
   async twoFaTurnOff(@Req() req: any, @Res() res: any): Promise<void> {
     const user: UserDto = await this.userService.getUserById(
       req.session.userId,
@@ -168,7 +204,7 @@ export class UserController {
   }
 
   @Post('auth/2fa/verify')
-  @Header('Access-Control-Allow-Origin', 'http://localhost:4200')
+  @UseGuards(UserGuard)
   async twoFaVerify(
     @Req() req: any,
     @Res() res: any,

@@ -29,12 +29,6 @@ import { ScheduleModule } from '@nestjs/schedule';
       url: process.env.DATABASE_URL,
       autoLoadEntities: true,
       synchronize: true,
-      // host: 'localhost',
-      // port: 5432,
-      // username: 'yek',
-      // password: '',
-      // database: 'test',
-      // // logging: false,
       dropSchema: true, // don't use in production
       // entities: ['./dist/**/*.entity.js'],
     }),

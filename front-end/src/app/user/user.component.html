@@ -76,4 +76,10 @@
         </h1>
     </div>
     
+	<div>
+		<img [src]="qrCode" alt="QR-code" *ngIf="twoFaActive"/>
+	</div>
+	<button (click)="turnOnTwoFa()" *ngIf="!twoFaActive">Turn on 2Fa</button>
+	<button (click)="turnOffTwoFa()" *ngIf="twoFaActive">Turn off 2Fa</button>
+
 </div>

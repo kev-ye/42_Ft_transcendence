@@ -2,6 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GlobalConsts } from '../common/global';
+import { Router } from '@angular/router';
+import { UserApiService } from '../service/user_api/user-api.service';
+import { UserAuthService } from '../service/user_auth/user-auth.service';
+import { Subscription } from "rxjs";
 
 
 @Component({
@@ -11,21 +15,28 @@ import { GlobalConsts } from '../common/global';
 })
 export class UserComponent implements OnInit {
 
-  constructor(public dialog: MatDialog, private http: HttpClient) {
-  }
-
-  user: any;
-
-  changeUsername: boolean = false;
-  connected: boolean = false;
+	private subscription: Subscription = new Subscription();
+	
+	user: any;
+	
+	changeUsername: boolean = false;
+	connected: boolean = false;
+	
+	twoFaActive: boolean = false;
+	qrCode: string = '';
+	
+constructor(public dialog: MatDialog,
+		private http: HttpClient,
+		private router: Router,
+		private userApi: UserApiService,
+		private userAuth: UserAuthService) { }
 
   refreshUserDetails() {
     //load data from backend server
 
     this.http.get(`${GlobalConsts.userApi}/user/id/`, {withCredentials: true}).subscribe({
       next: data => {
-        if (!data)
-        {
+        if (!data) {
           console.log("Could not fetch user details");
           return ;
         }
@@ -43,16 +54,31 @@ export class UserComponent implements OnInit {
           },
           error: data => {
             console.log("Could not fetch user ladder points");
-            
+
         }});
     }, error: data => {
       console.log("Could not fetch user details");
-      
+
     }});
   }
 
   ngOnInit(): void {
     this.refreshUserDetails();
+	
+	this.subscription.add(this.userApi.getUser().subscribe({
+        next: (v) => {
+          if (v.twoFactorSecret) {
+            this.twoFaActive = true;
+            this.qrCode = v.twoFactorQR;
+          }
+        },
+        error: (e) => console.error('Error: get user in main:', e),
+        complete: () => console.info('Complete: get user in main')
+      }))
+  }
+
+  ngOnDestroy() {
+	this.subscription.unsubscribe();
   }
 
   openImageDialog() {
@@ -83,10 +109,36 @@ export class UserComponent implements OnInit {
         this.refreshUserDetails();
     })
   }
-  
-  
 
-
+      //// test function prepared for parameter
+	  turnOnTwoFa() {
+		this.subscription.add(this.userAuth.twoFaGenerate().subscribe({
+		  next: (v) => {
+			console.log('info:', v);
+			this.qrCode = v.qr;
+			this.twoFaActive = true;
+		  },
+		  error: (e) => {
+			console.error('Error: two-fa generate:', e);
+			alert('Something wrong, try again!');
+		  },
+		  complete: () => console.info('Complete: two-fa generate done')
+		}));
+	  }
+  
+	  turnOffTwoFa() {
+		this.subscription.add(this.userAuth.twoFaTurnOff().subscribe({
+		  next: _ => {
+			this.qrCode = '';
+			this.twoFaActive = false;
+		  },
+		  error: (e) => {
+			console.error('Error: two-fa: turn off:', e);
+			alert('Something wrong, try again!');
+		  },
+		  complete: () => console.info('Complete: two-fa turn off done')
+		}));
+	  }
 }
 
 @Component({
@@ -118,7 +170,7 @@ export class DialogChangeUsername implements OnInit {
   }
 
   inputEvent(username: string) {
-    
+
     if (username)
     {
       //look for username in database and see if available
@@ -126,7 +178,7 @@ export class DialogChangeUsername implements OnInit {
         next: data => {
           if (!data)
           {
-            this.statusText.nativeElement.textContent = username + " is available";    
+            this.statusText.nativeElement.textContent = username + " is available";
             this.change = true;
           }
           else
@@ -175,12 +227,12 @@ export class DialogChangeImage {
           this.link = reader.result.toString();
       };
     }
-    
+
   }
 
 
   submitImage() {
-    
+
     if (!this.file.nativeElement.files)
       return ;
 
@@ -196,12 +248,12 @@ export class DialogChangeImage {
 
       let ext: string = "";
       let index: number = 0;
-      
+
       if ((index = ((image.name as string).lastIndexOf('.'))) > 0)
       {
         ext = (image.name as string).substring(index).toUpperCase();
         console.log("extension " + ext);
-        
+
         if (ext != ".PNG" && ext != ".JPG")
         {
           console.log("Bad extension 1: " + ext);
@@ -210,7 +262,7 @@ export class DialogChangeImage {
         let fd = new FormData();
         fd.append('image', image);
         this.http.post<FormData>(`${GlobalConsts.userApi}/image/upload/` + this.data.user_id, fd, {headers: {extension: ext}, withCredentials: true}).subscribe((res) => {
-          
+
         });
       }
       else

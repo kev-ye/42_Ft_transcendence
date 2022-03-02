@@ -63,3 +63,24 @@ bdd -> user account -> chat
 					   friends
 					   preferences
 					   game
+
+
+
+- [ ] game
+	- front:
+		- customization
+		- game room
+			- match making
+			- create private game
+			- spectator
+				- list
+		- game
+			- treat signals
+	- back:
+		- receive signals
+
+
+
+- startRound() : 
+- input(treshold : number) : void
+- endGame() : void

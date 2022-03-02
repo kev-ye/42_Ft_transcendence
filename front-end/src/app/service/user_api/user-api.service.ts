@@ -16,11 +16,17 @@ export class UserApiService {
  * User Api
  */
 
-	createUser(name: any): Observable<any> {
-    return this.httpClient.put(`${this.USER_API}/user/create/first`, { name: name}, {
+	createUser(name: string): Observable<any> {
+    return this.httpClient.put(`${this.USER_API}/user/create`, { name: name}, {
 			withCredentials: true
 		})
   }
+
+	nameVerify(name: string): Observable<any> {
+		return this.httpClient.post<any>(`${this.USER_API}/user/create/verify`, { name: name }, {
+			withCredentials: true
+		})
+	}
 
 	getUser(): Observable<any> {
     return this.httpClient.get<any>(`${this.USER_API}/user/id`, {

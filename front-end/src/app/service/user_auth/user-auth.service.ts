@@ -21,7 +21,7 @@ export class UserAuthService {
 		});
 	}
 
-	isLogin(): Observable<any> {
+	isLogin(): Observable<boolean> {
     return this.httpClient.get<boolean>(`${this.USER_API}/user/isLogin`, {
 			withCredentials: true
 		})
