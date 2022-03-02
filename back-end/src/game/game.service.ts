@@ -50,14 +50,26 @@ export class GameService {
         return await this.repo.findOne({id: id});
     }
 
+    async getGameByCreator(creator_id: string) {
+        return await this.repo.find({creator_id: creator_id});
+    }
+
+    async getGameByStatus(status: number) {
+        return await this.repo.find({game_state: status});
+    }
+
     async createGame(): Promise<GameEntity> {
         const tmp = this.repo.create();
         this.games.set(tmp.id, tmp);
         return await this.repo.save(tmp);
     }
 
-    async createGameWithCreator(userID: string) {
-        const tmp = this.repo.create({creator_id: userID});
+    async createGameWithCreator(userID: string, data?: any) {
+        let tmp;
+        if (data)
+            tmp = this.repo.create({creator_id: userID, ...data});
+        else
+        tmp = this.repo.create({creator_id: userID});
         return await this.repo.save(tmp);
     } 
 
