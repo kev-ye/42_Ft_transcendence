@@ -1,7 +1,11 @@
+.game-container {
+	margin: 64px 0;
+}
+
 #game-wrapper {
 	display: block;
 	margin: 0 auto;
-	max-width: 1800px;
+	max-width: 1500px;
 }
 
 .game {

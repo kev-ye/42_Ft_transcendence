@@ -9,32 +9,32 @@
 
 	<span>{{ title }}</span>
 
-  <div *ngIf="isLogin">
-    <button mat-raised-button mat-icon-button (click)="friendSidenav.toggle()" class="item">
-      <mat-icon>{{ friendSidenav.opened ? 'close' : 'people' }}</mat-icon>
-    </button>
-		<button mat-raised-button mat-icon-button class="item" >
-			<mat-icon>sports_esports</mat-icon>
+	<div *ngIf="isLogin">
+		<button mat-raised-button mat-icon-button (click)="friendSidenav.toggle()" class="item">
+			<mat-icon class="material-icon">{{ friendSidenav.opened ? 'close' : 'people' }}</mat-icon>
 		</button>
-  </div>
+		<button mat-raised-button mat-icon-button class="item">
+			<mat-icon class="material-icon">sports_esports</mat-icon>
+		</button>
+	</div>
 </mat-toolbar>
 
 <!-- side nav -->
 <mat-sidenav-container class="sidenav-container">
 	<!-- user	-->
-  <mat-sidenav #userSidenav mode="over" position="start" class="sidenav">
+	<mat-sidenav #userSidenav mode="over" position="start" class="sidenav">
 		<app-user></app-user>
-  </mat-sidenav>
+	</mat-sidenav>
 
 	<!-- chat	-->
 	<mat-sidenav #friendSidenav mode="over" position="end" class="sidenav">
 		<app-chat></app-chat>
-  </mat-sidenav>
+	</mat-sidenav>
 
 	<!-- router content	-->
-  <mat-sidenav-content>
+	<mat-sidenav-content class="router-container">
 		<router-outlet></router-outlet>
-  </mat-sidenav-content>
+	</mat-sidenav-content>
 </mat-sidenav-container>
 
 

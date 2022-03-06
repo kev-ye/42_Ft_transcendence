@@ -18,7 +18,7 @@ export class UserSubscriptionComponent implements OnInit, OnDestroy {
     name: new FormControl('', [
       Validators.required,
       Validators.minLength(6),
-      Validators.pattern('^[a-zA-Z ]*$')
+      Validators.pattern('^[a-zA-Z]*$')
     ])
   });
 

@@ -12,9 +12,9 @@ import { UserAuthService } from "./service/user_auth/user-auth.service";
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit, OnDestroy {
-  title: string = GlobalConsts.siteTitle;
+	title: string = GlobalConsts.siteTitle;
 	time: number = 60 * 60 * 1000;
-	isLogin: boolean = false;
+	isLogin: boolean = true;
 
 	private subscription: Subscription = new Subscription();
 	intervalObs: Observable<number> = interval(this.time);
@@ -34,14 +34,14 @@ export class AppComponent implements OnInit, OnDestroy {
 			)
 			.subscribe())
 
-		this.subscription.add(this.userAuth.isLogin().subscribe({
-			next: (v) => {
-				console.log('->', v);
-				this.isLogin = v
-			},
-			error: (e) => console.error('Error: is login:', e),
-			complete: () => console.info('Complete: user is login')
-		}))
+		// this.subscription.add(this.userAuth.isLogin().subscribe({
+		// 	next: (v) => {
+		// 		console.log('->', v);
+		// 		this.isLogin = v
+		// 	},
+		// 	error: (e) => console.error('Error: is login:', e),
+		// 	complete: () => console.info('Complete: user is login')
+		// }))
 	}
 
 	ngOnDestroy() {

@@ -1,9 +1,5 @@
-<mat-toolbar [ngClass]="'container'">
-  <span>{{ title }}</span>
-</mat-toolbar>
-
-<div class="stepperContainer">
-  <mat-vertical-stepper [linear]="true">
+<div class="container">
+  <mat-vertical-stepper [linear]="true" class="stepper-container">
     <form [formGroup]="subscriptionForm">
 
       <!-- name step -->
@@ -20,14 +16,8 @@
         </mat-form-field>
 				  <button mat-button color="warm" (click)="nameVerify()">check name</button>
         <div>
-          <button mat-button matStepperNext color="primary">Next to Avatar</button>
+          <button mat-button matStepperNext color="primary">Next</button>
         </div>
-      </mat-step>
-
-      <!-- avatar step -->
-      <mat-step label="Avatar" optional>
-        <button mat-button matStepperPrevious color="warn">Back to Info</button>
-        <button mat-button matStepperNext color="primary">Next to submit</button>
       </mat-step>
 
     </form>
