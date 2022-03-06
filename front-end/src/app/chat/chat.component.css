@@ -2,8 +2,8 @@
 
 .background-one {
 	background-color: rgb(223, 223, 223);
+	height: 100%;
 	width: 400px;
-	height: 590px;
 	border-top-right-radius: 15px;
 	border-bottom-right-radius: 15px;
 	position: fixed;
