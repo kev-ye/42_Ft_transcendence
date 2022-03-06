@@ -3,10 +3,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PrivateController } from './private.controller';
 import { PrivateMessageEntity } from './entity/private_message.entity';
 import { PrivateService } from './private.service';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([PrivateMessageEntity])
+    TypeOrmModule.forFeature([PrivateMessageEntity]),
+    UserModule
   ],
   controllers: [PrivateController],
   providers: [

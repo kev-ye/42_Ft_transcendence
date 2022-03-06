@@ -1,4 +1,4 @@
-import { Controller, Inject, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Inject, Param, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { GameService } from './game.service';
 import { UserGuard } from '../auth/user.guard';
 import { UserService } from '../user/user.service'
@@ -36,10 +36,20 @@ export class GameController {
                 }
             }
             if (data.limit_game)
-                return await this.service.createGameWithCreator(userID, {limit_game: data.limit_game});
-            return await this.service.createGameWithCreator(userID);
+            {
+                res.send({id: (await this.service.createGameWithCreator(userID, {limit_game: data.limit_game})).id})
+                return;
+            }
+            res.send({id: (await this.service.createGameWithCreator(userID)).id});
+            return ;
         }
-        
-        
+
+        @Get('custom/:id')
+        async getCustomGameById(@Param('id') id: string) {
+            const tmp = await this.service.getGameById(id);
+            if (tmp && tmp.creator_id)
+                return tmp;
+            return null;
+        }
     }
     

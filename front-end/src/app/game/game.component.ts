@@ -1,11 +1,15 @@
-import { Component, HostListener, Inject, Input, OnInit, Output } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Component, HostListener, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { io, Socket } from 'socket.io-client';
+import { GlobalConsts } from '../common/global';
 
 @Component({
 	selector: 'app-game',
 	templateUrl: './game.component.svg',
 	styleUrls: ['./game.component.css']
 })
-export class GameComponent implements OnInit {
+export class GameComponent implements OnInit, OnDestroy {
 
 	private gameStarted: boolean = false;
 	fillColor = 'rgb(20, 20, 20)';
@@ -48,139 +52,89 @@ export class GameComponent implements OnInit {
 		x:     this.game.WIDTH - this.paddle.WIDTH - this.paddle.PADDING,
 		y:     (this.game.HEIGHT / 2) - (this.paddle.HEIGHT / 2)
 	}
+
+	mode: number = 0;
+	//0 : play
+	//1 : spectate
 	
 
-	constructor() {
+	constructor(private route: ActivatedRoute, private http: HttpClient) {
 		// this.start()
 	}
+
+	sock: Socket;
+	user: any;
 	
 	ngOnInit() : void {
+		this.http.get(`${GlobalConsts.userApi}/user`).subscribe((data: any) => {
+			this.user = data[0];
+			console.log("received user data", data);
+			
+		});
+		this.route.queryParams.subscribe((data: any)=> {
+			this.mode = 0;
+			if (data.id)
+			{
+				this.http.get(`${GlobalConsts.userApi}/game/custom/${data.id}`).subscribe({next: data => {
+					if (!data)
+						console.log("Game doesn't exist");
+					else
+					{
+						
+					}
+				}})
+			}
+			else if (data.spec)
+			{
+				this.mode = 1;
+				this.http.get(`${GlobalConsts.userApi}/game/custom/${data.spec}`).subscribe({next: data => {
+					if (!data)
+						console.log("Game doesn't exist");
+				}})
+			}
 
+			this.sock = io(`/game`, {
+				path: '/game/socket.io',
+				withCredentials: true
+			});
+			this.sock.on('user', () => {
+				console.log("emitting user", this.user);
+								
+				this.sock.emit('user', {id: this.user.id});
+			});
+
+			this.sock.on('joinedGame', () => {
+				console.log("joinnneedGame");
+			})
+		})
+		
 	}
 
-	resetBall() : void {
-		this.ball.x = this.ball_t.X
-		this.ball.y = Math.random() * (this.game.HEIGHT - this.ball_t.RADIUS)
-		if (this.ball.y < this.ball_t.RADIUS)
-			this.ball.y = this.ball_t.RADIUS
-
-		this.ball.xIncrement = this.ball_t.SPEED * (Math.random() < 0.5 ? -1 : 1);
-		this.ball.yIncrement = this.ball_t.SPEED * Math.random();
-		if (this.ball.yIncrement < this.ball_t.SPEED * 0.2)
-			this.ball.yIncrement = this.ball_t.SPEED / 2;
-		console.log(this.ball.yIncrement)
-	}
-
-	start() : void {
-		if (!this.gameStarted) {
-			this.gameStarted = true
-			this.resetBall()
-			window.requestAnimationFrame(() => this.moveBall());
-		}
+	ngOnDestroy(): void {
+		this.route.queryParams.subscribe((data: any) => {
+			if (data.id)
+			{
+				//this.http.delete
+			}
+		})
 	}
 
 	@HostListener("window:keydown", ["$event"])
   	onKeyDown(e: any) {
-		let threshold: number = 0
-
-		if (e.code === "ArrowUp") {
-			threshold = -this.paddle.SPEED
+		  let threshold: number = 0
+		  e.preventDefault();
+		  
+		  if (this.mode == 1)
+		  	return ;
+		  console.log("event", e);
+		if (e.code == 'ArrowUp')
+			this.sock.emit('input', {value: 1});
+		else if (e.code == 'ArrowDown')
+			this.sock.emit('input', {value: -1});
+		else if (e.code == 'Space'){
+			console.log("emit startMatchmaking");
+			this.sock.emit('startMatchmaking');
 		}
-		if (e.code === "ArrowDown") {
-			threshold = this.paddle.SPEED
-		}
-
-		/* animation was too slow - had to do this trick */
-		let val: number = threshold < 0 ? -1 : 1
-		for (let _ = Math.abs(threshold); _ > 0; --_) {
-			this.movePaddle(val)
-			setTimeout(() => {
-				window.requestAnimationFrame(() => this.movePaddle(val))
-			}, 10)
-		}
-		// window.requestAnimationFrame(() => this.movePaddle(threshold));
-	}
-
-	movePaddle(val: number) : void {
-		if (this.player1.y + val >= 0 &&
-			this.player1.y + val + this.paddle.HEIGHT <= this.game.HEIGHT) {
-			this.player1.y += val
-		}
-	}
-
-	goalCollision(x: number) : boolean {
-		if (x < -this.ball_t.RADIUS)
-		{
-			this.player2.score++
-			return true
-		}
-		else if (x > (this.game.WIDTH + this.ball_t.RADIUS))
-		{
-			this.player1.score++
-			return true
-		}
-		else
-			return false;
-	}
-
-	wallCollision(y: number) : boolean {
-		return y <= this.ball_t.RADIUS ||
-			   y >= (this.game.HEIGHT - this.ball_t.RADIUS)
-	}
-
-	paddleCollision(x: number, y: number) : boolean {
-
-		// check if the ball is aligned with one of the paddle
-		const rightPaddleCollision: boolean =
-			y >= this.player1.y &&
-			y <= (this.player1.y + this.paddle.HEIGHT);
-
-		const leftPaddleCollision: boolean =
-			y >= this.player2.y &&
-			y <= (this.player2.y + this.paddle.HEIGHT);
-
-		/*
-			check if the ball is in the paddle area,
-			and that the ball is actually in front of the corresponding paddle.
-			(means that we have to bounce it)
-		*/
-		const rightCollision: boolean =
-					  x - (this.paddle.PADDING + this.paddle.WIDTH) <= 0 &&
-			this.ball.x - (this.paddle.PADDING + this.paddle.WIDTH) >  0 &&
-			rightPaddleCollision;
-
-		const leftCollision: boolean =
-					  x + (this.paddle.PADDING + this.paddle.WIDTH) >= this.game.WIDTH &&
-			this.ball.x + (this.paddle.PADDING + this.paddle.WIDTH) <  this.game.WIDTH &&
-			leftPaddleCollision;
-
-		return rightCollision || leftCollision
-	}
-
-	moveBall() : void {
-		const future_x: number = this.ball.x + this.ball.xIncrement
-		const future_y: number = this.ball.y + this.ball.yIncrement
-
-		if (this.goalCollision(future_x))
-		{
-			// the ball has hit a border, giving a point to the other player
-			this.resetBall()
-		}
-		else
-		{
-			// bounce off the paddles
-			if (this.paddleCollision(future_x, future_y))
-				this.ball.xIncrement = -this.ball.xIncrement
-
-			// bounce off top and bottom walls
-			if (this.wallCollision(future_y))
-				this.ball.yIncrement = -this.ball.yIncrement
-
-			this.ball.x += this.ball.xIncrement
-			this.ball.y += this.ball.yIncrement
-		}
-
-		window.requestAnimationFrame(() => this.moveBall());
 	}
 
 	changeColor() : void {

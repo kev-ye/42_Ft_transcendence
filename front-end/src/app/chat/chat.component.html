@@ -17,6 +17,19 @@
         border-bottom-right-radius: 15px;
     }
 
+    .inviteGame {
+        background-color: rgb(255, 155, 155);
+        text-align: center;
+        text-decoration: underline solid black;
+        cursor: pointer;
+        transition: 100ms ease;
+    }
+
+    .inviteGame:hover {
+        background-color: brown;
+        color: white;
+    }
+
     .tab {
         position: relative;
         width: 1px;
@@ -164,20 +177,22 @@
                     </div>
                     <mat-icon (click)="openFriendList()" style="position: absolute; top: 0%; left: 0%; cursor: pointer;"> keyboard_arrow_left </mat-icon>
                     <mat-icon (click)="inviteFriend()" *ngIf="chat.access == 2" class="btn" style="bottom: 0%; right: 0%; margin-right: 15px;"> person_add</mat-icon>
+                    <mat-icon (click)="inviteGame()" class="btn" style="bottom: 0%; right: 10%; margin-right: 15px;"> gamepad </mat-icon>
                     <mat-icon (click)="openSpec()" class="btn" style="bottom: 0%; left: 0%; margin-left: 15px;"> remove_red_eye </mat-icon>
                 </div>
                 <div style="height: 75%; width: 100%; position: relative; background-color: rgb(201, 201, 201); overflow-x: hidden; overflow-y: scroll; -ms-overflow-style: none; scrollbar-width: none;" #framePublic>
                     <div *ngFor="let msg of messages; let index = index">
                         <div style="position: relative;">
                             <div [ngClass]="{'colorLabel': msg.user_id != user.id}" [style.--color]="colorMap.get(msg.user_id)">
-                                <div [ngClass]="{'messages': true, 
+                                <div *ngIf="msg.type == 1" [ngClass]="{'messages': true, 
                                 'yours': msg.user_id != user.id,
                                 'mine': msg.user_id == user.id}">
                                     {{ msg.message }}
                                 </div>
+                                <div class="inviteGame" *ngIf="msg.type != 1" (click)="joinGame(msg.message)"> {{ msg.username + ' has invited you to play' }} </div>
                             </div>
                         </div>
-                        <div style="font-size:75%; cursor: pointer; display: inline-block;" (click)="openUserDialog(msg)" *ngIf="(index == messages.length - 1 || msg.username != messages[index + 1].username) && msg.user_id != user.id">
+                        <div style="font-size:75%; cursor: pointer; display: inline-block;" (click)="openUserDialog(msg)" *ngIf="(index == messages.length - 1 || msg.username != messages[index + 1].username) && msg.user_id != user.id && msg.type == 1">
                             {{ msg.username }}
                         </div>
                     </div>
@@ -226,18 +241,19 @@
                         {{ chat.name }}
                     </div>
                     <mat-icon (click)="openFriendList()" style="position: absolute; top: 0%; left: 0%; cursor: pointer;"> keyboard_arrow_left </mat-icon>
-                    <mat-icon (click)="inviteFriend()" class="btn" style="bottom: 0%; right: 0%; margin-right: 15px;"> gamepad </mat-icon>
+                    <mat-icon (click)="inviteGame()" class="btn" style="bottom: 0%; right: 0%; margin-right: 15px;"> gamepad </mat-icon>
                     <mat-icon (click)="openUserDialog()" class="btn" style="bottom: 0%; left: 0%; margin-left: 15px;"> person_pin </mat-icon>
                 </div>
                 <div style="height: 75%; width: 100%; position: relative; background-color: rgb(233, 233, 233); overflow-x: hidden; overflow-y: scroll; -ms-overflow-style: none; scrollbar-width: none;" #framePrivate>
                     <div *ngFor="let msg of messages; let index = index">
                         <div style="position: relative;">
                             <div [ngClass]="{'colorLabel': msg.user_id != user.id}" [style.--color]="colorMap.get(msg.user_id)">
-                                <div [ngClass]="{'messages': true, 
+                                <div *ngIf="msg.type == 1" [ngClass]="{'messages': msg.type == 1, 
                                 'yours': msg.user_id != user.id,
                                 'mine': msg.user_id == user.id}">
                                     {{ msg.message }}
                                 </div>
+                                <div class="inviteGame" *ngIf="msg.type != 1" (click)="joinGame(msg.message, msg.user_id)"> {{ msg.username + ' has invited you to play' }} </div>
                             </div>
                         </div>
                         <div style="font-size:75%; cursor: pointer; display: inline-block;" (click)="openUserDialog(msg)"  *ngIf="(index == messages.length - 1 || msg.username != messages[index + 1].username) && msg.user_id != user.id">

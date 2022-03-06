@@ -44,7 +44,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   stats: Map<string, any> = new Map();
 
-  async sleep(ms: number) {
+  async sleep(ms: number): Promise<unknown> {
     return new Promise((r) => setTimeout(r, ms));
   }
 
@@ -59,10 +59,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
   }
 
-  getSocket(socketID: string) {
-    if (this.server.sockets.sockets.has(socketID))
-      return this.server.sockets.sockets.get(socketID);
-    return null;
+  async getSocket(socketID: string) {
+    return (await this.server.fetchSockets()).find(val => val.id == socketID);
   }
 
   emitRoom(room: string, event: string, ...args: any[]) {
@@ -116,8 +114,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() data: any,
     @ConnectedSocket() client: Socket,
   ) {
-    console.log('received user', data);
-
+    console.log("received user details", data);
+    
     await this.playerService.setUserIdBySocketId(client.id, data.id);
   }
 
@@ -174,7 +172,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @Interval(3000)
   async checkMatchmaking() {
     const tmp = await this.playerService.getLookingPlayers();
-    console.log('Matchmaking: ' + tmp.length);
+    
     if (tmp.length < 2) return;
     const game = await this.service.createGame();
     await this.service.joinGame(tmp[0].socket_id, game.id);
@@ -183,28 +181,38 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     await this.playerService.updatePlayer({ id: tmp[1].id }, { status: 2 });
 
     const player_1 = await this.playerService.getPlayerBySocketId(
-      tmp[0].socket_id,
+      tmp[0].socket_id
     );
     const player_2 = await this.playerService.getPlayerBySocketId(
-      tmp[1].socket_id,
+      tmp[1].socket_id
     );
 
-    const sock_1 = this.getSocket(player_1.socket_id);
+    const sock_1 = await this.getSocket(player_1.socket_id);
     if (sock_1) {
       sock_1.join(game.id);
+    } else
+    {
+      console.log("Could not get socket for player_1");
+      return ;
+      
     }
 
-    const sock_2 = this.getSocket(player_2.socket_id);
+    const sock_2 = await this.getSocket(player_2.socket_id);
     if (sock_2) {
       sock_2.join(game.id);
+    } else
+    {
+      console.log("Could not get socket for player_2");
+      return ;
+      
     }
-
+    
     this.startGame(game.id);
   }
 
   @SubscribeMessage('startMatchmaking')
   async joinMatchmaking(@ConnectedSocket() client: Socket) {
-    const error = false;
+    let error = false;
     const tmp = await this.playerService.getPlayerBySocketId(client.id);
 
     if (!tmp || !tmp.user_id) return;
@@ -212,10 +220,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     //todo: check if same user is in matchmaking
     const players = await this.playerService.getLookingPlayers();
     players.forEach((val) => {
-      /*
-        if (val.user_id == tmp.user_id)
-          error = true;
-          */
+      
+        // if (val.user_id == tmp.user_id)
+        //   error = true;
+          
     });
     if (error) return;
 
@@ -239,6 +247,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   async startGame(gameID: string) {
+    
     const game = await this.service.getGameById(gameID);
     if (!game) return;
 
@@ -265,8 +274,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       }, //todo: implement powerups
       score: { first: 0, second: 0 },
     });
-
+    
     const interval = setInterval(() => {
+      
       if (!this.stats.has(game.id)) {
         clearInterval(interval);
         return;
@@ -311,6 +321,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
           data.speed.y *= -1;
         }
       }
+      
       this.emitRoom(gameID, 'refresh', data);
     }, TIME_TO_REFRESH);
   }
@@ -329,12 +340,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   async playerLoses(socketID: string) {
-    const sock = this.getSocket(socketID);
+    const sock = await this.getSocket(socketID);
     if (sock) sock.emit('lose');
   }
 
   async playerWins(socketID: string) {
-    const sock = this.getSocket(socketID);
+    const sock = await this.getSocket(socketID);
     if (sock) sock.emit('win');
   }
 }

@@ -1,12 +1,11 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UserApiService } from '../service/user_api/user-api.service';
 import { UserAuthService } from '../service/user_auth/user-auth.service';
 import { GlobalConsts } from '../common/global';
 import { HttpClient } from '@angular/common/http';
 import { Subscription } from "rxjs";
-import { io, Socket } from 'socket.io-client';
 
 @Component({
   selector: 'app-main',
@@ -47,10 +46,8 @@ export class MainComponent implements OnInit, OnDestroy {
     private router: Router,
     private userApi: UserApiService,
     private userAuth: UserAuthService,
-    private http: HttpClient) { }
-
-    public socket: Socket;
-
+    private http: HttpClient,
+    private route: ActivatedRoute) { }
 
     ngOnInit() {
     //   this.subscription.add(this.userApi.getUser().subscribe({
@@ -102,6 +99,17 @@ export class MainComponent implements OnInit, OnDestroy {
 
     openLadder() {
 
+    }
+
+    joinGame(event: any) {
+      console.log("joining", event);
+      this.route.queryParams.subscribe((data: any) => {
+        if (!data.id || data.id != event)
+        {
+          this.router.navigate(['play'], {queryParams: {id: event}})
+        }
+      })
+      
     }
 
   }

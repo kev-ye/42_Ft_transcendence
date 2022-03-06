@@ -51,7 +51,7 @@
 
 	<div id="game-preferences">
 		<div class="preferences">
-			<button  class="btn btn-dark" (click)="start()">Start</button>
+			<button  class="btn btn-dark">Start</button>
 		</div>
 		<div class="preferences">
 			<button class="btn" (click)="changeColor()">Change Background Color</button>

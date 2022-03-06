@@ -50,7 +50,7 @@ export class ChannelsService {
   }
 
   async getChannelById(id: string) {
-    return await this.repo.findOne({ id: id });
+    return await this.repo.findOne({id: id});
   }
 
   async getChannelByName(name: string) {
@@ -69,10 +69,13 @@ export class ChannelsService {
   }
 
   async checkAccess(userID: string, chatID: string) {
+    console.log("oui");
     const channel = await this.getChannelById(chatID);
+    console.log("oui 2", channel);
     if (!channel) return 1;
     if (await this.banService.isBanned(userID, chatID)) return 2;
     else if (await this.modService.isModerator(chatID, userID)) return 0;
+    console.log("oui 3");
     if (channel.access == 2) {
       if (!(await this.privateInvService.isInvited(userID, chatID))) return 1;
     }

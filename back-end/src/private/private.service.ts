@@ -1,11 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { PrivateMessageEntity } from './entity/private_message.entity';
 
 @Injectable()
 export class PrivateService {
-    constructor(@InjectRepository(PrivateMessageEntity) private repo: Repository<PrivateMessageEntity>) {}
+    constructor(@InjectRepository(PrivateMessageEntity) private repo: Repository<PrivateMessageEntity>,
+    @Inject('USER_SERVICE') private userService: UserService) {}
 
     async postMessage(userID: string, data: {to: string, type: number, message?: string}) {
         const tmp = this.repo.create({from: userID, ...data});
@@ -20,9 +22,19 @@ export class PrivateService {
         tmp.splice(20);
         tmp.reverse();
         let result = [];
+        const first = await this.userService.getUserById(data.first);
+        const second = await this.userService.getUserById(data.second);
+        
         tmp.forEach(val => {
-            result.push({user_id: val.from, message: val.message, type: val.type});
+            let obj: any = {user_id: val.from, message: val.message, type: val.type};
+            if (obj.user_id == first.id)
+                obj = {...obj, username: first.name};
+            else
+                obj = {...obj, username: second.name};
+            result.push(obj);
         });
+
+
         return result;
     }
 }

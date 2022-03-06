@@ -28,8 +28,15 @@ export class UserController {
   ) {}
 
   @Get()
+  @UseGuards(UserGuard)
   async getUsers(): Promise<UserDto[]> {
     return await this.userService.getUsers();
+  }
+
+  @Get('id/:id')
+  @UseGuards(UserGuard)
+  async getUserById(@Param('id') id: string) {
+    return await this.userService.getUserById(id);
   }
 
   @Get('id')

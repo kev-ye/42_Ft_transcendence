@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { targetModulesByContainer } from '@nestjs/core/router/router-module';
 import { Interval } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -16,9 +16,13 @@ export const XSPEED_MIN = 0.1;
 export const YSPEED_MIN = 0.1;
 
 @Injectable()
-export class GameService {
+export class GameService implements OnModuleInit {
     constructor(@InjectRepository(GameEntity) private repo: Repository<GameEntity>,
     private playerService: PlayersService) {}
+
+    onModuleInit() {
+        this.repo.clear();
+    }
 
     @WebSocketServer()
     server: Server;
@@ -47,7 +51,13 @@ export class GameService {
     }
 
     async getGameById(id: string) {
-        return await this.repo.findOne({id: id});
+        const tmp = await this.repo.find();
+        for (let it of tmp)
+        {
+            if (it.id == id)
+                return it;
+        }
+        return null;
     }
 
     async getGameByCreator(creator_id: string) {

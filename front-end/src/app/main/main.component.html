@@ -24,13 +24,20 @@
   </div>
 </mat-toolbar>
 
-<app-chat *ngIf="chatVisibility" style="position: fixed;" @chat></app-chat>
+<app-chat *ngIf="chatVisibility" style="position: fixed;" @chat (join)="joinGame($event)"></app-chat>
 <app-user *ngIf="userVisibility" style="position: fixed; right: 0%;" @user> </app-user>
+
+
+<router-outlet></router-outlet>
 <!-- <p class="main">main</p> -->
 
 <!-- <button (click)="toTF()" >Go to two_factor page</button> -->
 <!-- <p class="main">main</p> -->
-<app-game></app-game>
+
+
+<!-- <app-game></app-game> -->
+
+
 
 <!-- <div>
 	<img [src]="qrCode" alt="QR-code" *ngIf="twoFaActive"/>
