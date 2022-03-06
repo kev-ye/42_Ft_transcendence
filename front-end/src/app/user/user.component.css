@@ -1,0 +1,109 @@
+/*.background {*/
+/*	background-color: rgb(83, 83, 83);*/
+/*	border-top-left-radius: 30px;*/
+/*	border-bottom-left-radius: 30px;*/
+/*	width: 200px;*/
+/*}*/
+
+/*.avatar {*/
+/*		border-radius: 50%;*/
+/*		max-width: 100px;*/
+/*		max-height: 100px;*/
+/*		position: absolute;*/
+/*		left: 50%;*/
+/*		top: 50%;*/
+/*		transform: translate(-50%, -50%);*/
+/*}*/
+
+/*.category {*/
+/*		text-align: center;*/
+/*		text-decoration: underline;*/
+/*}*/
+
+/*.information {*/
+/*		text-align: center;*/
+/*}*/
+
+/*.username {*/
+/*		font-size: 1.2em;*/
+/*		text-align: center;*/
+/*}*/
+
+/*.username:hover {*/
+/*		text-decoration: underline;*/
+/*		cursor: pointer;*/
+/*		user-select: none;*/
+/*}*/
+
+/*.avatar {*/
+/*		transition: .25s ease;*/
+/*		cursor: pointer;*/
+/*}*/
+
+/*.avatar:hover  {*/
+/*		opacity: 0.5;*/
+/*}*/
+
+
+/* modify by kaye */
+* {
+	font-family: 'Press Start 2P';
+}
+
+.background {
+}
+
+.container {
+	text-align: center;
+}
+
+.avatar {
+	border-radius: 50%;
+	width: 50%;
+	height: 50%;
+	position: relative;
+}
+
+.category {
+	text-align: center;
+}
+
+.information {
+	text-align: center;
+	color: gray;
+}
+
+.username {
+		font-size: 1.2em;
+		text-align: center;
+}
+
+.username:hover {
+	cursor: pointer;
+	opacity: 0.5;
+}
+
+.avatar {
+	transition: .25s ease;
+	cursor: pointer;
+}
+
+.avatar:hover  {
+	opacity: 0.5;
+}
+
+.qrcode {
+	text-align: center;
+}
+
+.btn {
+	text-align: center;
+	color: gray;
+}
+
+.btnOn {
+	text-align: center;
+	color: gray;
+	padding-top: 83px;
+}
+

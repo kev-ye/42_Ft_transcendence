@@ -18,15 +18,15 @@ import { DialogChangeUsername } from './dialogs/dialog-change-username.component
 export class UserComponent implements OnInit {
 
 	private subscription: Subscription = new Subscription();
-	
+
 	user: any;
-	
+
 	changeUsername: boolean = false;
 	connected: boolean = false;
-	
+
 	twoFaActive: boolean = false;
 	qrCode: string = '';
-	
+
 constructor(public dialog: MatDialog,
 		private http: HttpClient,
 		private router: Router,
@@ -66,8 +66,8 @@ constructor(public dialog: MatDialog,
 
   ngOnInit(): void {
     this.refreshUserDetails();
-	
-	this.subscription.add(this.userApi.getUser().subscribe({
+
+		this.subscription.add(this.userApi.getUser().subscribe({
         next: (v) => {
           if (v.twoFactorSecret) {
             this.twoFaActive = true;
@@ -112,33 +112,48 @@ constructor(public dialog: MatDialog,
     })
   }
 
-      //// test function prepared for parameter
-	  turnOnTwoFa() {
+	turnOnTwoFa() {
 		this.subscription.add(this.userAuth.twoFaGenerate().subscribe({
-		  next: (v) => {
+			next: (v) => {
 			console.log('info:', v);
 			this.qrCode = v.qr;
 			this.twoFaActive = true;
-		  },
-		  error: (e) => {
+			},
+			error: (e) => {
 			console.error('Error: two-fa generate:', e);
 			alert('Something wrong, try again!');
-		  },
-		  complete: () => console.info('Complete: two-fa generate done')
+			},
+			complete: () => console.info('Complete: two-fa generate done')
 		}));
-	  }
-  
-	  turnOffTwoFa() {
+	}
+
+	turnOffTwoFa() {
 		this.subscription.add(this.userAuth.twoFaTurnOff().subscribe({
-		  next: _ => {
+			next: _ => {
 			this.qrCode = '';
 			this.twoFaActive = false;
-		  },
-		  error: (e) => {
+			},
+			error: (e) => {
 			console.error('Error: two-fa: turn off:', e);
 			alert('Something wrong, try again!');
-		  },
-		  complete: () => console.info('Complete: two-fa turn off done')
+			},
+			complete: () => console.info('Complete: two-fa turn off done')
 		}));
-	  }
+	}
+
+	logOut(): void {
+		const confirm$: boolean = confirm('Are you sure?');
+		if (confirm$) {
+			this.subscription.add(this.userAuth.logout().subscribe({
+				next: _ => {
+					this.router.navigate(['user_login']).then();
+				},
+				error: e => {
+					console.error('Error: user logout:', e);
+					this.router.navigate(['user_login']).then();
+				},
+				complete: () => console.info('Complete: user logout done')
+			}));
+		}
+	}
 }

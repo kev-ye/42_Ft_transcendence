@@ -1,0 +1,47 @@
+.toolbar,
+.toolbar-offline,
+.footer,
+.sidenav,
+p {
+	font-family: 'Press Start 2P';
+	font-size: 15px;
+}
+
+.toolbar {
+	border: solid;
+	border-radius: 7px;
+  display: flex;
+  justify-content: space-between;
+	position: fixed;
+	z-index: 2;
+}
+
+.toolbar-offline,
+.footer {
+	border: solid;
+	border-radius: 7px;
+	display: flex;
+  justify-content: space-around;
+	position: fixed;
+	z-index: 2;
+}
+
+.footer {
+	bottom: 0;
+}
+
+.sidenav {
+  padding-top: 64px;
+	width: 30%;
+}
+
+.item {
+	border: solid;
+	border-radius: 50%;
+}
+
+.material-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}

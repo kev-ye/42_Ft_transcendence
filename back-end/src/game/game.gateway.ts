@@ -174,7 +174,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @Interval(3000)
   async checkMatchmaking() {
     const tmp = await this.playerService.getLookingPlayers();
-    console.log('Matchmaking: ' + tmp.length);
+    // console.log('Matchmaking: ' + tmp.length);
     if (tmp.length < 2) return;
     const game = await this.service.createGame();
     await this.service.joinGame(tmp[0].socket_id, game.id);

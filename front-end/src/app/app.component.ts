@@ -13,10 +13,10 @@ import { UserAuthService } from "./service/user_auth/user-auth.service";
 })
 export class AppComponent implements OnInit, OnDestroy {
   title: string = GlobalConsts.siteTitle;
-	time: number = 60 * 60 * 1000; // one hour
-	user: any = null;
+	time: number = 60 * 60 * 1000;
+	isLogin: boolean = false;
 
-	private subscription?: Subscription;
+	private subscription: Subscription = new Subscription();
 	intervalObs: Observable<number> = interval(this.time);
 
 	constructor(
@@ -24,7 +24,7 @@ export class AppComponent implements OnInit, OnDestroy {
 		private userAuth: UserAuthService) {}
 
 	ngOnInit() {
-		this.subscription = this.intervalObs
+		this.subscription.add(this.intervalObs
 			.pipe(
 				switchMap(() => {
 					if (this.router.url !== '/user_login')
@@ -32,7 +32,16 @@ export class AppComponent implements OnInit, OnDestroy {
 					return of(null);
 				})
 			)
-			.subscribe()
+			.subscribe())
+
+		this.subscription.add(this.userAuth.isLogin().subscribe({
+			next: (v) => {
+				console.log('->', v);
+				this.isLogin = v
+			},
+			error: (e) => console.error('Error: is login:', e),
+			complete: () => console.info('Complete: user is login')
+		}))
 	}
 
 	ngOnDestroy() {

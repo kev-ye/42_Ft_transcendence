@@ -1,132 +1,7 @@
-<style>
-
-    .background-one {
-        background-color: rgb(223, 223, 223);
-        width: 400px;
-        height: 590px;
-        border-top-right-radius: 15px;
-        border-bottom-right-radius: 15px;
-        position: fixed;
-        overflow-y: hidden;
-        overflow-x: hidden;
-    }
-
-    .contact:hover {
-        background-color: hotpink;
-        border-top-right-radius: 15px;
-        border-bottom-right-radius: 15px;
-    }
-
-    .tab {
-        position: relative;
-        width: 1px;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
-
-    .tab:hover {
-        background-color: hotpink;
-    }
-
-    .mat-tab-body-wrapper {
-        background-color: royalblue;
-        bottom: 12px;
-    }
-
-    .friend {
-        background: linear-gradient(90deg, var(--color), rgb(223, 223, 223) 90%);
-        height: 15px;
-        padding-top: 5px;
-        margin-top: 5px;
-        margin-bottom: 5px;
-        padding-bottom: 5px;
-        padding-left: 5px;
-        border-top-left-radius: 5px;
-        border-bottom-left-radius: 5px;
-        vertical-align: middle;
-        cursor: default;
-        font-weight: bold;
-        position: relative;
-    }
-
-    .friend:hover {
-        background: linear-gradient(90deg, rgb(129, 63, 2), rgb(223, 223, 223) 90%);
-    }
-
-    .messages {
-        cursor: default;
-        word-break: break-all;
-        user-select: none;
-        margin-top: 5px;
-        
-    }
-
-    .messages.mine {
-        text-align: right;
-        margin-right: 10px;
-    }
-
-    .messages.yours {
-        text-align: left;
-        margin-left: 10px;
-    }
-
-    .colorLabel:before {
-        position: absolute;
-        content: "";
-        background-color: var(--color);
-        width: 5px;
-        height: 100%;
-        margin-right: 5px;
-        margin-left: 2px;
-    }
-
-    .messages:hover {
-        background-color: rgb(143, 143, 143);
-    }
-
-    .channel:hover {
-        background-color: rgb(165, 164, 164);
-    }
-
-    .ChatInformation {
-        height: 50px;
-    }
-
-    ::-webkit-scrollbar {
-        display: none;
-    }
-
-    .btn {
-        position: absolute;
-        cursor: pointer;
-        border-radius: 50%;
-    }
-
-    .btn:hover {
-        background-color: rgb(206, 206, 206);
-    }
-
-    .addFriend {
-        text-decoration: underline; text-align: center; font-weight: bold;
-        position: absolute;
-        display: inline;
-        left: 50%;
-        transform: translate(-50%, 0);
-        cursor: pointer;
-    }
-
-    .addFriend:hover {
-        color: blue;
-    }
-</style>
-
-
 <div class="background-one">
-    
+
     <mat-tab-group mat-stretch-tabs animationDuration="0ms" fitInkBarToContent=false  (selectedTabChange)="openFriendList($event)">
-            
+
             <mat-tab>
                 <ng-template mat-tab-label>
                     <p>
@@ -134,8 +9,8 @@
                         <!-- Include text description of the icon's meaning for screen-readers -->
                     </p>
                 </ng-template>
-            
-            <div *ngIf="!chat.show" id="roomsList" style="height: 540px; overflow-x: hidden; overflow-y: scroll;">
+
+<!--            <div *ngIf="!chat.show" id="roomsList" style="height: 540px; overflow-x: hidden; overflow-y: scroll;">-->
                 <div style="height: 25px; position: relative;">
 
                     <div (click)="createChat()" style="position: absolute; left: 50%; top: 50%;cursor: pointer; transform: translate(-50%, -50%);" (click)="createChat()">
@@ -155,7 +30,7 @@
                         <mat-icon style="position: absolute; left: 90%; top: 50%; transform: translate(0, -50%); ">keyboard_arrow_right</mat-icon>
                     </div>
                 </div>
-            </div>
+<!--            </div>-->
             <div *ngIf="chat.show" style="overflow: hidden; height: 600px; width: 400px">
                 <div class="ChatInformation" style="position: relative; height: 50px;">
                     <div (click)="openChannelSettings()" style="position: absolute; top: 0%; left: 50%; transform: translate(-50%, 0); text-decoration: underline;" [ngStyle]="{'font-weight': chat.moderator ? 'bold': '',
@@ -170,7 +45,7 @@
                     <div *ngFor="let msg of messages; let index = index">
                         <div style="position: relative;">
                             <div [ngClass]="{'colorLabel': msg.user_id != user.id}" [style.--color]="colorMap.get(msg.user_id)">
-                                <div [ngClass]="{'messages': true, 
+                                <div [ngClass]="{'messages': true,
                                 'yours': msg.user_id != user.id,
                                 'mine': msg.user_id == user.id}">
                                     {{ msg.message }}
@@ -189,7 +64,7 @@
                     </form>
                 </div>
             </div>
-            
+
         </mat-tab>
         <mat-tab>
             <ng-template mat-tab-label>
@@ -233,7 +108,7 @@
                     <div *ngFor="let msg of messages; let index = index">
                         <div style="position: relative;">
                             <div [ngClass]="{'colorLabel': msg.user_id != user.id}" [style.--color]="colorMap.get(msg.user_id)">
-                                <div [ngClass]="{'messages': true, 
+                                <div [ngClass]="{'messages': true,
                                 'yours': msg.user_id != user.id,
                                 'mine': msg.user_id == user.id}">
                                     {{ msg.message }}
@@ -257,4 +132,3 @@
 
 </div>
 
-      
