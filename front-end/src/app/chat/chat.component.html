@@ -180,7 +180,7 @@
                     <mat-icon (click)="inviteGame()" class="btn" style="bottom: 0%; right: 10%; margin-right: 15px;"> gamepad </mat-icon>
                     <mat-icon (click)="openSpec()" class="btn" style="bottom: 0%; left: 0%; margin-left: 15px;"> remove_red_eye </mat-icon>
                 </div>
-                <div style="height: 75%; width: 100%; position: relative; background-color: rgb(201, 201, 201); overflow-x: hidden; overflow-y: scroll; -ms-overflow-style: none; scrollbar-width: none;" #framePublic>
+                <div style="height: 72%; width: 100%; position: relative; background-color: rgb(201, 201, 201); overflow-x: hidden; overflow-y: scroll; -ms-overflow-style: none; scrollbar-width: none;" #framePublic>
                     <div *ngFor="let msg of messages; let index = index">
                         <div style="position: relative;">
                             <div [ngClass]="{'colorLabel': msg.user_id != user.id}" [style.--color]="colorMap.get(msg.user_id)">
@@ -197,7 +197,7 @@
                         </div>
                     </div>
                 </div>
-                <div style="position: relative; height: 10%; padding-top: 3px; ">
+                <div style="position: relative; height: 10%; padding-top: 3px; background-color: rgb(201, 201, 201);">
                     <form (ngSubmit)="sendMessage()">
                         <!--<button type="submit" style="width: 100%;"> Send </button> -->
                         <input type="text" placeholder="Enter text.." style="width: -webkit-fill-available; height: 50%; position: absolute; border-radius: 15px;" #input>
@@ -244,7 +244,7 @@
                     <mat-icon (click)="inviteGame()" class="btn" style="bottom: 0%; right: 0%; margin-right: 15px;"> gamepad </mat-icon>
                     <mat-icon (click)="openUserDialog()" class="btn" style="bottom: 0%; left: 0%; margin-left: 15px;"> person_pin </mat-icon>
                 </div>
-                <div style="height: 75%; width: 100%; position: relative; background-color: rgb(233, 233, 233); overflow-x: hidden; overflow-y: scroll; -ms-overflow-style: none; scrollbar-width: none;" #framePrivate>
+                <div style="height: 72%; width: 100%; position: relative; background-color: rgb(201, 201, 201); overflow-x: hidden; overflow-y: scroll; -ms-overflow-style: none; scrollbar-width: none;" #framePrivate>
                     <div *ngFor="let msg of messages; let index = index">
                         <div style="position: relative;">
                             <div [ngClass]="{'colorLabel': msg.user_id != user.id}" [style.--color]="colorMap.get(msg.user_id)">
@@ -261,7 +261,7 @@
                         </div>
                     </div>
                 </div>
-                <div style="position: relative; height: 10%; padding-top: 3px; ">
+                <div style="position: relative; height: 10%; padding-top: 3px; background-color: rgb(201, 201, 201);">
                     <form (ngSubmit)="sendMessage()">
                         <!--<button type="submit" style="width: 100%;"> Send </button> -->
                         <input type="text" placeholder="Enter text.." style="width: -webkit-fill-available; height: 50%; position: absolute; border-radius: 15px;" #inputPrivate>

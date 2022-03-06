@@ -32,7 +32,6 @@ import { DialogMute } from './chat/dialogs/dialog-mute.component';
 import { SharedMaterialModule } from './common/shared-material.module';
 import { TwoFactorComponent } from './two-factor/two-factor.component';
 import { GameComponent } from './game/game.component';
-import { HomeComponent } from './home/home.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +43,6 @@ import { HomeComponent } from './home/home.component';
     GameComponent,
     UserComponent,
     ChatComponent,
-    HomeComponent,
     DialogCreateChat,
     DialogInvite,
     DialogProtectedChat,
