@@ -14,15 +14,15 @@ import { io, Socket } from 'socket.io-client';
   styleUrls: ['./main.component.css'],
   animations: [
     trigger('chat', [
-      state('*', style({left: "0%"})),
-      state('void', style({left: "-100%"})),
+      state('*', style({ left: "0%" })),
+      state('void', style({ left: "-100%" })),
       transition('void <=> *', [
         animate('500ms ease-in-out')
       ])
     ]),
     trigger('user', [
-      state('*', style({right: "0%"})),
-      state('void', style({right: "-100%"})),
+      state('*', style({ right: "0%" })),
+      state('void', style({ right: "-100%" })),
       transition("void <=> *", [
         animate('500ms ease-in-out')
       ])
@@ -49,10 +49,10 @@ export class MainComponent implements OnInit, OnDestroy {
     private userAuth: UserAuthService,
     private http: HttpClient) { }
 
-    public socket: Socket;
+  public socket: Socket;
 
 
-    ngOnInit() {
+  ngOnInit() {
     //   this.subscription.add(this.userApi.getUser().subscribe({
     //     next: (v) => {
     //       if (v.twoFactorSecret) {
@@ -63,45 +63,37 @@ export class MainComponent implements OnInit, OnDestroy {
     //     error: (e) => console.error('Error: get user in main:', e),
     //     complete: () => console.info('Complete: get user in main')
     //   }))
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
+
+  logOut(): void {
+    const confirm$: boolean = confirm('Are you sure?');
+    if (confirm$) {
+      this.subscription.add(this.userAuth.logout().subscribe({
+        next: _ => {
+          this.router.navigate(['user_login']).then();
+        },
+        error: e => {
+          console.error('Error: user logout:', e);
+          this.router.navigate(['user_login']).then();
+        },
+        complete: () => console.info('Complete: user logout done')
+      }));
     }
+  }
 
-    ngOnDestroy() {
-      this.subscription.unsubscribe();
-    }
+  openChat() {
+    this.chatVisibility = !this.chatVisibility;
+  }
 
-    logOut(): void {
-      const confirm$: boolean = confirm('Are you sure?');
-      if (confirm$) {
-        this.subscription.add(this.userAuth.logout().subscribe({
-          next: _ => {
-            this.router.navigate(['user_login']).then();
-          },
-          error: e => {
-            console.error('Error: user logout:', e);
-            this.router.navigate(['user_login']).then();
-          },
-          complete: () => console.info('Complete: user logout done')
-        }));
-      }
-    }
+  openUser() {
+    this.userVisibility = !this.userVisibility;
+  }
 
-    openChat() {
-      if (this.chatVisibility)
-        this.chatVisibility = false;
-      else
-        this.chatVisibility = true;
-
-    }
-
-    openUser() {
-      if (this.userVisibility)
-        this.userVisibility = false;
-      else
-        this.userVisibility = true;
-    }
-
-    openLadder() {
-
-    }
+  openLadder() {
 
   }
+}
