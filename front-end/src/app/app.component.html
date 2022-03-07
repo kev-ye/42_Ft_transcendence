@@ -13,7 +13,7 @@
 		<button mat-raised-button mat-icon-button (click)="friendSidenav.toggle()" class="item">
 			<mat-icon class="material-icon">{{ friendSidenav.opened ? 'close' : 'people' }}</mat-icon>
 		</button>
-		<button mat-raised-button mat-icon-button class="item">
+		<button mat-raised-button mat-icon-button (click)="gameRoom()" class="item">
 			<mat-icon class="material-icon">sports_esports</mat-icon>
 		</button>
 	</div>
@@ -28,7 +28,7 @@
 
 	<!-- chat	-->
 	<mat-sidenav #friendSidenav mode="over" position="end" class="sidenav" style="background-color: rgb(165, 164, 164);">
-			<app-chat style="position: absolute; top: 9%;" (join)="joinGame($event)"></app-chat>
+		<app-chat style="position: absolute; top: 9%;"></app-chat>
 	</mat-sidenav>
 
 	<!-- router content	-->

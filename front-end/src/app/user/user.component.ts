@@ -27,7 +27,7 @@ export class UserComponent implements OnInit {
 	twoFaActive: boolean = false;
 	qrCode: string = '';
 
-constructor(public dialog: MatDialog,
+	constructor(public dialog: MatDialog,
 		private http: HttpClient,
 		private router: Router,
 		private userApi: UserApiService,

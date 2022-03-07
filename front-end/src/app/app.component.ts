@@ -54,9 +54,12 @@ export class AppComponent implements OnInit, OnDestroy {
 	// 		return navigator.sendBeacon(`${GlobalConsts.userApi}/user/auth/logout`);
 	// 	return true;
 	// }
-	joinGame(event: any) {
-		this.router.navigate([], {queryParams: {id: "yo"}});
-		console.log("navigating");
-		
+	// joinGame(event: any) {
+	// 	this.router.navigate([], {queryParams: {id: "yo"}});
+	// 	console.log("navigating");
+	// }
+
+	gameRoom(): any {
+		this.router.navigate(['room']).then();
 	}
 }

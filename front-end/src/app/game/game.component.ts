@@ -1,4 +1,6 @@
 import { Component, HostListener, Inject, Input, OnInit, Output } from '@angular/core';
+import { Subscription } from "rxjs";
+import { UserApiService } from '../service/user_api/user-api.service';
 
 @Component({
 	selector: 'app-game',
@@ -48,14 +50,29 @@ export class GameComponent implements OnInit {
 		x:     this.game.WIDTH - this.paddle.WIDTH - this.paddle.PADDING,
 		y:     (this.game.HEIGHT / 2) - (this.paddle.HEIGHT / 2)
 	}
-	
 
-	constructor() {
+
+	private subscription: Subscription = new Subscription();
+	private user: any;
+
+
+	constructor(private userApi: UserApiService) {
 		// this.start()
 	}
-	
-	ngOnInit() : void {
 
+	ngOnInit(): void {
+		this.subscription.add(this.userApi.getUser().subscribe({
+			next: (data) => {
+						this.user = {...data}
+						console.log('game_data:', this.user)
+			},
+			error: (e) => console.error('Error: get user in main:', e),
+			complete: () => console.info('Complete: get user in main')
+		}))
+	}
+
+	ngOnDestroy() {
+			this.subscription.unsubscribe();
 	}
 
 	resetBall() : void {
@@ -80,7 +97,7 @@ export class GameComponent implements OnInit {
 	}
 
 	@HostListener("window:keydown", ["$event"])
-  	onKeyDown(e: any) {
+	onKeyDown(e: any) {
 		let threshold: number = 0
 
 		if (e.code === "ArrowUp") {
@@ -189,6 +206,6 @@ export class GameComponent implements OnInit {
 		const g = Math.floor((Math.random() * 256 - 30) % 256);
 		const b = Math.floor((Math.random() * 256 - 30) % 256);
 		this.fillColor = `rgb(${r}, ${g}, ${b})`;
-		console.log(this.fillColor);		
+		console.log(this.fillColor);
 	}
 }
