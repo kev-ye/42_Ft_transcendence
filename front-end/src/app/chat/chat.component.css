@@ -11,6 +11,19 @@
 	overflow-x: hidden;
 }
 
+.inviteGame {
+	background-color: rgb(255, 155, 155);
+	text-align: center;
+	text-decoration: underline solid black;
+	cursor: pointer;
+	transition: 100ms ease;
+}
+
+.inviteGame:hover {
+	background-color: brown;
+	color: white;
+}
+
 .contact:hover {
 	background-color: hotpink;
 	border-top-right-radius: 15px;

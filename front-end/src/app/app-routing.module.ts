@@ -17,6 +17,7 @@ const routes: Routes = [
 	{ path: 'two_factor', component: TwoFactorComponent, canActivate: [IsLoginGuard, TwoFactorGuard] },
   { path: 'user_subscription', component: UserSubscriptionComponent, canActivate: [IsLoginGuard, SubscriptionGuard] },
   { path: 'main', component: MainComponent, canActivate: [IsLoginGuard, AuthGuard] },
+  { path: 'play', component: MainComponent, canActivate: [IsLoginGuard, AuthGuard] },
   { path: '**', redirectTo: 'user_login', pathMatch: 'full' }
 ];
 

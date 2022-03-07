@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { targetModulesByContainer } from '@nestjs/core/router/router-module';
 import { Interval } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -16,9 +16,13 @@ export const XSPEED_MIN = 0.1;
 export const YSPEED_MIN = 0.1;
 
 @Injectable()
-export class GameService {
+export class GameService implements OnModuleInit {
     constructor(@InjectRepository(GameEntity) private repo: Repository<GameEntity>,
     private playerService: PlayersService) {}
+
+    onModuleInit() {
+        this.repo.clear();
+    }
 
     @WebSocketServer()
     server: Server;
@@ -47,7 +51,21 @@ export class GameService {
     }
 
     async getGameById(id: string) {
-        return await this.repo.findOne({id: id});
+        const tmp = await this.repo.find();
+        for (let it of tmp)
+        {
+            if (it.id == id)
+                return it;
+        }
+        return null;
+    }
+
+    async getGameByCreator(creator_id: string) {
+        return await this.repo.find({creator_id: creator_id});
+    }
+
+    async getGameByStatus(status: number) {
+        return await this.repo.find({game_state: status});
     }
 
     async createGame(): Promise<GameEntity> {
@@ -56,8 +74,12 @@ export class GameService {
         return await this.repo.save(tmp);
     }
 
-    async createGameWithCreator(userID: string) {
-        const tmp = this.repo.create({creator_id: userID});
+    async createGameWithCreator(userID: string, data?: any) {
+        let tmp;
+        if (data)
+            tmp = this.repo.create({creator_id: userID, ...data});
+        else
+        tmp = this.repo.create({creator_id: userID});
         return await this.repo.save(tmp);
     } 
 
