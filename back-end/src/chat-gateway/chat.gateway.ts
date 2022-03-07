@@ -137,6 +137,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() data: any,
     @ConnectedSocket() client: Socket,
   ) {
+    console.log("received user", data);
+    
     await this.activeService.updateUser({id: client.id, user_id: data.user_id});
   }
 
