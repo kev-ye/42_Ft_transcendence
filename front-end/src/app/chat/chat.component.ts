@@ -153,7 +153,10 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 		});
 
 		this.socket.on('user', () => {
-			this.socket.emit('user', {user_id: this.user.id});
+			this.http.get(`${GlobalConsts.userApi}/user/id`, {withCredentials: true}).subscribe((data: any) => {
+				this.user = data;				
+				this.socket.emit('user', {user_id: data.id});
+			})
 		})
 
 		this.socket.on('mod', (data: string) => {
