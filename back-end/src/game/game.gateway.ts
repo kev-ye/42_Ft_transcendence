@@ -11,14 +11,14 @@ import {
 } from '@nestjs/websockets';
 import { stat } from 'fs';
 import { first } from 'rxjs';
-import { Server, Socket } from 'socket.io';
+import { RemoteSocket, Server, Socket } from 'socket.io';
+import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 import { PlayersService } from 'src/players/players.service';
 import { GameService } from './game.service';
-export const TIME_TO_REFRESH = 200; //milliseconds
-export const XSPEED_MIN = 0.1;
-export const YSPEED_MIN = 0.1;
-export const PLAYER_HEIGHT = 10; //percentage
-export const SPEED_COEF = 10;
+export const TIME_TO_REFRESH = 20; //milliseconds
+export const XSPEED_MIN = 1;
+export const YSPEED_MIN = 1;
+export const SPEED_COEF = 5;
 
 @WebSocketGateway(3002, {
   path: '/game/socket.io',
@@ -39,6 +39,26 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private service: GameService,
   ) {}
 
+  game = {
+		WIDTH:  100,
+		HEIGHT: 100
+	}
+
+	paddle = {
+		WIDTH:   1,
+		HEIGHT:  20,
+		PADDING: 4,
+		RADIUS:  3,
+		SPEED:   3
+	}
+
+	ball_t = {
+		RADIUS: 1,
+		SPEED:  1,
+		X:      50,
+		Y:      50
+	}
+
   @WebSocketServer()
   server: Server;
 
@@ -51,18 +71,24 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async emitUser(userID: string, event: string, ...args: any[]) {
     const tmp = await this.playerService.getPlayerByUserId(userID);
     if (tmp.length > 0) {
-      for (const it of tmp) {
-        if (this.server.sockets.sockets.has(it.socket_id)) {
-          this.server.sockets.sockets.get(it.socket_id).emit(event, args);
+      await this.server.fetchSockets().then(data => {
+        for (const it of tmp) {
+          const sock = data.find(val => val.id == it.socket_id);
+          if (sock)
+            sock.emit(event, args);
         }
-      }
+      });
     }
   }
 
-  getSocket(socketID: string) {
-    if (this.server.sockets.sockets.has(socketID))
-      return this.server.sockets.sockets.get(socketID);
-    return null;
+  async getSocket(socketID: string): Promise<any> {
+    let res: RemoteSocket<DefaultEventsMap, any> = null;
+    await this.server.fetchSockets().then(data => {
+      const sock = data.find(val => val.id == socketID);
+      if (sock)
+        res = sock;
+    });
+    return res;
   }
 
   emitRoom(room: string, event: string, ...args: any[]) {
@@ -79,11 +105,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   async checkForfeit(client: Socket) {
     const player = await this.playerService.getPlayerBySocketId(client.id);
-    console.log('check forfeit: ', player);
 
     if (!player || !player.game_id) return;
     const game = await this.service.getGameById(player.game_id);
-    console.log('check forfeit2: ', game);
 
     if (game) {
       if (
@@ -99,8 +123,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         }
         //todo: save game in history
         console.log('Deleting game -- forfeit');
-
-        this.stats.delete(game.id);
+        
+        if (this.stats.get(game.id))
+          this.stopGame(game.id, this.stats.get(game.id));
+        else
+          this.stats.delete(game.id);
       }
     }
   }
@@ -149,23 +176,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.service.joinGame(client.id, data.game_id);
   }
 
-  @SubscribeMessage('ready')
-  async setPlayerReady(
-    @MessageBody() data: { game_id: string },
-    @ConnectedSocket() client: Socket,
-  ) {
-    const tmp = await this.playerService.getPlayerBySocketId(client.id);
-
-    if (!tmp || !tmp.game_id) return;
-    const game = await this.service.getGameById(data.game_id);
-    if (!game) return;
-    const res = await this.service.setPlayerState(client.id, 1);
-    if (res.first_state == 1 && res.second_state == 1) {
-      //start game if both players are ready
-      this.startGame(res.id);
-    }
-  }
-
   @SubscribeMessage('disconnectGame')
   async disconnectFromGame(@ConnectedSocket() client: Socket) {
     await this.service.handleDisconnect(client.id);
@@ -189,12 +199,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       tmp[1].socket_id,
     );
 
-    const sock_1 = this.getSocket(player_1.socket_id);
+    const sock_1 = await this.getSocket(player_1.socket_id);
     if (sock_1) {
       sock_1.join(game.id);
     }
 
-    const sock_2 = this.getSocket(player_2.socket_id);
+    const sock_2 = await this.getSocket(player_2.socket_id);
     if (sock_2) {
       sock_2.join(game.id);
     }
@@ -234,8 +244,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     stats.pos.x = 0;
     stats.pos.y = 0;
     stats.speed = this.generateRandomSpeed();
-    stats.first = 0;
-    stats.second = 0;
+    //stats.first = 0;
+    //stats.second = 0;
   }
 
   async startGame(gameID: string) {
@@ -250,6 +260,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.stats.set(game.id, {
       first: 0, //position of first player
       second: 0, //position of second player
+      first_socket: game.first,
+      second_socket: game.second,
       speed: this.generateRandomSpeed(), //ball's speed
       pos: {
         //ball's position
@@ -274,49 +286,59 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const data = this.stats.get(game.id);
       data.pos.x += data.speed.x;
       data.pos.y += data.speed.y;
+      if (data.pos.y <= -50) {
+        //todo: considerer ball radius
+        data.pos.y = -50;
+        data.speed.y *= -1;
+      }
+      else if (data.pos.y >= 50)
+      {
+        data.pos.y = 50;
+        data.speed.y *= -1;
+      }
 
       if (data.pos.x <= -50) {
         data.speed = this.generateRandomSpeed();
         data.score.second++;
         if (data.score.second >= game.limit_game) {
+          this.emitRoom(gameID, 'refresh', data);
           this.playerWins(game.second);
           this.playerLoses(game.first);
-          this.stopGame(game.id);
+          this.stopGame(game.id, data);
           clearInterval(interval);
+          return;
         }
         this.newRound(data);
       } else if (data.pos.x >= 50) {
         data.speed = this.generateRandomSpeed();
         data.score.first++;
         if (data.score.first >= game.limit_game) {
+          this.emitRoom(gameID, 'refresh', data);
           this.playerWins(game.first);
           this.playerLoses(game.second);
-          this.stopGame(game.id);
+          this.stopGame(game.id, data);
           clearInterval(interval);
+          return;
         }
         this.newRound(data);
       }
 
-      if (data.pos.y <= -50 || data.pos.y >= 50) {
-        //todo: considerer ball radius
-        data.speed.y *= -1;
-      }
-
-      if (data.pos.x <= -45) {
-        if (Math.abs(data.pos.y - data.first) <= PLAYER_HEIGHT) {
+      if (data.pos.x <= -45 && data.speed.x < 0) {
+        if (Math.abs(data.pos.y - data.first) <= this.paddle.HEIGHT / 2) {
           data.speed.x *= -1;
         }
-      } else if (data.pos.x >= 45) {
-        if (Math.abs(data.pos.y - data.second) <= PLAYER_HEIGHT) {
-          data.speed.y *= -1;
+      } else if (data.pos.x >= 45 && data.speed.x > 0) {
+        if (Math.abs(data.pos.y - data.second) <= this.paddle.HEIGHT / 2) {
+          data.speed.x *= -1;
         }
       }
       this.emitRoom(gameID, 'refresh', data);
     }, TIME_TO_REFRESH);
   }
 
-  async stopGame(gameID: string) {
-    await this.service.stopGame(gameID);
+  async stopGame(gameID: string, data: any) {
+    await this.service.stopGame(gameID, data);
+    this.stats.delete(gameID);
   }
 
   generateRandomSpeed(): { x: number; y: number } {
@@ -328,13 +350,41 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     return { x: x, y: y };
   }
 
+  @SubscribeMessage('input')
+  async inputPlayer(@ConnectedSocket() client: Socket, @MessageBody() data: any) {
+    if (!data.game_id)
+      return;
+    if (!this.stats.has(data.game_id))
+      return;
+    const tmp = this.stats.get(data.game_id);
+    const value = data.value * 5;
+    if (tmp.first_socket == client.id)
+    {
+      if (tmp.first + value < -50 + this.paddle.HEIGHT / 2)
+        this.stats.set(data.game_id, {...tmp, first: -50 + this.paddle.HEIGHT / 2});
+      else if (tmp.first + value > 50 - this.paddle.HEIGHT / 2)
+        this.stats.set(data.game_id, {...tmp, first: 50 - this.paddle.HEIGHT / 2});
+      else
+        this.stats.set(data.game_id, {...tmp, first: tmp.first + value});
+    }
+    else if (tmp.second_socket == client.id)
+    {
+      if (tmp.second + value < -50 + this.paddle.HEIGHT / 2)
+        this.stats.set(data.game_id, {...tmp, second: -50 + this.paddle.HEIGHT / 2});
+      else if (tmp.second + value > 50 - this.paddle.HEIGHT / 2)
+        this.stats.set(data.game_id, {...tmp, second: 50 - this.paddle.HEIGHT / 2});
+      else
+        this.stats.set(data.game_id, {...tmp, second: tmp.second + value});
+    }
+  }
+
   async playerLoses(socketID: string) {
-    const sock = this.getSocket(socketID);
+    const sock = await this.getSocket(socketID);
     if (sock) sock.emit('lose');
   }
 
   async playerWins(socketID: string) {
-    const sock = this.getSocket(socketID);
+    const sock = await this.getSocket(socketID);
     if (sock) sock.emit('win');
   }
 }

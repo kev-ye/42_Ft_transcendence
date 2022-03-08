@@ -1,4 +1,7 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, HostListener, Inject, Input, OnInit, Output } from '@angular/core';
+import { io, Socket } from 'socket.io-client';
+import { GlobalConsts } from '../common/global';
 
 @Component({
 	selector: 'app-game',
@@ -9,6 +12,9 @@ export class GameComponent implements OnInit {
 
 	private gameStarted: boolean = false;
 	fillColor = 'rgb(20, 20, 20)';
+
+	private socket: Socket;
+	gameID: string;
 
 	game = {
 		WIDTH:  100,
@@ -50,25 +56,38 @@ export class GameComponent implements OnInit {
 	}
 	
 
-	constructor() {
+	constructor(private http: HttpClient) {
 		// this.start()
 	}
 	
 	ngOnInit() : void {
+		this.socket = io(`/game`, {
+			path: '/game/socket.io',
+			withCredentials: true
+		});
 
+		this.socket.on('user', () => {
+			this.http.get(`${GlobalConsts.userApi}/user/id`).subscribe((data: any) => {
+				this.socket.emit('user', {id: data.id});
+			})
+		});
+
+		this.socket.on('refresh', (data: any) => {			
+			this.ball.x = data[0].pos.x + 50;
+			this.ball.y = data[0].pos.y + 50;
+			this.player1.score = data[0].score.first;
+			this.player2.score = data[0].score.second;
+			this.player1.y = data[0].first + 50 - this.paddle.HEIGHT / 2;
+			this.player2.y = data[0].second + 50 - this.paddle.HEIGHT / 2;
+		});
+
+		this.socket.on('joinedGame', (data: any) => {
+			this.gameID = data.game_id;
+		})
 	}
 
 	resetBall() : void {
-		this.ball.x = this.ball_t.X
-		this.ball.y = Math.random() * (this.game.HEIGHT - this.ball_t.RADIUS)
-		if (this.ball.y < this.ball_t.RADIUS)
-			this.ball.y = this.ball_t.RADIUS
-
-		this.ball.xIncrement = this.ball_t.SPEED * (Math.random() < 0.5 ? -1 : 1);
-		this.ball.yIncrement = this.ball_t.SPEED * Math.random();
-		if (this.ball.yIncrement < this.ball_t.SPEED * 0.2)
-			this.ball.yIncrement = this.ball_t.SPEED / 2;
-		console.log(this.ball.yIncrement)
+		
 	}
 
 	start() : void {
@@ -79,9 +98,14 @@ export class GameComponent implements OnInit {
 		}
 	}
 
+	startMatchmaking() {
+		this.socket.emit('startMatchmaking')
+	}
+
 	@HostListener("window:keydown", ["$event"])
   	onKeyDown(e: any) {
 		let threshold: number = 0
+		e.preventDefault();
 
 		if (e.code === "ArrowUp") {
 			threshold = -this.paddle.SPEED
@@ -92,95 +116,28 @@ export class GameComponent implements OnInit {
 
 		/* animation was too slow - had to do this trick */
 		let val: number = threshold < 0 ? -1 : 1
-		for (let _ = Math.abs(threshold); _ > 0; --_) {
-			this.movePaddle(val)
-			setTimeout(() => {
-				window.requestAnimationFrame(() => this.movePaddle(val))
-			}, 10)
-		}
+		this.socket.emit('input', {value: val, game_id: this.gameID});
+		console.log("emit input", {value: val, game_id: this.gameID});
+		
+		
 		// window.requestAnimationFrame(() => this.movePaddle(threshold));
 	}
 
 	movePaddle(val: number) : void {
-		if (this.player1.y + val >= 0 &&
-			this.player1.y + val + this.paddle.HEIGHT <= this.game.HEIGHT) {
-			this.player1.y += val
-		}
 	}
 
-	goalCollision(x: number) : boolean {
-		if (x < -this.ball_t.RADIUS)
-		{
-			this.player2.score++
-			return true
-		}
-		else if (x > (this.game.WIDTH + this.ball_t.RADIUS))
-		{
-			this.player1.score++
-			return true
-		}
-		else
-			return false;
+	goalCollision(x: number) {
+
 	}
 
-	wallCollision(y: number) : boolean {
-		return y <= this.ball_t.RADIUS ||
-			   y >= (this.game.HEIGHT - this.ball_t.RADIUS)
+	wallCollision(y: number) {
 	}
 
-	paddleCollision(x: number, y: number) : boolean {
-
-		// check if the ball is aligned with one of the paddle
-		const rightPaddleCollision: boolean =
-			y >= this.player1.y &&
-			y <= (this.player1.y + this.paddle.HEIGHT);
-
-		const leftPaddleCollision: boolean =
-			y >= this.player2.y &&
-			y <= (this.player2.y + this.paddle.HEIGHT);
-
-		/*
-			check if the ball is in the paddle area,
-			and that the ball is actually in front of the corresponding paddle.
-			(means that we have to bounce it)
-		*/
-		const rightCollision: boolean =
-					  x - (this.paddle.PADDING + this.paddle.WIDTH) <= 0 &&
-			this.ball.x - (this.paddle.PADDING + this.paddle.WIDTH) >  0 &&
-			rightPaddleCollision;
-
-		const leftCollision: boolean =
-					  x + (this.paddle.PADDING + this.paddle.WIDTH) >= this.game.WIDTH &&
-			this.ball.x + (this.paddle.PADDING + this.paddle.WIDTH) <  this.game.WIDTH &&
-			leftPaddleCollision;
-
-		return rightCollision || leftCollision
+	paddleCollision(x: number, y: number) {
 	}
 
 	moveBall() : void {
-		const future_x: number = this.ball.x + this.ball.xIncrement
-		const future_y: number = this.ball.y + this.ball.yIncrement
-
-		if (this.goalCollision(future_x))
-		{
-			// the ball has hit a border, giving a point to the other player
-			this.resetBall()
-		}
-		else
-		{
-			// bounce off the paddles
-			if (this.paddleCollision(future_x, future_y))
-				this.ball.xIncrement = -this.ball.xIncrement
-
-			// bounce off top and bottom walls
-			if (this.wallCollision(future_y))
-				this.ball.yIncrement = -this.ball.yIncrement
-
-			this.ball.x += this.ball.xIncrement
-			this.ball.y += this.ball.yIncrement
-		}
-
-		window.requestAnimationFrame(() => this.moveBall());
+		
 	}
 
 	changeColor() : void {
