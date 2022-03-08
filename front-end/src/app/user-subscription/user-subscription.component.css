@@ -1,13 +1,10 @@
 .container{
 	height: 100%;
-	/* margin: 0 64px; */
-	/* background-color: grey; */
 	position: relative;
 }
 
 .stepper-container {
 	background-color: rgb(250, 250, 250);
-	display: relative;
 	padding: 40px 50px;
 	width: fit-content;
 	height: fit-content;
@@ -18,4 +15,8 @@
 	border: 2px solid #000000;
 	border-radius: 10px;
 	box-shadow: 0 0 50px rgba(0,0,0, .08);
+}
+
+.btn {
+	margin: 5px;
 }

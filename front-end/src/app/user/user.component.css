@@ -58,6 +58,8 @@
 }
 
 .avatar {
+	margin-top: 32px;
+	border: 2px solid black;
 	border-radius: 50%;
 	width: 50%;
 	height: 50%;
@@ -73,9 +75,16 @@
 	color: gray;
 }
 
+.username,
+.qrcode,
+.btn,
+.btnOn {
+	margin: 32px 0;
+}
+
 .username {
-		font-size: 1.2em;
-		text-align: center;
+	font-size: 1.2em;
+	text-align: center;
 }
 
 .username:hover {
@@ -104,6 +113,5 @@
 .btnOn {
 	text-align: center;
 	color: gray;
-	padding-top: 83px;
 }
 

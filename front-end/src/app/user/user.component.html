@@ -42,13 +42,9 @@
             <img [src]="user.avatar" alt="avatar" class="avatar" (click)="openImageDialog()">
         </div>
 
-				<br>
-
 				<div>
         	<h1 class="username" (click)="openUsername()">{{ user.username }}</h1>
 				<div>
-
-				<br>
 
         <div>
 					<p class="category">42 Login: <span class="information">{{ user.login }}</span></p>
@@ -73,8 +69,6 @@
 	<div class="btn" *ngIf="twoFaActive">
 		<button mat-raised-button color="basic" (click)="turnOffTwoFa()">Turn off 2Fa</button>
 	</div>
-
-	<br>
 
 	<div class="btn">
 		<button mat-raised-button class="item" (click)="logOut()">logout</button>

@@ -1,5 +1,4 @@
 <!-- tool bar -->
-<!--<mat-toolbar class="toolbar-offline">-->
 <mat-toolbar [ngClass]="isLogin? 'toolbar' : 'toolbar-offline'">
 	<div *ngIf="isLogin">
 		<button mat-raised-button mat-icon-button (click)="userSidenav.toggle()" class="item">
@@ -13,8 +12,8 @@
 		<button mat-raised-button mat-icon-button (click)="friendSidenav.toggle()" class="item">
 			<mat-icon class="material-icon">{{ friendSidenav.opened ? 'close' : 'people' }}</mat-icon>
 		</button>
-		<button mat-raised-button mat-icon-button class="item">
-			<mat-icon class="material-icon">sports_esports</mat-icon>
+		<button mat-raised-button mat-icon-button (click)="roomActive()" class="item">
+			<mat-icon class="material-icon">{{ inRoom ? 'door_back' : 'sports_esports' }}</mat-icon>
 		</button>
 	</div>
 </mat-toolbar>
@@ -23,12 +22,12 @@
 <mat-sidenav-container class="sidenav-container">
 	<!-- user	-->
 	<mat-sidenav #userSidenav mode="over" position="start" class="sidenav">
-		<app-user></app-user>
+		<app-user (closeEmitter)="receiveClose($event, userSidenav, friendSidenav)" *ngIf="isLogin"></app-user>
 	</mat-sidenav>
 
 	<!-- chat	-->
 	<mat-sidenav #friendSidenav mode="over" position="end" class="sidenav" style="background-color: rgb(165, 164, 164);">
-			<app-chat style="position: absolute; top: 9%;" (join)="joinGame($event)"></app-chat>
+		<app-chat style="position: absolute; top: 9%;" (join)="joinGame($event)" *ngIf="isLogin"></app-chat>
 	</mat-sidenav>
 
 	<!-- router content	-->

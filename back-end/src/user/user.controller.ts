@@ -8,7 +8,6 @@ import {
   Res,
   Body,
   UseGuards,
-  Header,
   Redirect,
   Inject,
   Param,
@@ -27,7 +26,7 @@ export class UserController {
     @Inject('USER_SERVICE') private readonly userService: UserService,
   ) {}
 
-  @Get()
+  @Get('/')
   async getUsers(): Promise<UserDto[]> {
     return await this.userService.getUsers();
   }
