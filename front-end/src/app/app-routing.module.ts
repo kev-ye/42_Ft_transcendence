@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { UserLoginComponent } from './user-login/user-login.component';
 import { UserSubscriptionComponent } from './user-subscription/user-subscription.component';
+import { CombinedGuard } from "./service/guard/combined.guard";
 import { AuthGuard } from './service/guard/auth.guard';
 import { LoginGuard } from "./service/guard/login.guard";
 import { IsLoginGuard } from "./service/guard/is-login.guard";
@@ -13,17 +14,25 @@ import { TwoFactorComponent } from './two-factor/two-factor.component';
 import { GameRoomComponent } from "./game-room/game-room.component";
 import { GameComponent } from "./game/game.component";
 import { MatchMakingComponent } from "./match-making/match-making.component";
+import { NotFoundComponent } from "./not-found/not-found.component";
 
 const routes: Routes = [
 	{ path: '', redirectTo: 'user_login', pathMatch: 'full' },
-	{ path: 'user_login', component: UserLoginComponent, canActivate: [LoginGuard] },
-	{ path: 'two_factor', component: TwoFactorComponent, canActivate: [IsLoginGuard, TwoFactorGuard] },
-	{ path: 'user_subscription', component: UserSubscriptionComponent, canActivate: [IsLoginGuard, SubscriptionGuard] },
-	{ path: 'main', component: MainComponent, canActivate: [IsLoginGuard, AuthGuard] },
-	{ path: 'room', component: GameRoomComponent, canActivate: [IsLoginGuard, AuthGuard] },
-	{ path: 'match-making', component: MatchMakingComponent, canActivate: [IsLoginGuard, AuthGuard] },
-	{ path: 'game', component: GameComponent, canActivate: [IsLoginGuard, AuthGuard] },
-	{ path: '**', redirectTo: 'user_login', pathMatch: 'full' }
+  { path: 'user_login', component: UserLoginComponent, canActivate: [LoginGuard] },
+	{ path: 'two_factor', component: TwoFactorComponent, canActivate: [CombinedGuard], data: {
+		guards: [IsLoginGuard, TwoFactorGuard]
+	}},
+  { path: 'user_subscription', component: UserSubscriptionComponent, canActivate: [CombinedGuard], data: {
+		guards: [IsLoginGuard, SubscriptionGuard]
+	}},
+	{ path: 'main', component: MainComponent, canActivate: [CombinedGuard], data: {
+		guards: [IsLoginGuard, AuthGuard]
+	}},
+	{ path: 'game', component: GameComponent, canActivate: [IsLoginGuard] },  // need game guard
+	{ path: 'game_room', component: GameRoomComponent, canActivate: [IsLoginGuard] }, // need room guard
+	{ path: 'match-making', component: MatchMakingComponent, canActivate: [IsLoginGuard] }, // need match-making guard
+	{ path: 'api', component: NotFoundComponent },
+  { path: '**', redirectTo: 'user_login', pathMatch: 'full' }
 ];
 
 @NgModule({

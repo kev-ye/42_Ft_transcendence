@@ -23,10 +23,10 @@
     </form>
 
     <!-- submit step -->
-    <mat-step label="Done" optional>
+    <mat-step label="Done">
       <button mat-button matStepperPrevious color="warn">Back to Avatar</button>
-      <button type="submit" mat-button color="primary" (click)="createUser()">Done</button>
-      <!-- <button type="submit" mat-button color="primary">Done</button> -->
+			<button mat-raised-button color="warn" (click)="cancel()" class="btn">Cancel</button>
+      <button type="submit" mat-raised-button color="primary" (click)="createUser()" class="btn">Done</button>
     </mat-step>
 
   </mat-vertical-stepper>
