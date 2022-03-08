@@ -1,0 +1,21 @@
+<button mat-stroked-button class="btn-back" (click)="getToGameRoom()">Game Room</button>
+<br>
+
+<div class="form">
+
+	<mat-form-field appearance="fill" class="form-wrapper">
+		<mat-hint>Choose points to score</mat-hint>
+		<mat-label>Points</mat-label>
+		<select matNativeControl (change)="selectChangeHandler($event)">
+			<option value="3">3</option>
+			<option value="5">5</option>
+			<option value="10" selected>10</option>
+			<option value="20">20</option>
+			<option value="50">50</option>
+		</select>
+	</mat-form-field>
+
+	<br>
+	<button mat-raised-button color="primary" (click)="matchMaking()">Start</button>
+
+</div>

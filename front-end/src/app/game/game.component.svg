@@ -13,8 +13,7 @@
 	</div>
 
 	<div id="game-wrapper">
-		<svg class="game"
-		[attr.fill]="fillColor">
+		<svg class="game" [attr.fill]="gameColor">
 		
 			<rect width="100%" height="100%"/>
 				
@@ -25,11 +24,13 @@
 				y2="100%"/>
 			
 			<circle class="ball"
+				[attr.fill]="movablesColor"
 				[attr.cx]="ball.x + '%'"
 				[attr.cy]="ball.y + '%'"
 				[attr.r]="ball_t.RADIUS + '%'"/>
 
 			<rect class="player"
+				[attr.fill]="movablesColor"
 				[attr.width]="paddle.WIDTH + '%'"
 				[attr.height]="paddle.HEIGHT + '%'"
 				[attr.rx]="paddle.RADIUS"
@@ -38,6 +39,7 @@
 				[attr.y]="player1.y + '%'"/>
 
 			<rect class="player"
+				[attr.fill]="movablesColor"
 				[attr.width]="paddle.WIDTH + '%'"
 				[attr.height]="paddle.HEIGHT + '%'"
 				[attr.rx]="paddle.RADIUS"

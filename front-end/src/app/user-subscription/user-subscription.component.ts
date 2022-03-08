@@ -5,6 +5,9 @@ import { Router } from '@angular/router';
 import { UserApiService } from '../service/user_api/user-api.service';
 import { GlobalConsts } from '../common/global';
 import { Subscription } from "rxjs";
+import {DataService} from "angular-auth-oidc-client/lib/api/data.service";
+import {DataSharedService} from "../service/data/data-shared.service";
+import {UserAuthService} from "../service/user_auth/user-auth.service";
 
 @Component({
   selector: 'app-user-subscription',
@@ -13,6 +16,7 @@ import { Subscription } from "rxjs";
 })
 export class UserSubscriptionComponent implements OnInit, OnDestroy {
 	title: string = GlobalConsts.siteTitle;
+	isLogin: boolean = false;
 
 	subscriptionForm: FormGroup = new FormGroup({
     name: new FormControl('', [
@@ -26,7 +30,9 @@ export class UserSubscriptionComponent implements OnInit, OnDestroy {
 
 	constructor(
 		private router: Router,
-		private userApi: UserApiService) { }
+		private userAuth: UserAuthService,
+		private userApi: UserApiService,
+		private data: DataSharedService) { }
 
   ngOnInit(): void {}
 
@@ -40,8 +46,10 @@ export class UserSubscriptionComponent implements OnInit, OnDestroy {
 			this.subscription.add(this.userApi.createUser(this.subscriptionForm.value.name).subscribe({
 				next: (v) => {
 					console.log('name:', this.subscriptionForm.value.name);
-					if (v && v.name === this.subscriptionForm.value.name)
+					if (v && v.name === this.subscriptionForm.value.name) {
+						this.data.changeIsLoginData(true);
 						this.router.navigate(['main']).then();
+					}
 					else
 						alert('something wrong, try again!');
 				},
@@ -52,6 +60,23 @@ export class UserSubscriptionComponent implements OnInit, OnDestroy {
 				complete: () => console.info('Complete: create user done')
 			}));
   }
+
+	cancel() {
+		const confirm$: boolean = confirm('Are you sure?');
+		if (confirm$) {
+			this.subscription.add(this.userAuth.logout().subscribe({
+				next: _ => {
+					this.data.changeIsLoginData(false);
+					this.router.navigate(['user_login']).then();
+				},
+				error: e => {
+					console.error('Error: user logout:', e);
+					this.router.navigate(['user_login']).then();
+				},
+				complete: () => console.info('Complete: user logout done')
+			}));
+		}
+	}
 
 	nameVerify() {
 		this.subscription.add(this.userApi.nameVerify(this.subscriptionForm.value.name).subscribe({

@@ -32,6 +32,10 @@ import { DialogMute } from './chat/dialogs/dialog-mute.component';
 import { SharedMaterialModule } from './common/shared-material.module';
 import { TwoFactorComponent } from './two-factor/two-factor.component';
 import { GameComponent } from './game/game.component';
+import { GameRoomComponent } from './game-room/game-room.component';
+import { MatchMakingComponent } from './match-making/match-making.component';
+import { NotFoundComponent } from './not-found/not-found.component';
+import { GameRoomTestComponent } from './game-room-test/game-room-test.component';
 
 @NgModule({
   declarations: [
@@ -52,8 +56,11 @@ import { GameComponent } from './game/game.component';
     DialogBanned,
     DialogAddFriend,
     DialogMuted,
-    DialogMute
-    
+    DialogMute,
+    GameRoomComponent,
+    MatchMakingComponent,
+    NotFoundComponent,
+    GameRoomTestComponent
   ],
   imports: [
     BrowserModule,

@@ -3,7 +3,7 @@
 .footer,
 .sidenav,
 p {
-	font-family: 'Press Start 2P';
+	font-family: 'Press Start 2P', serif;
 	font-size: 15px;
 }
 
@@ -41,7 +41,8 @@ p {
 }
 
 .sidenav {
-	padding-top: 128px;
+	border-style: none solid;
+	margin: 64px 0;
 	width: 30%;
 }
 

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { GlobalConsts } from '../common/global';
 import { Router } from '@angular/router';
 import { UserApiService } from '../service/user_api/user-api.service';
@@ -8,6 +8,7 @@ import { UserAuthService } from '../service/user_auth/user-auth.service';
 import { Subscription } from "rxjs";
 import { DialogChangeImage } from './dialogs/dialog-change-image.component';
 import { DialogChangeUsername } from './dialogs/dialog-change-username.component';
+import { DataSharedService } from "../service/data/data-shared.service";
 
 
 @Component({
@@ -16,7 +17,6 @@ import { DialogChangeUsername } from './dialogs/dialog-change-username.component
   styleUrls: ['./user.component.css']
 })
 export class UserComponent implements OnInit {
-
 	private subscription: Subscription = new Subscription();
 
 	user: any;
@@ -27,11 +27,15 @@ export class UserComponent implements OnInit {
 	twoFaActive: boolean = false;
 	qrCode: string = '';
 
+	isLogin: boolean = true;
+	@Output() closeEmitter = new EventEmitter<boolean>()
+
 constructor(public dialog: MatDialog,
 		private http: HttpClient,
 		private router: Router,
 		private userApi: UserApiService,
-		private userAuth: UserAuthService) { }
+		private userAuth: UserAuthService,
+		private data: DataSharedService) { }
 
   refreshUserDetails() {
     //load data from backend server
@@ -42,7 +46,7 @@ constructor(public dialog: MatDialog,
           console.log("Could not fetch user details");
           return ;
         }
-        console.log("fetched user details", data);
+        // console.log("fetched user details", data);
         const tmp = data as any;
         this.user = tmp;
         this.user.username = tmp.name;
@@ -65,22 +69,25 @@ constructor(public dialog: MatDialog,
   }
 
   ngOnInit(): void {
-    this.refreshUserDetails();
+		this.subscription.add(this.data.isLoginData.subscribe(data => this.isLogin = data));
 
-		this.subscription.add(this.userApi.getUser().subscribe({
-        next: (v) => {
-          if (v.twoFactorSecret) {
-            this.twoFaActive = true;
-            this.qrCode = v.twoFactorQR;
-          }
-        },
-        error: (e) => console.error('Error: get user in main:', e),
-        complete: () => console.info('Complete: get user in main')
-      }))
+		if (this.isLogin) {
+    	this.refreshUserDetails();
+			this.subscription.add(this.userApi.getUser().subscribe({
+				next: (v) => {
+					if (v.twoFactorSecret) {
+						this.twoFaActive = true;
+						this.qrCode = v.twoFactorQR;
+					}
+				},
+				error: (e) => console.error('Error: get user in main:', e),
+				complete: () => console.info('Complete: get user in main')
+			}))
+		}
   }
 
   ngOnDestroy() {
-	this.subscription.unsubscribe();
+		this.subscription.unsubscribe();
   }
 
   openImageDialog() {
@@ -146,6 +153,8 @@ constructor(public dialog: MatDialog,
 		if (confirm$) {
 			this.subscription.add(this.userAuth.logout().subscribe({
 				next: _ => {
+					this.data.changeIsLoginData(false);
+					this.closeEmitter.emit(true);
 					this.router.navigate(['user_login']).then();
 				},
 				error: e => {
