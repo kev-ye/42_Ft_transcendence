@@ -23,10 +23,10 @@ export const MAX_MESSAGE = 25;
 })
 export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 	constructor(public dialog: MatDialog, private http: HttpClient) { }
-	
-	chat: {show: boolean, public: boolean, access: number, id: string, user_id: string, name: string, moderator: boolean, creator_id: string} = {show: false, public: true, name: "", id: "", user_id: "", moderator: true, creator_id: '79139', access: 0};
-	messages: {id: string, username?: string, user_id: string, type: number, message?: string}[] = [];
-	
+
+	chat: { show: boolean, public: boolean, access: number, id: string, user_id: string, name: string, moderator: boolean, creator_id: string } = { show: false, public: true, name: "", id: "", user_id: "", moderator: true, creator_id: '79139', access: 0 };
+	messages: { id: string, username?: string, user_id: string, type: number, message?: string }[] = [];
+
 	scroll: boolean = false;
 	friendList: any[] = [];
 	focus: string = "";
@@ -36,57 +36,58 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 	blocked: any[] = [];
 
 	myGame: any = null;
-	
+
 	user: any = {}
 	password: string = "";
-	
+
 	@ViewChild('input') input: ElementRef<HTMLInputElement>;
-	
+
 	@ViewChild('inputPrivate') inputPrivate: ElementRef<HTMLInputElement>;
-	
+
 	@ViewChild('framePublic') framePublic: ElementRef<HTMLDivElement>;
 	@ViewChild('framePrivate') framePrivate: ElementRef<HTMLDivElement>;
 
 	@Output() join = new EventEmitter<string>();
-	
+
 	ngAfterViewChecked(): void {
-		if (this.scroll)
-		{
+		if (this.scroll) {
 			console.log("scrolling..");
 			if (this.chat.public && this.framePublic)
-			this.framePublic.nativeElement.scroll({top: this.framePublic.nativeElement.scrollHeight, behavior: "smooth"});
+				this.framePublic.nativeElement.scroll({ top: this.framePublic.nativeElement.scrollHeight, behavior: "smooth" });
 			else if (!this.chat.public && this.framePrivate)
-			this.framePrivate.nativeElement.scroll({top: this.framePrivate.nativeElement.scrollHeight, behavior: "smooth"});
+				this.framePrivate.nativeElement.scroll({ top: this.framePrivate.nativeElement.scrollHeight, behavior: "smooth" });
 			this.scroll = false;
 		}
 	}
-	
+
 	fetchChannels() {
-		this.http.get(`${GlobalConsts.userApi}/channels/`, {withCredentials: true}).subscribe({next: data => {
-			console.log("fetched channels", data);
-			this.channelList = data as any[];
-		},
-		error: _ => {
-			console.error("error during channels fetch");
-		}});
-	}
-	
-	deleteFriend(friend: any) {
-		this.http.patch(`${GlobalConsts.userApi}/friend`,
-		{
-			first: this.user.id,
-			second: friend.id
-		}, {withCredentials: true}).subscribe({
+		this.http.get(`${GlobalConsts.userApi}/channels/`, { withCredentials: true }).subscribe({
 			next: data => {
-				console.log("Deleted friend");
-				this.fetchFriends();
-				
-			}, error: data => {
-				console.log("Could not delete friend");
+				console.log("fetched channels", data);
+				this.channelList = data as any[];
+			},
+			error: _ => {
+				console.error("error during channels fetch");
 			}
 		});
 	}
-	
+
+	deleteFriend(friend: any) {
+		this.http.patch(`${GlobalConsts.userApi}/friend`,
+			{
+				first: this.user.id,
+				second: friend.id
+			}, { withCredentials: true }).subscribe({
+				next: data => {
+					console.log("Deleted friend");
+					this.fetchFriends();
+
+				}, error: data => {
+					console.log("Could not delete friend");
+				}
+			});
+	}
+
 	openFriendDialog() {
 		const tmp = this.dialog.open(DialogAddFriend, {
 			data: {
@@ -97,10 +98,10 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 			this.fetchFriends();
 		})
 	}
-	
+
 	openChannelSettings() {
 		if (!this.chat.moderator)
-		return ;
+			return;
 		const tmp = this.dialog.open(DialogChannelSettings, {
 			data: {
 				...this.chat,
@@ -111,75 +112,75 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 			this.fetchChannels();
 		})
 	}
-	
+
 	fetchPrivateMessage(friend: any) {
 		this.messages = [];
-		this.http.get(`${GlobalConsts.userApi}/private/` + this.user.id + "/" + friend.id, {withCredentials: true}).subscribe(data => {
+		this.http.get(`${GlobalConsts.userApi}/private/` + this.user.id + "/" + friend.id, { withCredentials: true }).subscribe(data => {
 			console.log("fetched private history", data);
-			this.messages = data as {id: string, username: string, user_id: string, type: number, message?: string}[];
-			
+			this.messages = data as { id: string, username: string, user_id: string, type: number, message?: string }[];
+
 			this.messages.forEach(msg => {
 				if (this.blocked.find(val => val == msg.user_id))
-				msg.message = '<message blocked>'
+					msg.message = '<message blocked>'
 			})
 			this.generateRandomColors();
 		});
 	}
-	
+
 	fetchChannelHistory(channel: any) {
-		this.http.get(`${GlobalConsts.userApi}/history/` + channel.id, {headers: {password: this.password}, withCredentials: true}).subscribe(data => {
+		this.http.get(`${GlobalConsts.userApi}/history/` + channel.id, { headers: { password: this.password }, withCredentials: true }).subscribe(data => {
 			console.log("fetched history", data);
-			
-			this.messages = data as {id: string, user_id: string, type: number, username: string, message?: string}[];
-			
+
+			this.messages = data as { id: string, user_id: string, type: number, username: string, message?: string }[];
+
 			this.messages.forEach(msg => {
 				if (this.blocked.find(val => val == msg.user_id))
-				msg.message = '<message blocked>'
+					msg.message = '<message blocked>'
 			})
-			
+
 			this.chat.id = channel.id;
 			this.chat.name = channel.name;
 			this.chat.public = true;
-			
+
 			this.generateRandomColors();
 		});
 	}
-	
+
 	fetchBlockedUsers() {
-		this.http.get(`${GlobalConsts.userApi}/block/` + this.user.id, {withCredentials: true}).subscribe(data => {
+		this.http.get(`${GlobalConsts.userApi}/block/` + this.user.id, { withCredentials: true }).subscribe(data => {
 			this.blocked = data as any[];
 		});
 	}
-	
+
 	ngOnInit(): void {
 		this.socket = io('/chat', {
 			path: '/chat/socket.io',
 			withCredentials: true
 		});
-		
+
 		this.socket.on('user', () => {
 			this.http.get(`${GlobalConsts.userApi}/user/id`).subscribe((data: any) => {
 				this.user = data;
-				this.socket.emit('user', {user_id: data.id});
+				this.socket.emit('user', { user_id: data.id });
 			})
 		})
-		
+
 		this.socket.on('mod', (data: string) => {
 			if (this.chat.id == data)
-			this.chat.moderator = true;
+				this.chat.moderator = true;
 			const chan = this.channelList.findIndex(val => val.id == data)
 			if (chan >= 0)
-			this.channelList[chan].moderator = true;
+				this.channelList[chan].moderator = true;
 		});
-		
+
 		this.socket.on('unmod', (data: string) => {
 			if (this.chat.id == data)
-			this.chat.moderator = false;
+				this.chat.moderator = false;
 			const chan = this.channelList.findIndex(val => val.id == data)
 			if (chan >= 0)
-			this.channelList[chan].moderator = false;
+				this.channelList[chan].moderator = false;
 		})
-		
+
 		this.socket.on('mute', data => {
 			this.dialog.open(DialogMuted, {
 				data: {
@@ -187,12 +188,12 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 				}
 			})
 		})
-		
-		this.http.get(`${GlobalConsts.userApi}/user/id`, {withCredentials: true}).subscribe((data: any) => {
+
+		this.http.get(`${GlobalConsts.userApi}/user/id`, { withCredentials: true }).subscribe((data: any) => {
 			this.user.id = data.id;
 			this.fetchBlockedUsers();
 		})
-		
+
 		this.socket.on('message', (data: {
 			id: string,
 			user_id: string,
@@ -201,31 +202,31 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 			type: number
 		}) => {
 			console.log("received message", data);
-			
+
 			data.user_id = String(data.user_id);
-			
+
 			if (this.blocked.find(val => val == data.user_id))
-			data.message = '<message blocked>'
-			
+				data.message = '<message blocked>'
+
 			this.addMessage(data);
 		})
-		
+
 		this.socket.on('ban', () => {
 			if (this.chat.show && this.chat.public)
-			this.openFriendList();
+				this.openFriendList();
 		});
-		
-		
+
+
 		this.fetchChannels();
 	}
-	
+
 	ngOnDestroy(): void {
 		console.log("test ", this.socket.connected);
-		
+
 		if (this.socket.connected)
-		this.socket.disconnect();
+			this.socket.disconnect();
 	}
-	
+
 	addMessage(data: {
 		id: string,
 		user_id: string,
@@ -233,114 +234,115 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 		type: number
 		username?: string,
 	}) {
-		this.messages.push({id: data.id, username: data.username, message: data.message, user_id: data.user_id, type: data.type});
+		this.messages.push({ id: data.id, username: data.username, message: data.message, user_id: data.user_id, type: data.type });
 		if (this.messages.length > 25)
-		this.messages.splice(0, 1);
+			this.messages.splice(0, 1);
 		this.generateRandomColors();
 		this.scroll = true;
 	}
-	
+
 	getStatusColor(friend: any) {
 		if (friend.status == 1) //invite pending
-		return '#e9d901';
+			return '#e9d901';
 		if (!friend.online)
-		return '#700303';
-		else if  (friend.online == 1)
-		return '#3e7739';
+			return '#700303';
+		else if (friend.online == 1)
+			return '#3e7739';
 		return '#e9d901';
 	}
-	
+
 	addFriend(friend: any) {
 		this.http.post(`${GlobalConsts.userApi}/friend/`, {
 			first: this.user.id,
 			second: friend.id
-		}, {withCredentials: true}).subscribe({
+		}, { withCredentials: true }).subscribe({
 			next:
-			data => {
-				console.log("accepted invite from user " + friend.id);
-				this.fetchFriends();
-			}
+				data => {
+					console.log("accepted invite from user " + friend.id);
+					this.fetchFriends();
+				}
 		})
 	}
-	
+
 	generateRandomColors() {
 		this.messages.forEach(val => {
 			const tmp: string = val.user_id as string;
 			if (!this.colorMap.has(tmp))
-			this.colorMap.set(tmp, '#' + Math.floor(Math.random() * 16777215).toString(16));
+				this.colorMap.set(tmp, '#' + Math.floor(Math.random() * 16777215).toString(16));
 		});
 	}
-	
-	
+
+
 	sendMessage() {
-		let obj : {
+		let obj: {
 			user_id: string,
 			message: string,
 			type: number,
-			chat: {public: boolean, id: string},
+			chat: { public: boolean, id: string },
 			password?: string
 		} = {
 			user_id: this.user.id,
 			message: this.input.nativeElement.value,
 			type: 1,
-			chat: {public: this.chat.public, id: this.chat.id},
+			chat: { public: this.chat.public, id: this.chat.id },
 		};
 		console.log('sending message', obj);
-		
+
 		if (this.chat.public)
-			obj = {...obj, password: this.password, message: this.input.nativeElement.value}
+			obj = { ...obj, password: this.password, message: this.input.nativeElement.value }
 		else
-			obj = {...obj, password: this.password, message: this.inputPrivate.nativeElement.value}
+			obj = { ...obj, password: this.password, message: this.inputPrivate.nativeElement.value }
 		this.input.nativeElement.value = "";
 		this.inputPrivate.nativeElement.value = "";
 		this.socket.emit('message', obj);
 	}
-	
+
 	openPrivate(friend: any) {
 		console.log("Opening chat " + friend.id + " with ", friend);
 		console.log("user:", this.user);
-		
-		this.socket.emit('connectRoom', {user_id: this.user.id, chat: {public: false, id: friend.id}});
+
+		this.socket.emit('connectRoom', { user_id: this.user.id, chat: { public: false, id: friend.id } });
 		this.fetchPrivateMessage(friend);
-		
+
 		this.chat.id = friend.id;
 		this.chat.name = friend.username;
 		this.chat.public = false;
 		if (!this.chat.show)
-		this.chat.show = true;
+			this.chat.show = true;
 		else
-		this.chat.show = false;
+			this.chat.show = false;
 	}
-	
+
 	connectRoom(channel: any) {
 		this.http.get(`${GlobalConsts.userApi}/channels/access/` + channel.id,
-		{withCredentials: true})
-		.subscribe({next: (data) => {
-			console.log("received response from connectRoom:", data);
-			
-			if (data == 0)
-			{
-				this.socket.emit('connectRoom', {user_id: this.user.id, chat: {public: true, id: channel.id}, password: this.password});
-				this.messages = [];
-				this.fetchChannelHistory(channel);
-				this.chat.show = true;
-				this.chat.creator_id = channel.creator_id;
-				this.chat.moderator = channel.moderator;
-				this.chat.access = channel.access;
-				this.scroll = true;
-			} else if (data == 2) //user is banned
-			{
-				this.dialog.open(DialogBanned);
-			} else if (data == 1) {
-				this.dialog.open(DialogAccessChat);
-			}
-			
-		}});
+			{ withCredentials: true })
+			.subscribe({
+				next: (data) => {
+					console.log("received response from connectRoom:", data);
+
+					if (data == 0) {
+						this.socket.emit('connectRoom', { user_id: this.user.id, chat: { public: true, id: channel.id }, password: this.password });
+						this.messages = [];
+						this.fetchChannelHistory(channel);
+						this.chat.show = true;
+						this.chat.creator_id = channel.creator_id;
+						this.chat.moderator = channel.moderator;
+						this.chat.access = channel.access;
+						this.scroll = true;
+					} else if (data == 2) //user is banned
+					{
+						this.dialog.open(DialogBanned);
+					} else if (data == 1) {
+						this.dialog.open(DialogAccessChat);
+					}
+
+				}
+			});
 	}
-	
+
 	openPublic(channel: any) {
 		console.log("opening channel", channel);
-		
+
 		if (channel.access == 1) //protected channel
 		{
 			const tmp = this.dialog.open(DialogProtectedChat, {
@@ -348,183 +350,181 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 					id: channel.id
 				}
 			});
-			
+
 			tmp.afterClosed().subscribe(data => {
 				if (data && data.password)
-				this.password = data.password;
-				if (data && data.success)
-				{
+					this.password = data.password;
+				if (data && data.success) {
 					this.connectRoom(channel);
-					return ;
+					return;
 				}
 			});
 		}
 		else //open or private channel
 		{
 			if (!this.chat.show)
-			this.connectRoom(channel);
+				this.connectRoom(channel);
 			else
-			this.chat.show = false;
+				this.chat.show = false;
 		}
 	}
-	
+
 	focusFriend(username: string) {
 		this.focus = username;
 	}
-	
+
 	unfocusFriend() {
 		this.focus = "";
 	}
-	
+
 	fetchFriends() {
-		this.http.get(`${GlobalConsts.userApi}/friend/` + this.user.id, {withCredentials: true}).subscribe({next:
-			data => {
-				console.log("fetched friends", data);
-				this.friendList = data as any[];
-			},
+		this.http.get(`${GlobalConsts.userApi}/friend/` + this.user.id, { withCredentials: true }).subscribe({
+			next:
+				data => {
+					console.log("fetched friends", data);
+					this.friendList = data as any[];
+				},
 			error:
-			data => {
-				console.error("could not fetch friends");
-			}})
-		}
-		
-		openFriendList(event?: any) {
-			this.chat.show = false;
-			
-			this.fetchChannels();
-			this.fetchFriends();
-			/*this.friendList.sort((a, b) => {
-				return b.status - a.status;
-			})
-			*/
-			
-			this.socket.emit('disconnectRoom')
-		}
-		
-		openUserDialog(message?: any) {
-			console.log("opening dialog", message);
-			if (message)
-			{
-				
-				
-				const tmp = this.dialog.open(DialogUser, {
-					data: {
-						username: message.username,
-						id: message.user_id,
-						my_id: this.user.id,
-						friends: this.friendList,
-						blocked: this.blocked
-					}
-				});
-				tmp.afterClosed().subscribe(() => {
-					this.fetchBlockedUsers();
-					console.log("fetching blocked", this.blocked);
-					
-				});
-			}
-			else
-			{
-				const tmp = this.dialog.open(DialogUser, {
-					data: {
-						username: this.chat.name,
-						id: this.chat.id,
-						my_id: this.user.id,
-						friends: this.friendList,
-						blocked: this.blocked
-					}
-				});
-				
-				tmp.afterClosed().subscribe(() => {
-					this.fetchBlockedUsers();
-					console.log("fetching blocked 2", this.blocked);
-					
-				})
-			}
-		}
-		
-		openSpec() {
-			const tmp = this.dialog.open(DialogSpectator, {
-				data :
-				{
-					chat: this.chat,
+				data => {
+					console.error("could not fetch friends");
+				}
+		})
+	}
+
+	openFriendList(event?: any) {
+		this.chat.show = false;
+
+		this.fetchChannels();
+		this.fetchFriends();
+		/*this.friendList.sort((a, b) => {
+			return b.status - a.status;
+		})
+		*/
+
+		this.socket.emit('disconnectRoom')
+	}
+
+	openUserDialog(message?: any) {
+		console.log("opening dialog", message);
+		if (message) {
+
+
+			const tmp = this.dialog.open(DialogUser, {
+				data: {
+					username: message.username,
+					id: message.user_id,
 					my_id: this.user.id,
 					friends: this.friendList,
-					blocked: this.blocked,
-					socket: this.socket
-					//channel name to send and moderator status
+					blocked: this.blocked
 				}
 			});
-			
 			tmp.afterClosed().subscribe(() => {
 				this.fetchBlockedUsers();
+				console.log("fetching blocked", this.blocked);
+
 			});
-			
 		}
-		
-		inviteFriend() {
-			this.dialog.open(DialogInvite, {
+		else {
+			const tmp = this.dialog.open(DialogUser, {
 				data: {
-					chat: this.chat
+					username: this.chat.name,
+					id: this.chat.id,
+					my_id: this.user.id,
+					friends: this.friendList,
+					blocked: this.blocked
 				}
+			});
+
+			tmp.afterClosed().subscribe(() => {
+				this.fetchBlockedUsers();
+				console.log("fetching blocked 2", this.blocked);
+
 			})
 		}
-		
-		inviteGame() {
-			console.log("test invite game");
-			
-			if (!this.myGame)
+	}
+
+	openSpec() {
+		const tmp = this.dialog.open(DialogSpectator, {
+			data:
 			{
-				console.log("posting a new game");
-				
-				this.http.post(`${GlobalConsts.userApi}/game/custom`, {}).subscribe({next: (data: any) => {
+				chat: this.chat,
+				my_id: this.user.id,
+				friends: this.friendList,
+				blocked: this.blocked,
+				socket: this.socket
+				//channel name to send and moderator status
+			}
+		});
+
+		tmp.afterClosed().subscribe(() => {
+			this.fetchBlockedUsers();
+		});
+
+	}
+
+	inviteFriend() {
+		this.dialog.open(DialogInvite, {
+			data: {
+				chat: this.chat
+			}
+		})
+	}
+
+	inviteGame() {
+		console.log("test invite game");
+
+		if (!this.myGame) {
+			console.log("posting a new game");
+
+			this.http.post(`${GlobalConsts.userApi}/game/custom`, {}).subscribe({
+				next: (data: any) => {
 					console.log("invite game ID", this.user);
-					let obj = {id: data.id, type: 2, user_id: this.user.id, message: data.id, chat: this.chat};
+					let obj = { id: data.id, type: 2, user_id: this.user.id, message: data.id, chat: this.chat };
 					this.myGame = obj;
 					this.socket.emit('message', this.myGame);
 					this.joinGame(this.myGame.id);
 				},
 				error: () => {
 					console.log("erroooor");
-					
+
 				},
 				complete: () => {
 					console.log("compleete");
-					
-				}});
-			}
-			else
-			{
-				console.log("sending invite");
-				
-				this.socket.emit('message', this.myGame);
-				this.joinGame(this.myGame.id);
-			}
-		}
-		
-		createChat() {
-			//todo implement creating chat
-			const tmp = this.dialog.open(DialogCreateChat, {
-				data: {
-					user_id: this.user.id
+
 				}
 			});
-			tmp.afterClosed().subscribe(data => {
-				this.fetchChannels();
-			})
 		}
+		else {
+			console.log("sending invite");
 
-		joinGame(id: string | undefined, user?: any) {
-			if (id != undefined)
-			{
-				console.log("test join", user, this.user.id);
-				
-				if (user == undefined || user != this.user.id)
-					this.join.emit(id);
-				else
-					console.log("Cannot join game I made");
-					
-
-
-			}
+			this.socket.emit('message', this.myGame);
+			this.joinGame(this.myGame.id);
 		}
 	}
+
+	createChat() {
+		//todo implement creating chat
+		const tmp = this.dialog.open(DialogCreateChat, {
+			data: {
+				user_id: this.user.id
+			}
+		});
+		tmp.afterClosed().subscribe(data => {
+			this.fetchChannels();
+		})
+	}
+
+	joinGame(id: string | undefined, user?: any) {
+		if (id != undefined) {
+			console.log("test join", user, this.user.id);
+
+			if (user == undefined || user != this.user.id)
+				this.join.emit(id);
+			else
+				console.log("Cannot join game I made");
+
+
+
+		}
+	}
+}

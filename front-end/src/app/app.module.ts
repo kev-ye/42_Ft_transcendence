@@ -33,6 +33,7 @@ import { SharedMaterialModule } from './common/shared-material.module';
 import { TwoFactorComponent } from './two-factor/two-factor.component';
 import { GameComponent } from './game/game.component';
 import { GameRoomComponent } from './game-room/game-room.component';
+import { MatchMakingComponent } from './match-making/match-making.component';
 
 @NgModule({
   declarations: [
@@ -54,8 +55,8 @@ import { GameRoomComponent } from './game-room/game-room.component';
     DialogAddFriend,
     DialogMuted,
     DialogMute,
-    GameRoomComponent
-    
+    GameRoomComponent,
+    MatchMakingComponent
   ],
   imports: [
     BrowserModule,

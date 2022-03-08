@@ -8,6 +8,15 @@
 	max-width: 1500px;
 }
 
+.game,
+.ball,
+.player {
+	transition: fill 0.3s ease;
+	-o-transition: fill 0.3s ease;
+	-moz-transition: fill 0.3s ease;
+	-webkit-transition: fill 0.3s ease;
+}
+
 .game {
 	aspect-ratio: 5/3;
 	margin: 0 5%;
@@ -18,14 +27,6 @@
 .game .delimiter {
 	stroke: rgba(255, 255, 255, 0.4);
 	stroke-width: 3px;
-}
-
-.game .ball {
-	fill: white;
-}
-
-.game .player {
-	fill: rgb(230, 230, 230);
 }
 
 .score-wrapper {

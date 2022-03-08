@@ -9,51 +9,50 @@ import { UserApiService } from '../service/user_api/user-api.service';
 })
 export class GameComponent implements OnInit {
 
+	private user: any;
+	private subscription: Subscription = new Subscription();
 	private gameStarted: boolean = false;
-	fillColor = 'rgb(20, 20, 20)';
+	gameColor = 'rgb(20, 20, 20)';
+	movablesColor = 'rgb(255, 255, 255)'
 
 	game = {
-		WIDTH:  100,
+		WIDTH: 100,
 		HEIGHT: 100
 	}
 
 	paddle = {
-		WIDTH:   1,
-		HEIGHT:  20,
+		WIDTH: 1,
+		HEIGHT: 20,
 		PADDING: 4,
-		RADIUS:  3,
-		SPEED:   3
+		RADIUS: 3,
+		SPEED: 3
 	}
 
 	ball_t = {
 		RADIUS: 1,
-		SPEED:  1,
-		X:      50,
-		Y:      50
+		SPEED: 1,
+		X: 50,
+		Y: 50
 	}
 
 	ball = {
-		x:          this.ball_t.X,
-		y:          this.ball_t.Y,
+		x: this.ball_t.X,
+		y: this.ball_t.Y,
 		xIncrement: 0,
 		yIncrement: 0,
 	}
 
 	player1 = {
 		score: 0,
-		x:     this.paddle.PADDING,
-		y:     (this.game.HEIGHT / 2) - (this.paddle.HEIGHT / 2)
+		x: this.paddle.PADDING,
+		y: (this.game.HEIGHT / 2) - (this.paddle.HEIGHT / 2)
 	}
 
 	player2 = {
 		score: 0,
-		x:     this.game.WIDTH - this.paddle.WIDTH - this.paddle.PADDING,
-		y:     (this.game.HEIGHT / 2) - (this.paddle.HEIGHT / 2)
+		x: this.game.WIDTH - this.paddle.WIDTH - this.paddle.PADDING,
+		y: (this.game.HEIGHT / 2) - (this.paddle.HEIGHT / 2)
 	}
-
-
-	private subscription: Subscription = new Subscription();
-	private user: any;
 
 
 	constructor(private userApi: UserApiService) {
@@ -63,8 +62,8 @@ export class GameComponent implements OnInit {
 	ngOnInit(): void {
 		this.subscription.add(this.userApi.getUser().subscribe({
 			next: (data) => {
-						this.user = {...data}
-						console.log('game_data:', this.user)
+				this.user = { ...data }
+				console.log('game_data:', this.user)
 			},
 			error: (e) => console.error('Error: get user in main:', e),
 			complete: () => console.info('Complete: get user in main')
@@ -72,10 +71,10 @@ export class GameComponent implements OnInit {
 	}
 
 	ngOnDestroy() {
-			this.subscription.unsubscribe();
+		this.subscription.unsubscribe();
 	}
 
-	resetBall() : void {
+	resetBall(): void {
 		this.ball.x = this.ball_t.X
 		this.ball.y = Math.random() * (this.game.HEIGHT - this.ball_t.RADIUS)
 		if (this.ball.y < this.ball_t.RADIUS)
@@ -88,7 +87,7 @@ export class GameComponent implements OnInit {
 		console.log(this.ball.yIncrement)
 	}
 
-	start() : void {
+	start(): void {
 		if (!this.gameStarted) {
 			this.gameStarted = true
 			this.resetBall()
@@ -118,21 +117,19 @@ export class GameComponent implements OnInit {
 		// window.requestAnimationFrame(() => this.movePaddle(threshold));
 	}
 
-	movePaddle(val: number) : void {
+	movePaddle(val: number): void {
 		if (this.player1.y + val >= 0 &&
 			this.player1.y + val + this.paddle.HEIGHT <= this.game.HEIGHT) {
 			this.player1.y += val
 		}
 	}
 
-	goalCollision(x: number) : boolean {
-		if (x < -this.ball_t.RADIUS)
-		{
+	goalCollision(x: number): boolean {
+		if (x < -this.ball_t.RADIUS) {
 			this.player2.score++
 			return true
 		}
-		else if (x > (this.game.WIDTH + this.ball_t.RADIUS))
-		{
+		else if (x > (this.game.WIDTH + this.ball_t.RADIUS)) {
 			this.player1.score++
 			return true
 		}
@@ -140,12 +137,12 @@ export class GameComponent implements OnInit {
 			return false;
 	}
 
-	wallCollision(y: number) : boolean {
+	wallCollision(y: number): boolean {
 		return y <= this.ball_t.RADIUS ||
-			   y >= (this.game.HEIGHT - this.ball_t.RADIUS)
+			y >= (this.game.HEIGHT - this.ball_t.RADIUS)
 	}
 
-	paddleCollision(x: number, y: number) : boolean {
+	paddleCollision(x: number, y: number): boolean {
 
 		// check if the ball is aligned with one of the paddle
 		const rightPaddleCollision: boolean =
@@ -162,29 +159,27 @@ export class GameComponent implements OnInit {
 			(means that we have to bounce it)
 		*/
 		const rightCollision: boolean =
-					  x - (this.paddle.PADDING + this.paddle.WIDTH) <= 0 &&
-			this.ball.x - (this.paddle.PADDING + this.paddle.WIDTH) >  0 &&
+			x - (this.paddle.PADDING + this.paddle.WIDTH) <= 0 &&
+			this.ball.x - (this.paddle.PADDING + this.paddle.WIDTH) > 0 &&
 			rightPaddleCollision;
 
 		const leftCollision: boolean =
-					  x + (this.paddle.PADDING + this.paddle.WIDTH) >= this.game.WIDTH &&
-			this.ball.x + (this.paddle.PADDING + this.paddle.WIDTH) <  this.game.WIDTH &&
+			x + (this.paddle.PADDING + this.paddle.WIDTH) >= this.game.WIDTH &&
+			this.ball.x + (this.paddle.PADDING + this.paddle.WIDTH) < this.game.WIDTH &&
 			leftPaddleCollision;
 
 		return rightCollision || leftCollision
 	}
 
-	moveBall() : void {
+	moveBall(): void {
 		const future_x: number = this.ball.x + this.ball.xIncrement
 		const future_y: number = this.ball.y + this.ball.yIncrement
 
-		if (this.goalCollision(future_x))
-		{
+		if (this.goalCollision(future_x)) {
 			// the ball has hit a border, giving a point to the other player
 			this.resetBall()
 		}
-		else
-		{
+		else {
 			// bounce off the paddles
 			if (this.paddleCollision(future_x, future_y))
 				this.ball.xIncrement = -this.ball.xIncrement
@@ -200,12 +195,16 @@ export class GameComponent implements OnInit {
 		window.requestAnimationFrame(() => this.moveBall());
 	}
 
-	changeColor() : void {
-		// avoid too bright colors
-		const r = Math.floor((Math.random() * 256 - 30) % 256);
-		const g = Math.floor((Math.random() * 256 - 30) % 256);
-		const b = Math.floor((Math.random() * 256 - 30) % 256);
-		this.fillColor = `rgb(${r}, ${g}, ${b})`;
-		console.log(this.fillColor);
+	changeColor(): void {
+		const r = Math.floor(Math.random() * 256);
+		const g = Math.floor(Math.random() * 256);
+		const b = Math.floor(Math.random() * 256);
+		this.gameColor = `rgb(${r}, ${g}, ${b})`;
+
+		// revert ball & paddles color if the background color is too bright / dark
+		if (r > 200 || g > 200 || b > 200)
+			this.movablesColor = "rgb(30, 30, 30)";
+		else
+			this.movablesColor = "rgb(255, 255, 255)";
 	}
 }

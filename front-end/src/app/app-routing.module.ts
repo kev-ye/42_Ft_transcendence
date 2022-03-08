@@ -10,24 +10,26 @@ import { TwoFactorGuard } from "./service/guard/two-factor.guard";
 import { SubscriptionGuard } from "./service/guard/subscription.guard";
 import { MainComponent } from './main/main.component';
 import { TwoFactorComponent } from './two-factor/two-factor.component';
-import {GameRoomComponent} from "./game-room/game-room.component";
-import {GameComponent} from "./game/game.component";
+import { GameRoomComponent } from "./game-room/game-room.component";
+import { GameComponent } from "./game/game.component";
+import { MatchMakingComponent } from "./match-making/match-making.component";
 
 const routes: Routes = [
-  { path: '', redirectTo: 'user_login', pathMatch: 'full' },
-  { path: 'user_login', component: UserLoginComponent, canActivate: [LoginGuard] },
+	{ path: '', redirectTo: 'user_login', pathMatch: 'full' },
+	{ path: 'user_login', component: UserLoginComponent, canActivate: [LoginGuard] },
 	{ path: 'two_factor', component: TwoFactorComponent, canActivate: [IsLoginGuard, TwoFactorGuard] },
-  { path: 'user_subscription', component: UserSubscriptionComponent, canActivate: [IsLoginGuard, SubscriptionGuard] },
-  { path: 'main', component: MainComponent, canActivate: [IsLoginGuard, AuthGuard] },
-  { path: 'room', component: GameRoomComponent, canActivate: [IsLoginGuard, AuthGuard] },
+	{ path: 'user_subscription', component: UserSubscriptionComponent, canActivate: [IsLoginGuard, SubscriptionGuard] },
+	{ path: 'main', component: MainComponent, canActivate: [IsLoginGuard, AuthGuard] },
+	{ path: 'room', component: GameRoomComponent, canActivate: [IsLoginGuard, AuthGuard] },
+	{ path: 'match-making', component: MatchMakingComponent, canActivate: [IsLoginGuard, AuthGuard] },
 	{ path: 'game', component: GameComponent, canActivate: [IsLoginGuard, AuthGuard] },
-  { path: '**', redirectTo: 'user_login', pathMatch: 'full' }
+	{ path: '**', redirectTo: 'user_login', pathMatch: 'full' }
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forRoot(routes)
-  ],
-  exports: [RouterModule]
+	imports: [
+		RouterModule.forRoot(routes)
+	],
+	exports: [RouterModule]
 })
 export class AppRoutingModule { }
