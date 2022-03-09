@@ -69,6 +69,19 @@ export class GameComponent implements OnInit, OnDestroy {
 		// this.start()
 	}
 
+	showError(error: string, redirect: boolean = true) {
+		const tmp = this.dialog.open(DialogError, {
+			data: {
+				error: error
+			}
+		});
+		if (redirect)
+			tmp.afterClosed().subscribe(() => {
+				this.router.navigate(['main']);
+			})
+		return tmp;
+	}
+
 	initSocket() {
 		this.socket.onAny(data => {
 		})		
@@ -85,15 +98,11 @@ export class GameComponent implements OnInit, OnDestroy {
 			}
 			else
 			{
-				const tmp = this.dialog.open(DialogError, {
-					data: {
-						error: "Waiting for game"
-					}
-				});
+				const tmp = this.showError('Waiting for game', false);
 				setTimeout(() => {
 					this.socket.emit('startMatchmaking');
 				}, 500);
-				
+
 				this.socket.on('joinedGame', (data) => {
 					if (data.game_id)
 					{
@@ -108,20 +117,11 @@ export class GameComponent implements OnInit, OnDestroy {
 			}
 		})
 
-		this.socket.on('error', (data: any) => {
-			console.log("received error", data);
-			
+		this.socket.on('error', (data: any) => {			
 			if (!data.error)
 				return;
-			const tmp = this.dialog.open(DialogError, {
-				data: {
-					error: data.error
-				}
-			});
-			tmp.afterClosed().subscribe(() => {
-				this.router.navigate(['main']);
-			})
-		})
+			this.showError(data.error);
+		});
 
 		this.socket.on('user', () => {
 			this.http.get(`${GlobalConsts.userApi}/user/id`).subscribe((data: any) => {
@@ -169,8 +169,7 @@ export class GameComponent implements OnInit, OnDestroy {
 		setTimeout(() => {
 			if (this.socket.disconnected)
 			{
-				console.error("Connection on game gateway was not possible");
-				confirm('Could not connect to game server')
+				this.showError('Could not connect to game server');
 			}
 		}, 3000);
 

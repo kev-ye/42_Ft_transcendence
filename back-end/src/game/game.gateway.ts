@@ -266,8 +266,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (!game) return;
 
     this.server.to(gameID).emit('joinedGame', { game_id: gameID });
-    //wait 3 seconds to star
-    this.sleep(3000);
+    //wait 3 seconds to start
+    await this.sleep(3000);
 
     this.service.startGame(gameID);
     this.stats.set(game.id, {
