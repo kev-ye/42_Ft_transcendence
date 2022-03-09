@@ -10,7 +10,7 @@
 </style>
 
 <div *ngIf="!error">
-	<p> Username: {{ username }} </p>
+	<p> {{ username }} </p>
 	<div *ngIf="true">
 		<div style="height: 150px; width: 150px;">
 			<img [src]="link" class="avatar">
@@ -20,7 +20,7 @@
 		<button *ngIf="friend" (click)="deleteFriend()"> Remove as friend</button>
 		<button *ngIf="!blocked" (click)="blockUser()"> Block user </button>
 		<button *ngIf="blocked" (click)="unblockUser()"> Unblock user </button>
-		<button> Invite to play </button>
+		<!-- <button> Invite to play </button> -->
 	</div>
 </div>
 <div *ngIf="error">

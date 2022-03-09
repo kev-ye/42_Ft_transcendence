@@ -556,16 +556,12 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 	}
 
 	joinGame(id: string | undefined, user?: any) {
-		if (id != undefined) {
-			console.log("test join", user, this.user.id);
-
+		
+		if (id != undefined) {			
 			if (user == undefined || user != this.user.id)
-				this.join.emit(id);
-			else
-				console.log("Cannot join game I made");
-
-
-
+				this.join.emit(id)
 		}
+		else
+			this.join.emit(id)
 	}
 }

@@ -154,7 +154,7 @@ export class GameComponent implements OnInit, OnDestroy {
 	
 	
 	ngOnInit() : void {		
-		this.socket = io(`/game`, {
+		this.socket = io(`ws://localhost:3002/game`, {
 			path: '/game/socket.io',
 			withCredentials: true,
 			closeOnBeforeunload: true,
@@ -204,14 +204,15 @@ export class GameComponent implements OnInit, OnDestroy {
 	@HostListener("window:keydown", ["$event"])
 	onKeyDown(e: any) {
 		let threshold: number = 0
-		e.preventDefault();
 		if (this.socket.disconnected)
 			return ;
 
 		if (e.code === "ArrowUp") {
+			e.preventDefault();
 			threshold = -this.paddle.SPEED
 		}
 		if (e.code === "ArrowDown") {
+			e.preventDefault();
 			threshold = this.paddle.SPEED
 		}
 

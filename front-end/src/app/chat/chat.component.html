@@ -30,18 +30,18 @@
                     </div>
                 </div>
             </div>
-            <div *ngIf="chat.show" style="overflow: hidden; height: 600px; width: 400px">
-                <div class="ChatInformation" style="position: relative; height: 50px;">
+            <div *ngIf="chat.show" style="overflow: hidden; height: 580px; width: 350px">
+                <div class="ChatInformation" style="position: relative; height: 50px; width: 350px;">
                     <div (click)="openChannelSettings()" style="position: absolute; top: 0%; left: 50%; transform: translate(-50%, 0); text-decoration: underline;" [ngStyle]="{'font-weight': chat.moderator ? 'bold': '',
                                                                                               'cursor': chat.moderator ? 'pointer': 'default'}">
                         {{ chat.name }}
                     </div>
                     <mat-icon (click)="openFriendList()" style="position: absolute; top: 0%; left: 0%; cursor: pointer;"> keyboard_arrow_left </mat-icon>
-                    <mat-icon (click)="inviteFriend()" *ngIf="chat.access == 2" class="btn" style="bottom: 0%; right: 24%; margin-right: 15px;"> person_add</mat-icon>
-                    <mat-icon (click)="inviteGame()" class="btn" style="bottom: 0%; right: 15%; margin-right: 15px;"> gamepad </mat-icon>
+                    <mat-icon (click)="inviteFriend()" *ngIf="chat.access == 2" class="btn" style="bottom: 0%; right: 10%; margin-right: 15px;"> person_add</mat-icon>
+                    <mat-icon (click)="inviteGame()" class="btn" style="bottom: 0%; right: 0%; margin-right: 15px;"> gamepad </mat-icon>
                     <mat-icon (click)="openSpec()" class="btn" style="bottom: 0%; left: 0%; margin-left: 15px;"> remove_red_eye </mat-icon>
                 </div>
-                <div style="height: 72%; width: 88%; position: relative; background-color: rgb(201, 201, 201); overflow-x: hidden; overflow-y: scroll; -ms-overflow-style: none; scrollbar-width: none;" #framePublic>
+                <div style="height: 72%; width: 350px; position: relative; background-color: rgb(201, 201, 201); overflow-x: hidden; overflow-y: scroll; -ms-overflow-style: none; scrollbar-width: none;" #framePublic>
                     <div *ngFor="let msg of messages; let index = index">
                         <div style="position: relative;">
                             <div [ngClass]="{'colorLabel': msg.user_id != user.id}" [style.--color]="colorMap.get(msg.user_id)">
@@ -50,7 +50,7 @@
                                 'mine': msg.user_id == user.id}">
                                     {{ msg.message }}
                                 </div>
-                                <div class="inviteGame" *ngIf="msg.type != 1" (click)="joinGame(msg.message)"> {{ msg.username + ' has invited you to play' }} </div>
+                                <div class="inviteGame" *ngIf="msg.type != 1" (click)="joinGame(msg.message, msg.user_id)"> {{ msg.username + ' has invited you to play' }} </div>
                             </div>
                         </div>
                         <div style="font-size:75%; cursor: pointer; display: inline-block;" (click)="openUserDialog(msg)" *ngIf="(index == messages.length - 1 || msg.username != messages[index + 1].username) && msg.user_id != user.id && msg.type == 1">
@@ -58,7 +58,7 @@
                         </div>
                     </div>
                 </div>
-                <div style="position: relative; height: 10%; padding-top: 3px; background-color: rgb(201, 201, 201); width: 87%;">
+                <div style="position: relative; height: 14%; padding-top: 3px; background-color: rgb(201, 201, 201); width: 350px;">
                     <form (ngSubmit)="sendMessage()">
                         <input type="text" placeholder="Enter text.." style="width: -webkit-fill-available; height: 50%; position: absolute; border-radius: 15px; width: 80%; left: 50%; transform: translate(-50%, 0);" #input>
                     </form>
@@ -95,16 +95,16 @@
                     </div>
                 </div>
             </div>
-            <div *ngIf="chat.show" style="overflow: hidden; height: 600px; width: 400px; position: relative;">
+            <div *ngIf="chat.show" style="overflow: hidden; height: 580px; width: 350px; position: relative;">
                 <div class="ChatInformation" style="position: relative; height: 8%;">
                     <div style="position: absolute; top: 0%; left: 50%; transform: translate(-50%, 0); text-decoration: underline;">
                         {{ chat.name }}
                     </div>
                     <mat-icon (click)="openFriendList()" style="position: absolute; top: 0%; left: 0%; cursor: pointer;"> keyboard_arrow_left </mat-icon>
-                    <mat-icon (click)="inviteGame()" class="btn" style="bottom: 0%; right: 15%; margin-right: 15px;"> gamepad </mat-icon>
+                    <mat-icon (click)="inviteGame()" class="btn" style="bottom: 0%; right: 0%; margin-right: 15px;"> gamepad </mat-icon>
                     <mat-icon (click)="openUserDialog()" class="btn" style="bottom: 0%; left: 0%; margin-left: 15px;"> person_pin </mat-icon>
                 </div>
-                <div style="height: 72%; width: 100%; position: relative; background-color: rgb(201, 201, 201); overflow-x: hidden; overflow-y: scroll; -ms-overflow-style: none; scrollbar-width: none;" #framePrivate>
+                <div style="height: 72%; width: 350px; position: relative; background-color: rgb(201, 201, 201); overflow-x: hidden; overflow-y: scroll; -ms-overflow-style: none; scrollbar-width: none;" #framePrivate>
                     <div *ngFor="let msg of messages; let index = index">
                         <div style="position: relative;">
                             <div [ngClass]="{'colorLabel': msg.user_id != user.id}" [style.--color]="colorMap.get(msg.user_id)">
@@ -113,7 +113,7 @@
                                 'mine': msg.user_id == user.id}">
                                     {{ msg.message }}
                                 </div>
-                                <div class="inviteGame" *ngIf="msg.type != 1" (click)="joinGame(msg.message, msg.user_id)"> {{ msg.username + ' has invited you to play' }} </div>
+                                <div class="inviteGame" *ngIf="msg.type != 1" (click)="joinGame(msg.message, msg.user_id)"> {{ chat.name + ' has invited you to play' }} </div>
                             </div>
                         </div>
                         <div style="font-size:75%; cursor: pointer; display: inline-block;" (click)="openUserDialog(msg)"  *ngIf="(index == messages.length - 1 || msg.username != messages[index + 1].username) && msg.user_id != user.id">
@@ -121,10 +121,10 @@
                         </div>
                     </div>
                 </div>
-                <div style="position: relative; height: 10%; padding-top: 3px; background-color: rgb(201, 201, 201);">
+                <div style="position: relative; height: 14%; padding-top: 3px; background-color: rgb(201, 201, 201); width: 350px;">
                     <form (ngSubmit)="sendMessage()">
                         <!--<button type="submit" style="width: 100%;"> Send </button> -->
-                        <input type="text" placeholder="Enter text.." style="width: -webkit-fill-available; height: 50%; position: absolute; border-radius: 15px;" #inputPrivate>
+                        <input type="text" placeholder="Enter text.." style="width: -webkit-fill-available; height: 50%; position: absolute; border-radius: 15px; width: 80%; left: 50%; transform: translate(-50%, 0); margin-bottom: 35px;" #inputPrivate>
                     </form>
                 </div>
             </div>
