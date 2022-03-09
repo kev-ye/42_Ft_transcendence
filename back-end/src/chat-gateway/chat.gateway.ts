@@ -28,6 +28,7 @@ import { UserService } from 'src/user/user.service';
     methods: ['GET', 'POST'],
     credentials: true,
   },
+  transports: ['websocket']
 })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()

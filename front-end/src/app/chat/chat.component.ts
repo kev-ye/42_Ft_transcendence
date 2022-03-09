@@ -191,10 +191,10 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 		this.subscription.add(this.data.isLoginData.subscribe(data => this.isLogin = data));
 
 		if (this.isLogin) {
-			this.socket = io('/chat', {
+			this.socket = io('ws://localhost:3001/chat', {
 				path: '/chat/socket.io',
 				withCredentials: true,
-				// transports: ['websocket']
+				transports: ['websocket']
 			});
 
 			this.socket.on('user', () => {

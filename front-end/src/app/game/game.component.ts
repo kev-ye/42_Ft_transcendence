@@ -154,7 +154,7 @@ export class GameComponent implements OnInit, OnDestroy {
 	
 	
 	ngOnInit() : void {		
-		this.socket = io(`ws://localhost:3002/game`, {
+		this.socket = io(`/game`, {
 			path: '/game/socket.io',
 			withCredentials: true,
 			closeOnBeforeunload: true,
