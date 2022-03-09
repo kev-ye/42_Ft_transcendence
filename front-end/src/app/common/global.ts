@@ -1,4 +1,4 @@
 export class GlobalConsts {
-  public static siteTitle: string = 'Ft_transcendence';
+  public static siteTitle: string = 'PongTastic';
   public static userApi: string = 'api';
 }

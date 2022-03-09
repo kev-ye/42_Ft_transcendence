@@ -25,15 +25,7 @@ export class GameEntity {
 
     @Column({default: 0})
     second_score: number;
-
-    @Column({default: 0})
-    first_state: number;
-    //0 - waiting
-    //1 - ready
-
-    @Column({default: 0})
-    second_state: number;
-
+    
     @Column({default: 5})
     limit_game: number;
 

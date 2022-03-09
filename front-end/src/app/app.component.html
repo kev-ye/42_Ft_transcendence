@@ -27,7 +27,10 @@
 
 	<!-- chat	-->
 	<mat-sidenav #friendSidenav mode="over" position="end" class="sidenav" style="background-color: rgb(165, 164, 164);">
-		<app-chat style="position: absolute; top: 9%;" (join)="joinGame($event)" *ngIf="isLogin"></app-chat>
+		<mat-sidenav-content>
+			<app-chat style="position: absolute; top: 0%;" (join)="joinGame($event)" *ngIf="isLogin"></app-chat>
+
+		</mat-sidenav-content>
 	</mat-sidenav>
 
 	<!-- router content	-->
@@ -37,5 +40,5 @@
 </mat-sidenav-container>
 
 <mat-toolbar class="footer">
-	<p>Kaye - Besellem - Ppoinsinet</p>
+	<p>Kaye - Besellem - Ppoinsin</p>
 </mat-toolbar>

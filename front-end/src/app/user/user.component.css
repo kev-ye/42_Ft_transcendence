@@ -1,51 +1,3 @@
-/*.background {*/
-/*	background-color: rgb(83, 83, 83);*/
-/*	border-top-left-radius: 30px;*/
-/*	border-bottom-left-radius: 30px;*/
-/*	width: 200px;*/
-/*}*/
-
-/*.avatar {*/
-/*		border-radius: 50%;*/
-/*		max-width: 100px;*/
-/*		max-height: 100px;*/
-/*		position: absolute;*/
-/*		left: 50%;*/
-/*		top: 50%;*/
-/*		transform: translate(-50%, -50%);*/
-/*}*/
-
-/*.category {*/
-/*		text-align: center;*/
-/*		text-decoration: underline;*/
-/*}*/
-
-/*.information {*/
-/*		text-align: center;*/
-/*}*/
-
-/*.username {*/
-/*		font-size: 1.2em;*/
-/*		text-align: center;*/
-/*}*/
-
-/*.username:hover {*/
-/*		text-decoration: underline;*/
-/*		cursor: pointer;*/
-/*		user-select: none;*/
-/*}*/
-
-/*.avatar {*/
-/*		transition: .25s ease;*/
-/*		cursor: pointer;*/
-/*}*/
-
-/*.avatar:hover  {*/
-/*		opacity: 0.5;*/
-/*}*/
-
-
-/* modify by kaye */
 * {
 	font-family: 'Press Start 2P';
 }
@@ -114,4 +66,3 @@
 	text-align: center;
 	color: gray;
 }
-

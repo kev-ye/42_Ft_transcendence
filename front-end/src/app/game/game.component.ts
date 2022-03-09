@@ -1,19 +1,29 @@
-import { Component, HostListener, Inject, Input, OnInit, Output } from '@angular/core';
-import { Subscription } from "rxjs";
+import { HttpClient } from '@angular/common/http';
+import { Component, HostListener, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { io, Socket } from 'socket.io-client';
+import { GlobalConsts } from '../common/global';
 import { UserApiService } from '../service/user_api/user-api.service';
+import { Subscription } from "rxjs";
+import { ActivatedRoute, Params, Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogError } from './dialogs/error.component';
 
 @Component({
 	selector: 'app-game',
 	templateUrl: './game.component.svg',
 	styleUrls: ['./game.component.css']
 })
-export class GameComponent implements OnInit {
+export class GameComponent implements OnInit, OnDestroy {
 
 	private user: any;
 	private subscription: Subscription = new Subscription();
 	private gameStarted: boolean = false;
+	private leftPage: boolean = false;
 	gameColor = 'rgb(20, 20, 20)';
 	movablesColor = 'rgb(255, 255, 255)'
+
+	public socket: Socket;
+	gameID: string;
 
 	game = {
 		WIDTH: 100,
@@ -54,12 +64,84 @@ export class GameComponent implements OnInit {
 		y: (this.game.HEIGHT / 2) - (this.paddle.HEIGHT / 2)
 	}
 
-
-	constructor(private userApi: UserApiService) {
+	constructor(private http: HttpClient, private userApi: UserApiService,
+		private route: ActivatedRoute, private dialog: MatDialog,
+		private router: Router) {
 		// this.start()
 	}
 
-	ngOnInit(): void {
+	showError(error: string, redirect: boolean = true) {
+		const tmp = this.dialog.open(DialogError, {
+			data: {
+				error: error
+			}
+		});
+		if (redirect)
+			tmp.afterClosed().subscribe(() => {
+				this.router.navigate(['main']);
+			})
+		return tmp;
+	}
+
+	initSocket() {
+
+		this.route.queryParams.subscribe((data: any) => {			
+			if (data.id)
+			{
+				console.log("Connecting to game " + data.id);
+				this.socket.emit('connectGame', {game_id: data.id})
+			}
+			else if (data.spec)
+			{
+				this.socket.emit('spectate', {game_id: data.spec});
+			}
+			else
+			{
+				const tmp = this.showError('Waiting for game', false);
+				setTimeout(() => {
+					this.socket.emit('startMatchmaking');
+				}, 500);
+
+				this.socket.on('joinedGame', (data) => {
+					if (data.game_id)
+					{
+						this.gameID = data.game_id;
+						tmp.close();
+					}
+					else
+					{
+						console.error("No gameID was sent to player");
+					}
+				})
+			}
+		})
+
+		this.socket.on('error', (data: any) => {			
+			if (!data.error)
+				return;
+			this.leftPage = true;
+			this.showError(data.error);
+		});
+
+		this.socket.on('user', () => {
+			this.http.get(`${GlobalConsts.userApi}/user/id`).subscribe((data: any) => {
+				this.socket.emit('user', {id: data.id});
+			})
+		});
+
+		this.socket.on('refresh', (data: any) => {			
+			this.ball.x = data[0].pos.x + 50;
+			this.ball.y = data[0].pos.y + 50;
+			this.player1.score = data[0].score.first;
+			this.player2.score = data[0].score.second;
+			this.player1.y = data[0].first + 50 - this.paddle.HEIGHT / 2;
+			this.player2.y = data[0].second + 50 - this.paddle.HEIGHT / 2;
+		});
+
+		this.socket.on('joinedGame', (data: any) => {
+			this.gameID = data.game_id;
+		})
+
 		this.subscription.add(this.userApi.getUser().subscribe({
 			next: (data) => {
 				this.user = { ...data }
@@ -67,24 +149,44 @@ export class GameComponent implements OnInit {
 			},
 			error: (e) => console.error('Error: get user in main:', e),
 			complete: () => console.info('Complete: get user in main')
-		}))
+		}));
+	}
+	
+	
+	ngOnInit() : void {		
+		this.socket = io(`ws://localhost:3002/game`, {
+			path: '/game/socket.io',
+			withCredentials: true,
+			closeOnBeforeunload: true,
+			reconnection: false,
+			transports: ['websocket'],
+			autoConnect: true,
+			timeout: 3000
+		}).on('connect', () => {
+			this.initSocket();
+		});
+
+		setTimeout(() => {
+			if (this.socket.disconnected && !this.leftPage)
+			{
+				this.leftPage = true;
+				this.showError('Could not connect to game server');
+			}
+		}, 3000);
+
+		
+	}
+	
+	ngOnDestroy(): void {
+		this.socket.disconnect();
 	}
 
-	ngOnDestroy() {
-		this.subscription.unsubscribe();
+	stopSocket() {
+		this.socket.disconnect();		
 	}
 
-	resetBall(): void {
-		this.ball.x = this.ball_t.X
-		this.ball.y = Math.random() * (this.game.HEIGHT - this.ball_t.RADIUS)
-		if (this.ball.y < this.ball_t.RADIUS)
-			this.ball.y = this.ball_t.RADIUS
-
-		this.ball.xIncrement = this.ball_t.SPEED * (Math.random() < 0.5 ? -1 : 1);
-		this.ball.yIncrement = this.ball_t.SPEED * Math.random();
-		if (this.ball.yIncrement < this.ball_t.SPEED * 0.2)
-			this.ball.yIncrement = this.ball_t.SPEED / 2;
-		console.log(this.ball.yIncrement)
+	resetBall() : void {
+		
 	}
 
 	start(): void {
@@ -95,9 +197,16 @@ export class GameComponent implements OnInit {
 		}
 	}
 
+	startMatchmaking() {
+		this.socket.emit('startMatchmaking')
+	}
+
 	@HostListener("window:keydown", ["$event"])
 	onKeyDown(e: any) {
 		let threshold: number = 0
+		e.preventDefault();
+		if (this.socket.disconnected)
+			return ;
 
 		if (e.code === "ArrowUp") {
 			threshold = -this.paddle.SPEED
@@ -108,91 +217,28 @@ export class GameComponent implements OnInit {
 
 		/* animation was too slow - had to do this trick */
 		let val: number = threshold < 0 ? -1 : 1
-		for (let _ = Math.abs(threshold); _ > 0; --_) {
-			this.movePaddle(val)
-			setTimeout(() => {
-				window.requestAnimationFrame(() => this.movePaddle(val))
-			}, 10)
-		}
+		this.socket.emit('input', {value: val, game_id: this.gameID});
+		console.log("emit input", {value: val, game_id: this.gameID});
+		
+		
 		// window.requestAnimationFrame(() => this.movePaddle(threshold));
 	}
 
-	movePaddle(val: number): void {
-		if (this.player1.y + val >= 0 &&
-			this.player1.y + val + this.paddle.HEIGHT <= this.game.HEIGHT) {
-			this.player1.y += val
-		}
+	movePaddle(val: number) : void {
 	}
 
-	goalCollision(x: number): boolean {
-		if (x < -this.ball_t.RADIUS) {
-			this.player2.score++
-			return true
-		}
-		else if (x > (this.game.WIDTH + this.ball_t.RADIUS)) {
-			this.player1.score++
-			return true
-		}
-		else
-			return false;
+	goalCollision(x: number) {
+
 	}
 
-	wallCollision(y: number): boolean {
-		return y <= this.ball_t.RADIUS ||
-			y >= (this.game.HEIGHT - this.ball_t.RADIUS)
+	wallCollision(y: number) {
 	}
 
-	paddleCollision(x: number, y: number): boolean {
-
-		// check if the ball is aligned with one of the paddle
-		const rightPaddleCollision: boolean =
-			y >= this.player1.y &&
-			y <= (this.player1.y + this.paddle.HEIGHT);
-
-		const leftPaddleCollision: boolean =
-			y >= this.player2.y &&
-			y <= (this.player2.y + this.paddle.HEIGHT);
-
-		/*
-			check if the ball is in the paddle area,
-			and that the ball is actually in front of the corresponding paddle.
-			(means that we have to bounce it)
-		*/
-		const rightCollision: boolean =
-			x - (this.paddle.PADDING + this.paddle.WIDTH) <= 0 &&
-			this.ball.x - (this.paddle.PADDING + this.paddle.WIDTH) > 0 &&
-			rightPaddleCollision;
-
-		const leftCollision: boolean =
-			x + (this.paddle.PADDING + this.paddle.WIDTH) >= this.game.WIDTH &&
-			this.ball.x + (this.paddle.PADDING + this.paddle.WIDTH) < this.game.WIDTH &&
-			leftPaddleCollision;
-
-		return rightCollision || leftCollision
+	paddleCollision(x: number, y: number) {
 	}
 
-	moveBall(): void {
-		const future_x: number = this.ball.x + this.ball.xIncrement
-		const future_y: number = this.ball.y + this.ball.yIncrement
-
-		if (this.goalCollision(future_x)) {
-			// the ball has hit a border, giving a point to the other player
-			this.resetBall()
-		}
-		else {
-			// bounce off the paddles
-			if (this.paddleCollision(future_x, future_y))
-				this.ball.xIncrement = -this.ball.xIncrement
-
-			// bounce off top and bottom walls
-			if (this.wallCollision(future_y))
-				this.ball.yIncrement = -this.ball.yIncrement
-
-			this.ball.x += this.ball.xIncrement
-			this.ball.y += this.ball.yIncrement
-		}
-
-		window.requestAnimationFrame(() => this.moveBall());
+	moveBall() : void {
+		
 	}
 
 	changeColor(): void {

@@ -1,77 +1,39 @@
-<!--<div class="background">-->
-
-<!--    <div *ngIf="connected">-->
-
-<!--        <div class="container" style="position: relative; height: 100px; padding-top: 15px;">-->
-<!--            <img [src]="user.avatar" alt="" class="avatar" (click)="openImageDialog()">-->
-<!--        </div>-->
-
-<!--        <h1 class="username" (click)="openUsername()"> {{ user.username }} </h1>-->
-
-<!--        <div style="line-height: 0.1em">-->
-<!--            <h3 class="category"> Login </h3>-->
-<!--            <h4 class="information"> {{ user.login }}</h4>-->
-<!--            <br>-->
-<!--        </div>-->
-
-<!--        <div style="line-height: 0.1em; margin-bottom: 15px;">-->
-<!--            <h3 class="category"> Ladder points </h3>-->
-<!--            <h4 class="information"> {{ user.ladder }}</h4>-->
-<!--        </div>-->
-
-<!--        <br>-->
-<!--    </div>-->
-<!--    <div *ngIf="!connected">-->
-<!--        <h1>-->
-<!--            Trying to connect to back-end server..-->
-<!--        </h1>-->
-<!--    </div>-->
-
-<!--	<div>-->
-<!--		<img [src]="qrCode" alt="QR-code" *ngIf="twoFaActive"/>-->
-<!--	</div>-->
-<!--	<button (click)="turnOnTwoFa()" *ngIf="!twoFaActive">Turn on 2Fa</button>-->
-<!--	<button (click)="turnOffTwoFa()" *ngIf="twoFaActive">Turn off 2Fa</button>-->
-
-<!--</div>-->
-
-<!--modify by kaye-->
 <div class="background">
-    <div *ngIf="connected">
-        <div class="container">
-            <img [src]="user.avatar" alt="avatar" class="avatar" (click)="openImageDialog()">
-        </div>
+	<div *ngIf="connected">
+		<div class="container">
+			<img [src]="user.avatar" alt="avatar" class="avatar" (click)="openImageDialog()">
+		</div>
 
-				<div>
-        	<h1 class="username" (click)="openUsername()">{{ user.username }}</h1>
-				</div>
+		<div>
+			<h1 class="username" (click)="openUsername()">{{ user.username }}</h1>
+		</div>
+		<div>
+			<p class="category">42 Login: <span class="information">{{ user.login }}</span></p>
+		</div>
 
-        <div>
-					<p class="category">42 Login: <span class="information">{{ user.login }}</span></p>
-        </div>
-
-        <div>
-					<p class="category">Ladder points: <span class="information">{{ user.ladder }}</span></p>
-        </div>
-    </div>
-
-    <div *ngIf="!connected" class="loading">
-        <h1>loading ...</h1>
-    </div>
-
-	<div class="qrcode">
-		<img [src]="qrCode" alt="QR-code" *ngIf="twoFaActive"/>
+		<div>
+			<p class="category">Ladder points: <span class="information">{{ user.ladder }}</span></p>
+		</div>
 	</div>
 
-	<div class="btnOn" *ngIf="!twoFaActive">
+	<div *ngIf="!connected" class="loading">
+		<h1>loading ...</h1>
+	</div>
+
+	<div class="qrcode">
+		<img [src]="qrCode" alt="QR-code" *ngIf="twoFaActive" />
+	</div>
+
+	<div *ngIf="!twoFaActive" class="btnOn">
 		<button mat-raised-button color="basic" (click)="turnOnTwoFa()">Turn on 2Fa</button>
 	</div>
 
-	<div class="btn" *ngIf="twoFaActive">
+	<div *ngIf="twoFaActive" class="btn">
 		<button mat-raised-button color="basic" (click)="turnOffTwoFa()">Turn off 2Fa</button>
 	</div>
 
 	<div class="btn">
 		<button mat-raised-button class="item" (click)="logOut()">logout</button>
 	</div>
+
 </div>
