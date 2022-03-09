@@ -44,6 +44,12 @@ export class UserController {
       });
   }
 
+  @Get('id/:id')
+  @UseGuards(UserGuard)
+  async getUserById(@Param('id') id: string) {
+    return await this.userService.getUserById(id);
+  }
+
   @Get('name/:name')
   @UseGuards(UserGuard)
   async getUserByName(
