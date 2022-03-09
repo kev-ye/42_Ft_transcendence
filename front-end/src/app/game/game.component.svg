@@ -61,6 +61,7 @@
 		<div>
 			<button (click)="startMatchmaking()"> matchmaking </button>
 		</div>
+		<button (click)="stopSocket()"> socket </button>
 	</div>
 
 </div>

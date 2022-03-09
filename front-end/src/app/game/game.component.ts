@@ -1,16 +1,17 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, HostListener, Inject, Input, OnInit, Output } from '@angular/core';
+import { Component, HostListener, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
 import { GlobalConsts } from '../common/global';
 import { UserApiService } from '../service/user_api/user-api.service';
 import { Subscription } from "rxjs";
+import { ActivatedRoute, Params } from '@angular/router';
 
 @Component({
 	selector: 'app-game',
 	templateUrl: './game.component.svg',
 	styleUrls: ['./game.component.css']
 })
-export class GameComponent implements OnInit {
+export class GameComponent implements OnInit, OnDestroy {
 
 	private user: any;
 	private subscription: Subscription = new Subscription();
@@ -18,7 +19,7 @@ export class GameComponent implements OnInit {
 	gameColor = 'rgb(20, 20, 20)';
 	movablesColor = 'rgb(255, 255, 255)'
 
-	private socket: Socket;
+	public socket: Socket;
 	gameID: string;
 
 	game = {
@@ -60,15 +61,52 @@ export class GameComponent implements OnInit {
 		y: (this.game.HEIGHT / 2) - (this.paddle.HEIGHT / 2)
 	}
 
-	constructor(private http: HttpClient, private userApi: UserApiService) {
+	constructor(private http: HttpClient, private userApi: UserApiService,
+		private route: ActivatedRoute) {
 		// this.start()
 	}
 	
-	ngOnInit() : void {
-		this.socket = io(`/game`, {
+	
+	ngOnInit() : void {		
+		this.socket = io(`ws://localhost:3002/game`, {
 			path: '/game/socket.io',
-			withCredentials: true
+			withCredentials: true,
+			closeOnBeforeunload: true,
+			reconnection: false,
+			transports: ['websocket'],
+			autoConnect: true,
+		}).on('connect', () => {
+			console.log("connecteeed");
+			
 		});
+
+		this.socket.onAny(data => {
+			console.log("received " + data);
+			
+		})
+		console.log("teest socket " + this.socket.disconnected);
+		
+
+		this.route.queryParams.subscribe((data: any) => {			
+			if (data.id)
+			{
+				console.log("Connecting to game " + data.id);
+				this.socket.emit('connectGame', {game_id: data.id})
+			}
+			else if (data.spec)
+			{
+
+			}
+			else
+			{
+				//error
+			}
+		})
+
+		this.socket.on('error', (data: any) => {
+			console.log("Error: " + data.error);
+			
+		})
 
 		this.socket.on('user', () => {
 			this.http.get(`${GlobalConsts.userApi}/user/id`).subscribe((data: any) => {
@@ -97,6 +135,18 @@ export class GameComponent implements OnInit {
 			error: (e) => console.error('Error: get user in main:', e),
 			complete: () => console.info('Complete: get user in main')
 		}))
+	}
+	
+	ngOnDestroy(): void {
+		// this.socket.emit('disconnectGame')
+		this.socket.disconnect();
+	}
+
+	stopSocket() {
+		
+		this.socket.disconnect();
+		console.log("after disconnect ");
+		
 	}
 
 	resetBall() : void {

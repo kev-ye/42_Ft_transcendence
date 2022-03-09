@@ -32,6 +32,7 @@ export const SPEED_COEF = 5;
     methods: ['GET', 'POST'],
     credentials: true,
   },
+  transports: ['websocket']
 })
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
@@ -59,7 +60,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		Y:      50
 	}
 
-  @WebSocketServer()
+  @WebSocketServer() 
   server: Server;
 
   stats: Map<string, any> = new Map();
@@ -110,14 +111,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const game = await this.service.getGameById(player.game_id);
 
     if (game) {
-      if (
-        game.game_state == 1 &&
-        (game.first == client.id || game.second == client.id)
-      ) {
+      if (game.game_state == 1 && (game.first == client.id || game.second == client.id)) {
         if (game.first == client.id) {
           this.playerLoses(game.first);
           this.playerWins(game.second);
-        } else {
+        }
+        else {
           this.playerWins(game.first);
           this.playerLoses(game.second);
         }
@@ -129,10 +128,14 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         else
           this.stats.delete(game.id);
       }
+      else if (game.game_state == 0)
+        this.service.deleteGameById(game.id);
     }
   }
 
   async handleDisconnect(client: Socket) {
+    console.log("handle disconnect game gateway");
+    
     await this.checkForfeit(client);
     await this.playerService.deletePlayerBySocketId(client.id);
   }
@@ -166,7 +169,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {
     const tmp = await this.service.getGameById(data.game_id);
     if (!tmp) {
-      client.emit('gameNotFound');
+      client.emit('error', { error: 'Game was not found' });
       return;
     }
     if (tmp.first && tmp.second) {
@@ -178,7 +181,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('disconnectGame')
   async disconnectFromGame(@ConnectedSocket() client: Socket) {
-    await this.service.handleDisconnect(client.id);
+    //this.handleDisconnect(client);
+    //client.disconnect();
   }
 
   @Interval(3000)

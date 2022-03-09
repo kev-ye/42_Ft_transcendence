@@ -36,6 +36,7 @@ import { GameRoomComponent } from './game-room/game-room.component';
 import { MatchMakingComponent } from './match-making/match-making.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { GameRoomTestComponent } from './game-room-test/game-room-test.component';
+import { SocketIoModule } from 'ngx-socket-io';
 
 @NgModule({
   declarations: [
