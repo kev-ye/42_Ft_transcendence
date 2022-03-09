@@ -14,10 +14,10 @@ export class GameRoomComponent implements OnInit {
 	}
 
 	matchMaking(): any {
-		this.router.navigate(['match-making']).then();
+		this.router.navigate(['match-making'])
 	}
 
 	gameSpectator(): any {
-		this.router.navigate(['game']).then();
+		this.router.navigate(['spec_room'])
 	}
 }

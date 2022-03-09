@@ -253,6 +253,22 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     await this.playerService.updatePlayer({ id: tmp.id }, { status: 0 });
   }
 
+  @SubscribeMessage('spectate')
+  async spectateGame(@ConnectedSocket() client: Socket, @MessageBody() data: any) {
+    if (!data.game_id)
+    {
+      client.emit('error', {error: 'Could not find game to spectate'});
+      return;
+    }
+    const game = await this.service.getGameById(data.game_id);
+    if (!game)
+    {
+      client.emit('error', {error: 'Could not find game to spectate'});
+      return;
+    }
+    client.join(data.game_id);
+  }
+
   newRound(stats: any) {
     stats.pos.x = 0;
     stats.pos.y = 0;

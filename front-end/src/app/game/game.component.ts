@@ -18,6 +18,7 @@ export class GameComponent implements OnInit, OnDestroy {
 	private user: any;
 	private subscription: Subscription = new Subscription();
 	private gameStarted: boolean = false;
+	private leftPage: boolean = false;
 	gameColor = 'rgb(20, 20, 20)';
 	movablesColor = 'rgb(255, 255, 255)'
 
@@ -83,8 +84,6 @@ export class GameComponent implements OnInit, OnDestroy {
 	}
 
 	initSocket() {
-		this.socket.onAny(data => {
-		})		
 
 		this.route.queryParams.subscribe((data: any) => {			
 			if (data.id)
@@ -94,7 +93,7 @@ export class GameComponent implements OnInit, OnDestroy {
 			}
 			else if (data.spec)
 			{
-
+				this.socket.emit('spectate', {game_id: data.spec});
 			}
 			else
 			{
@@ -120,6 +119,7 @@ export class GameComponent implements OnInit, OnDestroy {
 		this.socket.on('error', (data: any) => {			
 			if (!data.error)
 				return;
+			this.leftPage = true;
 			this.showError(data.error);
 		});
 
@@ -167,8 +167,9 @@ export class GameComponent implements OnInit, OnDestroy {
 		});
 
 		setTimeout(() => {
-			if (this.socket.disconnected)
+			if (this.socket.disconnected && !this.leftPage)
 			{
+				this.leftPage = true;
 				this.showError('Could not connect to game server');
 			}
 		}, 3000);

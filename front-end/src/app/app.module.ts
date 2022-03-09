@@ -38,6 +38,7 @@ import { NotFoundComponent } from './not-found/not-found.component';
 import { GameRoomTestComponent } from './game-room-test/game-room-test.component';
 import { SocketIoModule } from 'ngx-socket-io';
 import { DialogError } from './game/dialogs/error.component';
+import { SpectateRoom } from './spectate-room/spectate-room.component';
 
 @NgModule({
   declarations: [
@@ -64,6 +65,7 @@ import { DialogError } from './game/dialogs/error.component';
     MatchMakingComponent,
     NotFoundComponent,
     GameRoomTestComponent,
+    SpectateRoom
   ],
   imports: [
     BrowserModule,
