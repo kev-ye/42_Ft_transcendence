@@ -10,6 +10,11 @@ export class GameController {
     constructor(private service: GameService,
         @Inject('USER_SERVICE') private userService: UserService) {}
         
+        @Get()
+        async getGames() {
+            return await this.service.getAllGames();
+        }
+
         @Post('custom')
         @UseGuards(UserGuard)
         async createCustomGame(@Req() req: any, @Res() res: Response, @MessageBody() data: {limit_game?: number}) {

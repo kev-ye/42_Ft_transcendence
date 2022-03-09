@@ -6,7 +6,7 @@
 	<mat-form-field appearance="fill" class="form-wrapper">
 		<mat-hint>Choose points to score</mat-hint>
 		<mat-label>Points</mat-label>
-		<select matNativeControl (change)="selectChangeHandler($event)">
+		<select matNativeControl #select (change)="selectChangeHandler($event)">
 			<option value="3">3</option>
 			<option value="5">5</option>
 			<option value="10" selected>10</option>
@@ -16,6 +16,17 @@
 	</mat-form-field>
 
 	<br>
-	<button mat-raised-button color="primary" (click)="matchMaking()">Start</button>
+	<button mat-raised-button color="primary" (click)="matchMaking(select.value)">Start</button>
 
+</div>
+
+<div>
+	<label> Matchmaking </label>
+	<button (click)="startMatchmaking()"> Search </button>
+</div>
+
+<div>
+	<label> Game ID </label>
+	<input type="text" #gameID>
+	<button (click)="joinGame(gameID.value)"> Join Game </button>
 </div>

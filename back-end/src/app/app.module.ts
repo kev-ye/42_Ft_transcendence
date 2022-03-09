@@ -29,7 +29,7 @@ import { ScheduleModule } from '@nestjs/schedule';
       url: process.env.DATABASE_URL,
       autoLoadEntities: true,
       synchronize: true,
-      dropSchema: true, // don't use in production
+      dropSchema: false, // don't use in production
       // entities: ['./dist/**/*.entity.js'],
     }),
     UserModule,

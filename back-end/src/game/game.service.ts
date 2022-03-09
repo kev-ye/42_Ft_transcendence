@@ -21,30 +21,17 @@ export class GameService implements OnModuleInit {
     private playerService: PlayersService) {}
 
     onModuleInit() {
-        this.repo.clear();
+        this.repo.delete({game_state: 0});
+        this.repo.delete({game_state: 1});
+
+    }
+
+    async getAllGames() {
+        return await this.repo.find();
     }
 
     @WebSocketServer()
     server: Server;
-
-    games: Map<string, any> = new Map<string, any>();
-
-    async setPlayerState(socketID: string, value: number) {
-        const tmp = await this.repo.findOne({where: [{first: socketID}, {second: socketID}]});
-        if (!tmp)
-            return null;
-        if (tmp.first == socketID)
-        {
-            await this.repo.update({id: tmp.id}, {second_state: value}); //set ready
-            this.games.set(tmp.id, {...this.games.get(tmp.id), first_state: value});
-        }
-        else
-        {
-            await this.repo.update({id: tmp.id}, {second_state: value});
-            this.games.set(tmp.id, {...this.games.get(tmp.id), second_state: value});
-        }
-        return tmp;
-    }
 
     async startGame(gameID: string) {
         await this.repo.update({id: gameID}, {game_state: 1});
@@ -70,7 +57,6 @@ export class GameService implements OnModuleInit {
 
     async createGame(): Promise<GameEntity> {
         const tmp = this.repo.create();
-        this.games.set(tmp.id, tmp);
         return await this.repo.save(tmp);
     }
 
@@ -94,22 +80,20 @@ export class GameService implements OnModuleInit {
             if (!tmp.first)
             {
                 tmp.first = socketID;
-                this.games.set(tmp.id, {...this.games.get(tmp.id), first: socketID});
             }
             else if (!tmp.second)
             {
                 
                 tmp.second = socketID;
-                this.games.set(tmp.id, {...this.games.get(tmp.id), second: socketID});
                 //this.startGame(tmp.id);
             }
             else
-                return false;
+                return null;
             await this.playerService.updatePlayer({socket_id: socketID}, {game_id: gameID});
             await this.repo.update({id: tmp.id}, tmp);
-            return true;
+            return tmp;
         }
-        return false;
+        return null;
     }
 
     async handleDisconnect(socketID: string) {
@@ -119,11 +103,16 @@ export class GameService implements OnModuleInit {
 
     }
 
-    async stopGame(gameID: string) {
+    async stopGame(gameID: string, data: any) { //save game data
         const tmp = await this.repo.findOne({id: gameID});
         if (tmp) {
-            await this.repo.update(tmp.id, {...this.games.get(tmp.id), status: 2});
-            this.games.delete(tmp.id);
+            await this.repo.update(tmp.id, {
+                first: data.first_socket,
+                second: data.second_socket,
+                first_score: data.score.first,
+                second_score: data.score.second,
+                game_state: 2
+            });
             const players = await this.playerService.getPlayersInGame(tmp.id);
             players.forEach(val => {
                 this.playerService.updatePlayer({id: val.id}, {status: 0, game_id: null});

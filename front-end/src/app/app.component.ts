@@ -83,8 +83,7 @@ export class AppComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	joinGame(event: any) {
-		this.router.navigate([], {queryParams: {id: "yo"}}).then();
-		console.log("navigating");
+	joinGame(id: string) {
+		this.router.navigate(['game'], {queryParams: {id: id}})
 	}
 }
