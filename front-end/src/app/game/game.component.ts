@@ -4,7 +4,9 @@ import { io, Socket } from 'socket.io-client';
 import { GlobalConsts } from '../common/global';
 import { UserApiService } from '../service/user_api/user-api.service';
 import { Subscription } from "rxjs";
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogError } from './dialogs/error.component';
 
 @Component({
 	selector: 'app-game',
@@ -62,30 +64,14 @@ export class GameComponent implements OnInit, OnDestroy {
 	}
 
 	constructor(private http: HttpClient, private userApi: UserApiService,
-		private route: ActivatedRoute) {
+		private route: ActivatedRoute, private dialog: MatDialog,
+		private router: Router) {
 		// this.start()
 	}
-	
-	
-	ngOnInit() : void {		
-		this.socket = io(`ws://localhost:3002/game`, {
-			path: '/game/socket.io',
-			withCredentials: true,
-			closeOnBeforeunload: true,
-			reconnection: false,
-			transports: ['websocket'],
-			autoConnect: true,
-		}).on('connect', () => {
-			console.log("connecteeed");
-			
-		});
 
+	initSocket() {
 		this.socket.onAny(data => {
-			console.log("received " + data);
-			
-		})
-		console.log("teest socket " + this.socket.disconnected);
-		
+		})		
 
 		this.route.queryParams.subscribe((data: any) => {			
 			if (data.id)
@@ -99,13 +85,42 @@ export class GameComponent implements OnInit, OnDestroy {
 			}
 			else
 			{
-				//error
+				const tmp = this.dialog.open(DialogError, {
+					data: {
+						error: "Waiting for game"
+					}
+				});
+				setTimeout(() => {
+					this.socket.emit('startMatchmaking');
+				}, 500);
+				
+				this.socket.on('joinedGame', (data) => {
+					if (data.game_id)
+					{
+						this.gameID = data.game_id;
+						tmp.close();
+					}
+					else
+					{
+						console.error("No gameID was sent to player");
+					}
+				})
 			}
 		})
 
 		this.socket.on('error', (data: any) => {
-			console.log("Error: " + data.error);
+			console.log("received error", data);
 			
+			if (!data.error)
+				return;
+			const tmp = this.dialog.open(DialogError, {
+				data: {
+					error: data.error
+				}
+			});
+			tmp.afterClosed().subscribe(() => {
+				this.router.navigate(['main']);
+			})
 		})
 
 		this.socket.on('user', () => {
@@ -134,19 +149,40 @@ export class GameComponent implements OnInit, OnDestroy {
 			},
 			error: (e) => console.error('Error: get user in main:', e),
 			complete: () => console.info('Complete: get user in main')
-		}))
+		}));
+	}
+	
+	
+	ngOnInit() : void {		
+		this.socket = io(`ws://localhost:3002/game`, {
+			path: '/game/socket.io',
+			withCredentials: true,
+			closeOnBeforeunload: true,
+			reconnection: false,
+			transports: ['websocket'],
+			autoConnect: true,
+			timeout: 3000
+		}).on('connect', () => {
+			this.initSocket();
+		});
+
+		setTimeout(() => {
+			if (this.socket.disconnected)
+			{
+				console.error("Connection on game gateway was not possible");
+				confirm('Could not connect to game server')
+			}
+		}, 3000);
+
+		
 	}
 	
 	ngOnDestroy(): void {
-		// this.socket.emit('disconnectGame')
 		this.socket.disconnect();
 	}
 
 	stopSocket() {
-		
-		this.socket.disconnect();
-		console.log("after disconnect ");
-		
+		this.socket.disconnect();		
 	}
 
 	resetBall() : void {
@@ -169,6 +205,8 @@ export class GameComponent implements OnInit, OnDestroy {
 	onKeyDown(e: any) {
 		let threshold: number = 0
 		e.preventDefault();
+		if (this.socket.disconnected)
+			return ;
 
 		if (e.code === "ArrowUp") {
 			threshold = -this.paddle.SPEED

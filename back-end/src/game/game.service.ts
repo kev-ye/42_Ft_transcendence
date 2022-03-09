@@ -88,12 +88,12 @@ export class GameService implements OnModuleInit {
                 //this.startGame(tmp.id);
             }
             else
-                return false;
+                return null;
             await this.playerService.updatePlayer({socket_id: socketID}, {game_id: gameID});
             await this.repo.update({id: tmp.id}, tmp);
-            return true;
+            return tmp;
         }
-        return false;
+        return null;
     }
 
     async handleDisconnect(socketID: string) {

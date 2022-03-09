@@ -19,3 +19,14 @@
 	<button mat-raised-button color="primary" (click)="matchMaking(select.value)">Start</button>
 
 </div>
+
+<div>
+	<label> Matchmaking </label>
+	<button (click)="startMatchmaking()"> Search </button>
+</div>
+
+<div>
+	<label> Game ID </label>
+	<input type="text" #gameID>
+	<button (click)="joinGame(gameID.value)"> Join Game </button>
+</div>

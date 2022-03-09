@@ -176,7 +176,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       client.emit('error', { error: 'Game is full' });
     }
 
-    this.service.joinGame(client.id, data.game_id);
+    const game = await this.service.joinGame(client.id, data.game_id);
+    if (game)
+      client.join(game.id);
+    if (game.first && game.second)
+      this.startGame(game.id);
   }
 
   @SubscribeMessage('disconnectGame')
@@ -218,8 +222,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('startMatchmaking')
   async joinMatchmaking(@ConnectedSocket() client: Socket) {
+    
     const error = false;
     const tmp = await this.playerService.getPlayerBySocketId(client.id);
+    
+    console.log("startMatchmaking received", tmp);
 
     if (!tmp || !tmp.user_id) return;
 
@@ -233,6 +240,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     });
     if (error) return;
 
+    console.log("updated matchmaking player");
+    
     await this.playerService.updatePlayer({ id: tmp.id }, { status: 1 });
   }
 

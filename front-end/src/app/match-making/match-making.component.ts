@@ -31,6 +31,16 @@ export class MatchMakingComponent implements OnInit {
 		
 	}
 
+	joinGame(id: string) {
+		this.router.navigate(['game'], {queryParams: {
+			id: id
+		}});
+	}
+
+	startMatchmaking() {
+		this.router.navigate(['game']);
+	}
+
 	selectChangeHandler(event: any) {
 		this.n = event.target.value;
 	}
