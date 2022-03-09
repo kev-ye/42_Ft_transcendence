@@ -37,36 +37,36 @@
 
 <!--modify by kaye-->
 <div class="background">
-    <div *ngIf="connected">
-        <div class="container">
-            <img [src]="user.avatar" alt="avatar" class="avatar" (click)="openImageDialog()">
-        </div>
+	<div *ngIf="connected">
+		<div class="container">
+			<img [src]="user.avatar" alt="avatar" class="avatar" (click)="openImageDialog()">
+		</div>
 
-				<div>
-        	<h1 class="username" (click)="openUsername()">{{ user.username }}</h1>
-				<div>
+		<div>
+			<h1 class="username" (click)="openUsername()">{{ user.username }}</h1>
+		</div>
+		<div>
+			<p class="category">42 Login: <span class="information">{{ user.login }}</span></p>
+		</div>
 
-        <div>
-					<p class="category">42 Login: <span class="information">{{ user.login }}</span></p>
-        </div>
+		<div>
+			<p class="category">Ladder points: <span class="information">{{ user.ladder }}</span></p>
+		</div>
+	</div>
 
-        <div>
-					<p class="category">Ladder points: <span class="information">{{ user.ladder }}</span></p>
-        </div>
-    </div>
-
-    <div *ngIf="!connected" class="loading">
-        <h1>loading ...</h1>
-    </div>
+	<div *ngIf="!connected" class="loading">
+		<h1>loading ...</h1>
+	</div>
 
 	<div class="qrcode">
-		<img [src]="qrCode" alt="QR-code" *ngIf="twoFaActive"/>
+		<img [src]="qrCode" alt="QR-code" *ngIf="twoFaActive" />
 	</div>
-	<div class="btnOn" *ngIf="!twoFaActive">
+
+	<div *ngIf="!twoFaActive" class="btnOn">
 		<button mat-raised-button color="basic" (click)="turnOnTwoFa()">Turn on 2Fa</button>
 	</div>
 
-	<div class="btn" *ngIf="twoFaActive">
+	<div *ngIf="twoFaActive" class="btn">
 		<button mat-raised-button color="basic" (click)="turnOffTwoFa()">Turn off 2Fa</button>
 	</div>
 

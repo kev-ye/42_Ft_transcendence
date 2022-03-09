@@ -1,0 +1,32 @@
+.main {
+	margin-top: 128px;
+	font-family: 'Press Start 2P', serif;
+}
+
+.main h1 {
+	font-size: 25px;
+	margin-top: 208px;
+	text-align: center;
+}
+
+.hero {
+	position: absolute;
+	padding: 50px 30px;
+	width: 80%;
+	aspect-ratio: 3/2;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	-ms-transform: translate(-50%, -50%);
+	background-image: url('./assets/cats.gif');
+	background-position: center;
+	background-size: 60%;
+	background-repeat: no-repeat;
+	z-index: -1;
+}
+
+@media screen and (max-width: 768px) {
+	.main h1 {
+		font-size: 17px;
+	}
+}
