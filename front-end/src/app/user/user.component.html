@@ -44,7 +44,7 @@
 
 				<div>
         	<h1 class="username" (click)="openUsername()">{{ user.username }}</h1>
-				<div>
+				</div>
 
         <div>
 					<p class="category">42 Login: <span class="information">{{ user.login }}</span></p>
@@ -62,6 +62,7 @@
 	<div class="qrcode">
 		<img [src]="qrCode" alt="QR-code" *ngIf="twoFaActive"/>
 	</div>
+
 	<div class="btnOn" *ngIf="!twoFaActive">
 		<button mat-raised-button color="basic" (click)="turnOnTwoFa()">Turn on 2Fa</button>
 	</div>
@@ -73,5 +74,4 @@
 	<div class="btn">
 		<button mat-raised-button class="item" (click)="logOut()">logout</button>
 	</div>
-
 </div>
