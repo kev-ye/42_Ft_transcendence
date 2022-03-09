@@ -54,14 +54,14 @@ export class AppComponent implements OnInit, OnDestroy {
 		this.subscription?.unsubscribe();
 	}
 
-	@HostListener('window:beforeunload')
-	beforeExitWindow(): boolean {
-		if (this.router.url !== '/user_login') {
-			navigator.sendBeacon(`${GlobalConsts.userApi}/user/auth/logout`);
-			this.router.navigate(['user_login']).then();
-		}
-		return true;
-	}
+	// @HostListener('window:beforeunload')
+	// beforeExitWindow(): boolean {
+	// 	if (this.router.url !== '/user_login') {
+	// 		navigator.sendBeacon(`${GlobalConsts.userApi}/user/auth/logout`);
+	// 		this.router.navigate(['user_login']).then();
+	// 	}
+	// 	return true;
+	// }
 
 	receiveClose($event: boolean, userSideNav: MatSidenav, chatSideNav: MatSidenav) {
 		if ($event) {
