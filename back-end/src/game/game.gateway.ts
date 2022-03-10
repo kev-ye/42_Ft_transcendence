@@ -358,6 +358,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
           const user_2 = await this.userService.getUserById(player_2.user_id);
           this.playerWins(user_2.id);
           this.playerLoses(user_1.id);
+          this.server.to(game.id).emit('win', {username: user_2.name});
           this.stopGame(game.id, data);
           clearInterval(interval);
           return;
@@ -374,6 +375,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
           const user_2 = await this.userService.getUserById(player_2.user_id);
           this.playerWins(user_1.id);
           this.playerLoses(user_2.id);
+          this.server.to(game.id).emit('win', {username: user_1.name});
           this.stopGame(game.id, data);
           clearInterval(interval);
           return;

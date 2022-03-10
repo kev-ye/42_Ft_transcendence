@@ -80,7 +80,7 @@ export class GameComponent implements OnInit, OnDestroy {
 		});
 		if (redirect)
 			tmp.afterClosed().subscribe(() => {
-				this.router.navigate(['main']);
+				this.router.navigate(['game_room']);
 			})
 		return tmp;
 	}
@@ -141,6 +141,10 @@ export class GameComponent implements OnInit, OnDestroy {
 			
 			
 		});
+
+		this.socket.on('win', (data: any) => {
+			this.showError(data.username + ' wins the game !');
+		})
 
 		this.socket.on('joinedGame', (data: any) => {
 			this.gameID = data.game_id;
