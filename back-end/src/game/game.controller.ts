@@ -19,7 +19,7 @@ export class GameController {
 
         @Post('custom')
         @UseGuards(UserGuard)
-        async createCustomGame(@Req() req: any, @Res() res: Response, @MessageBody() data: {limit_game?: number}) {
+        async createCustomGame(@Req() req: any, @Res() res: Response, @MessageBody() data: {limit_game?: number, power?: number}) {
             const userID = req.session.userId;
             
             if (!(await this.userService.getUserById(userID)))
@@ -52,12 +52,19 @@ export class GameController {
                     return ;
                 }
             }
+            let obj: any = {};
+            
             if (data.limit_game)
-            {
-                res.send({id: (await this.service.createGameWithCreator(userID, {limit_game: data.limit_game})).id})
-                return;
-            }
-            res.send({id: (await this.service.createGameWithCreator(userID)).id});
+                obj.limit_game = +data.limit_game;
+            if (data.power != undefined)
+                obj.power = +data.power;
+            const newGame = (await this.service.createGameWithCreator(userID, obj));
+            res.send({id: newGame.id});
+            setTimeout(async () => {
+                const tmp = await this.service.getGameById(newGame.id);
+                if (tmp.first == null)
+                    this.service.deleteGameById(newGame.id);
+            }, 5000);
             return ;
         }
 

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from "@angular/router";
-import { MatFormFieldModule } from '@angular/material/form-field'
 import { HttpClient } from '@angular/common/http';
 
 @Component({
@@ -10,38 +9,38 @@ import { HttpClient } from '@angular/common/http';
 })
 export class MatchMakingComponent implements OnInit {
 
-	private n: number = 10;
-
 	constructor(private router: Router, private http: HttpClient) { }
 
 	ngOnInit(): void {
 	}
 
 	getToGameRoom(): any {
-		this.router.navigate(['room']).then();
+		this.router.navigate(['game_room']).then();
 	}
 
-	matchMaking(value: any): any {
-		this.http.post(`/api/game/custom`, {limit_game: value}).subscribe((res: any) => {
-			if (res && res.id)
-				this.router.navigate(['play'], {queryParams: {
-					id: res.id
-				}})
-		});
+	matchMaking(value: any, power_ups: any): any {
+		console.log("matchmakiiiing", power_ups);
 		
+		this.http.post(`/api/game/custom`, { limit_game: value, power: power_ups === true ? 6 : 0 }).subscribe((res: any) => {
+			if (res && res.id) {
+				this.router.navigate(['play'], {
+					queryParams: {
+						id: res.id
+					}
+				})
+			}
+		});
 	}
 
 	joinGame(id: string) {
-		this.router.navigate(['play'], {queryParams: {
-			id: id
-		}});
+		this.router.navigate(['play'], {
+			queryParams: {
+				id: id
+			}
+		});
 	}
 
 	startMatchmaking() {
 		this.router.navigate(['play']);
-	}
-
-	selectChangeHandler(event: any) {
-		this.n = event.target.value;
 	}
 }

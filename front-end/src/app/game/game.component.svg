@@ -64,10 +64,6 @@
 		<div class="preferences">
 			<button class="btn" (click)="changeColor()">Change Background Color</button>
 		</div>
-		<div>
-			<button (click)="startMatchmaking()"> matchmaking </button>
-		</div>
-		<button (click)="stopSocket()"> socket </button>
 	</div>
 
 </div>

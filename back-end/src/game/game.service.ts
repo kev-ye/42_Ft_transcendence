@@ -66,6 +66,8 @@ export class GameService implements OnModuleInit {
 
     async createGameWithCreator(userID: string, data?: any) {
         let tmp;
+        console.log("creating game", data);
+        
         if (data)
             tmp = this.repo.create({creator_id: userID, ...data});
         else

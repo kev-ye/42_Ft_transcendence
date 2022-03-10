@@ -32,7 +32,7 @@ export class GameEntity {
     @Column({default: 0})
     game_state: number;
 
-    @Column({default: 8})
+    @Column({default: 0})
     power: number;
     //0 - none
     //2 - speed x2
