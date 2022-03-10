@@ -156,7 +156,10 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
 			this.messages.forEach(msg => {
 				if (this.blocked.find(val => val == msg.user_id))
+				{
 					msg.message = '<message blocked>'
+					msg.type = 1;
+				}
 			})
 			this.generateRandomColors();
 		});
@@ -525,9 +528,9 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 					this.socket.emit('message', this.myGame);
 					this.joinGame(this.myGame.id);
 				},
-				error: () => {
-					console.log("erroooor");
-
+				error: (err: any) => {
+					if (err.id)
+						this.myGame = {id: err.id};
 				},
 				complete: () => {
 					console.log("compleete");

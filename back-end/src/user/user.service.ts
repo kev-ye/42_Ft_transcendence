@@ -15,7 +15,9 @@ export class UserService {
     return await this._getCompleteUsers();
   }
 
-  async getUserById(id: string): Promise<UserDto> {
+  async getUserById(id: string | undefined): Promise<UserDto> {
+    if (id == undefined)
+      return null;
     return (await this._getCompleteUsers()).find((user) => user.id === id);
   }
 

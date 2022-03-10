@@ -50,7 +50,9 @@
                                 'mine': msg.user_id == user.id}">
                                     {{ msg.message }}
                                 </div>
-                                <div class="inviteGame" *ngIf="msg.type != 1" (click)="joinGame(msg.message, msg.user_id)"> {{ msg.username + ' has invited you to play' }} </div>
+                                <div class="inviteGame" *ngIf="msg.type != 1" (click)="joinGame(msg.message, msg.user_id)">
+                                    {{ msg.user_id != user.id ? msg.username + ' has invited you to play' : 'You invited to play' }}
+                                </div>
                             </div>
                         </div>
                         <div style="font-size:75%; cursor: pointer; display: inline-block;" (click)="openUserDialog(msg)" *ngIf="(index == messages.length - 1 || msg.username != messages[index + 1].username) && msg.user_id != user.id && msg.type == 1">
@@ -113,7 +115,9 @@
                                 'mine': msg.user_id == user.id}">
                                     {{ msg.message }}
                                 </div>
-                                <div class="inviteGame" *ngIf="msg.type != 1" (click)="joinGame(msg.message, msg.user_id)"> {{ chat.name + ' has invited you to play' }} </div>
+                                <div class="inviteGame" *ngIf="msg.type != 1" (click)="joinGame(msg.message, msg.user_id)">
+                                    {{ msg.user_id != user.id ? chat.name + ' has invited you to play' : 'You invited to play'}}
+                                </div>
                             </div>
                         </div>
                         <div style="font-size:75%; cursor: pointer; display: inline-block;" (click)="openUserDialog(msg)"  *ngIf="(index == messages.length - 1 || msg.username != messages[index + 1].username) && msg.user_id != user.id">

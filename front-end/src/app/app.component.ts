@@ -1,4 +1,4 @@
-import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { GlobalConsts } from './common/global';
 import { Router } from "@angular/router";
 
@@ -9,6 +9,8 @@ import { MatSidenav } from "@angular/material/sidenav";
 import { UserApiService } from "./service/user_api/user-api.service";
 import { DataSharedService } from "./service/data/data-shared.service";
 import {PlatformLocation} from "@angular/common";
+import { UserComponent } from './user/user.component';
+import { ChatComponent } from './chat/chat.component';
 
 @Component({
   selector: 'app-root',
@@ -20,6 +22,9 @@ export class AppComponent implements OnInit, OnDestroy {
 	time: number = 60 * 60 * 1000;
 	isLogin: boolean = false;
 	inRoom: boolean = false;
+
+	@ViewChild('userTab') userTab: UserComponent;
+	@ViewChild('chatTab') chatTab: ChatComponent;
 
 	private subscription: Subscription = new Subscription();
 	intervalObs: Observable<number> = interval(this.time);
@@ -68,6 +73,25 @@ export class AppComponent implements OnInit, OnDestroy {
 			userSideNav.close().then();
 			chatSideNav.close().then();
 		}
+	}
+
+	openUser(e: any) {
+		console.log("test", e);
+		
+		// if (!this.userTab.nativeElement)
+		// 	return;
+		console.log("opening user");
+		this.userTab.refreshUserDetails();
+	}
+
+	openChat(e: any) {
+		console.log("test", e);
+		
+		// if (!this.chatTab.nativeElement)
+		// 	return;
+		console.log("opening chat");
+		this.chatTab.fetchChannels();
+		this.chatTab.fetchFriends();
 	}
 
 	roomActive() {

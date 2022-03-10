@@ -23,7 +23,9 @@ export class PlayersService implements OnModuleInit {
         return tmp;
     }
 
-    async getPlayerBySocketId(socketID: string) {
+    async getPlayerBySocketId(socketID: string | undefined) {
+        if (socketID == undefined)
+            return null;
         return await this.repo.findOne({socket_id: socketID});
     }
 
