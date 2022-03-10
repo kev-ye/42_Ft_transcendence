@@ -37,6 +37,10 @@ export class GameService implements OnModuleInit {
         await this.repo.update({id: gameID}, {game_state: 1});
     }
 
+    async updateGameById(id: string, data: any) {
+        return await this.repo.update({id: id}, data);
+    }
+
     async getGameById(id: string) {
         const tmp = await this.repo.find();
         for (let it of tmp)
@@ -73,23 +77,27 @@ export class GameService implements OnModuleInit {
         return await this.repo.delete({id: id});
     }
 
-    async joinGame(socketID: string, gameID: string) {
+    async joinGame(player: any, gameID: string) {
+        console.log("joining", player);
+        
+        if (player == undefined)
+            return null;
         const tmp = await this.repo.findOne({id: gameID});
         if (tmp)
         {
             if (!tmp.first)
             {
-                tmp.first = socketID;
+                tmp.first = player.socket_id;
+                tmp.first_user = player.user_id;
             }
-            else if (!tmp.second)
+            else if (!tmp.second && player.socket_id != tmp.first)
             {
-                
-                tmp.second = socketID;
-                //this.startGame(tmp.id);
+                tmp.second = player.socket_id;
+                tmp.second_user = player.user_id;
             }
             else
-                return null;
-            await this.playerService.updatePlayer({socket_id: socketID}, {game_id: gameID});
+                return null;            
+            await this.playerService.updatePlayer({socket_id: player.socket_id}, {game_id: gameID});
             await this.repo.update({id: tmp.id}, tmp);
             return tmp;
         }

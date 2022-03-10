@@ -32,6 +32,12 @@ export class GameEntity {
     @Column({default: 0})
     game_state: number;
 
+    @Column({default: 8})
+    power: number;
+    //0 - none
+    //2 - speed x2
+    //4 - teleportation
+
     //0: waiting
     //1: playing
     //2: finished

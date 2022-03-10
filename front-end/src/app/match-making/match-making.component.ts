@@ -24,7 +24,7 @@ export class MatchMakingComponent implements OnInit {
 	matchMaking(value: any): any {
 		this.http.post(`/api/game/custom`, {limit_game: value}).subscribe((res: any) => {
 			if (res && res.id)
-				this.router.navigate(['game'], {queryParams: {
+				this.router.navigate(['play'], {queryParams: {
 					id: res.id
 				}})
 		});
@@ -32,13 +32,13 @@ export class MatchMakingComponent implements OnInit {
 	}
 
 	joinGame(id: string) {
-		this.router.navigate(['game'], {queryParams: {
+		this.router.navigate(['play'], {queryParams: {
 			id: id
 		}});
 	}
 
 	startMatchmaking() {
-		this.router.navigate(['game']);
+		this.router.navigate(['play']);
 	}
 
 	selectChangeHandler(event: any) {

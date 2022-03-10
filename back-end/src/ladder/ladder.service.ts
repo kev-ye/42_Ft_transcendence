@@ -25,7 +25,7 @@ export class LadderService {
     async getLadder() {
         let users = await this.ladderRepo.find();
         users.forEach(async v => {
-            //todo: use userService to identify each IDs with the associated username
+            //use userService to identify each IDs with the associated username
         })
         return users;
     }

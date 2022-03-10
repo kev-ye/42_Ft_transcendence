@@ -29,7 +29,7 @@ const routes: Routes = [
 	{ path: 'main', component: MainComponent, canActivate: [CombinedGuard], data: {
 		guards: [IsLoginGuard, AuthGuard]
 	}},
-	{ path: 'game', component: GameComponent, canActivate: [IsLoginGuard] },  // need game guard
+	{ path: 'play', component: GameComponent, canActivate: [IsLoginGuard] },  // need game guard
 	{ path: 'game_room', component: GameRoomComponent, canActivate: [IsLoginGuard] }, // need room guard
 	{ path: 'match-making', component: MatchMakingComponent, canActivate: [IsLoginGuard] }, // need match-making guard
 	{ path: 'api', component: NotFoundComponent },

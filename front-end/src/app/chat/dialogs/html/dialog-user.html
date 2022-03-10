@@ -10,16 +10,19 @@
 </style>
 
 <div *ngIf="!error">
-	<p> {{ username }} </p>
+	<div style="text-align: center;"> {{ username }} </div>
 	<div *ngIf="true">
 		<div style="height: 150px; width: 150px;">
 			<img [src]="link" class="avatar">
 		</div>
 		<br>
-		<button *ngIf="!friend" (click)="addFriend()"> Add as friend </button>
-		<button *ngIf="friend" (click)="deleteFriend()"> Remove as friend</button>
-		<button *ngIf="!blocked" (click)="blockUser()"> Block user </button>
-		<button *ngIf="blocked" (click)="unblockUser()"> Unblock user </button>
+		<div *ngIf="my_id != user.id">
+
+			<button *ngIf="!friend" (click)="addFriend()"> Add as friend </button>
+			<button *ngIf="friend" (click)="deleteFriend()"> Remove as friend</button>
+			<button *ngIf="!blocked" (click)="blockUser()"> Block user </button>
+			<button *ngIf="blocked" (click)="unblockUser()"> Unblock user </button>
+		</div>
 		<!-- <button> Invite to play </button> -->
 	</div>
 </div>

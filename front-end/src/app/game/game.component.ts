@@ -64,6 +64,8 @@ export class GameComponent implements OnInit, OnDestroy {
 		y: (this.game.HEIGHT / 2) - (this.paddle.HEIGHT / 2)
 	}
 
+	power : any = null;
+
 	constructor(private http: HttpClient, private userApi: UserApiService,
 		private route: ActivatedRoute, private dialog: MatDialog,
 		private router: Router) {
@@ -123,12 +125,6 @@ export class GameComponent implements OnInit, OnDestroy {
 			this.showError(data.error);
 		});
 
-		this.socket.on('user', () => {
-			this.http.get(`${GlobalConsts.userApi}/user/id`).subscribe((data: any) => {
-				this.socket.emit('user', {id: data.id});
-			})
-		});
-
 		this.socket.on('refresh', (data: any) => {			
 			this.ball.x = data[0].pos.x + 50;
 			this.ball.y = data[0].pos.y + 50;
@@ -136,6 +132,14 @@ export class GameComponent implements OnInit, OnDestroy {
 			this.player2.score = data[0].score.second;
 			this.player1.y = data[0].first + 50 - this.paddle.HEIGHT / 2;
 			this.player2.y = data[0].second + 50 - this.paddle.HEIGHT / 2;
+			this.power = data[0].power;
+			if (this.power)
+			{
+				this.power.pos.x += 50;
+				this.power.pos.y += 50;
+			}
+			
+			
 		});
 
 		this.socket.on('joinedGame', (data: any) => {
@@ -163,7 +167,12 @@ export class GameComponent implements OnInit, OnDestroy {
 			autoConnect: true,
 			timeout: 3000
 		}).on('connect', () => {
-			this.initSocket();
+			this.socket.on('user', () => {
+				this.http.get(`${GlobalConsts.userApi}/user/id`).subscribe((data: any) => {
+					this.socket.emit('user', {id: data.id});
+					this.initSocket();
+				})
+			});
 		});
 
 		setTimeout(() => {

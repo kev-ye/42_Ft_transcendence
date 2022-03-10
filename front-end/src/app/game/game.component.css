@@ -10,7 +10,8 @@
 
 .game,
 .ball,
-.player {
+.player,
+.power {
 	transition: fill 0.3s ease;
 	-o-transition: fill 0.3s ease;
 	-moz-transition: fill 0.3s ease;

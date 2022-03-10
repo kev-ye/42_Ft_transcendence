@@ -14,6 +14,6 @@ import { Router } from "@angular/router";
     spectateGame(id: string) {
         if (id == "")
             return ;
-        this.router.navigate(['game'], {queryParams: {spec: id}});
+        this.router.navigate(['play'], {queryParams: {spec: id}});
     }
 }

@@ -29,6 +29,12 @@
 				[attr.cy]="ball.y + '%'"
 				[attr.r]="ball_t.RADIUS + '%'"/>
 
+			<circle *ngIf="power" class="power"
+				[attr.fill]="power.type == 2 ? 'red' : 'blue'"
+				[attr.cx]="power.pos.x + '%'"
+				[attr.cy]="power.pos.y + '%'"
+				[attr.r]="ball_t.RADIUS * 5 + '%'"/>
+
 			<rect class="player"
 				[attr.fill]="movablesColor"
 				[attr.width]="paddle.WIDTH + '%'"

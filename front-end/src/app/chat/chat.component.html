@@ -84,7 +84,7 @@
                     <div *ngIf="friend.status == 2" class="friend"  (mouseover)="focusFriend(friend.username)" (mouseleave)="unfocusFriend()" [style.--color]="getStatusColor(friend)">
                         {{ friend.username }}
                         <mat-icon *ngIf="focus == friend.username" style="position: absolute ;cursor: pointer; margin-right: 20px; transform: translate(0, -50%); top: 50%; left: 80%" (click)="openPrivate(friend)">mail_outline</mat-icon>
-                        <mat-icon *ngIf="focus == friend.username && friend.status" style="position: absolute ;cursor: pointer; margin-right: 10px; transform: translate(0, -50%); top: 50%; left: 70%">gamepad</mat-icon>
+                        <!-- <mat-icon *ngIf="focus == friend.username && friend.status" style="position: absolute ;cursor: pointer; margin-right: 10px; transform: translate(0, -50%); top: 50%; left: 70%">gamepad</mat-icon> -->
                     </div>
                 </div>
                 <div style="text-decoration: underline; text-align: center; font-weight: bold;"> Invites </div>

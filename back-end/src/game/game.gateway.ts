@@ -18,9 +18,10 @@ import { PlayersService } from 'src/players/players.service';
 import { UserService } from 'src/user/user.service';
 import { GameService } from './game.service';
 export const TIME_TO_REFRESH = 20; //milliseconds
-export const XSPEED_MIN = 1;
-export const YSPEED_MIN = 1;
-export const SPEED_COEF = 5;
+export const XSPEED_MIN = 0.5;
+export const YSPEED_MIN = 0.5;
+export const MAX_SPEED = 1;
+export const PERCENTAGE_POWER = 0.3;
 
 @WebSocketGateway(3002, {
   path: '/game/socket.io',
@@ -125,16 +126,17 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 
           this.playerLoses(player.id);
-          this.playerWins(user_2.id);
-          this.server.to(game.id).emit('win', {username: user_2.name})
+          if (user_2)
+            this.playerWins(user_2.id);
+          this.server.to(game.id).emit('win', {username: user_2 ? user_2.name : 'Anonymous'})
           this.stats.set(game.id, {...this.stats.get(game.id), score: {second: game.limit_game, first: 0}});
         }
         else { //first wins
           const tmp = await this.playerService.getPlayerBySocketId(game.first);
           const user_2 = await this.userService.getUserById(tmp.id);
-          
           this.playerWins(user.id);
-          this.playerLoses(user_2.id);
+          if (user_2)
+            this.playerLoses(user_2.id);
           this.server.to(game.id).emit('win', {username: user.name})
           this.stats.set(game.id, {...this.stats.get(game.id), score: {first: game.limit_game, second: 0}});
         }
@@ -165,36 +167,36 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     await this.playerService.setUserIdBySocketId(client.id, data.id);
   }
 
-  async joiningGame(client: Socket, gameID: string) {
-    const user = await this.playerService.getPlayerBySocketId(client.id);
-    if (!user || user.game_id) return false;
-    client.join(gameID);
-
-    await this.service.joinGame(user.socket_id, gameID);
-    await this.playerService.setGameID(user.socket_id, gameID);
-
-    this.startGame(gameID);
-  }
-
   @SubscribeMessage('connectGame')
   async connectToGame(
     @MessageBody() data: { game_id: string },
     @ConnectedSocket() client: Socket,
   ) {
     const tmp = await this.service.getGameById(data.game_id);
+    
     if (!tmp) {
       client.emit('error', { error: 'Game was not found' });
       return;
     }
     if (tmp.first && tmp.second) {
       client.emit('error', { error: 'Game is full' });
+      return ;
     }
-
-    const game = await this.service.joinGame(client.id, data.game_id);
+    const player = await this.playerService.getPlayerBySocketId(client.id);
+    if (!player || !player.user_id) {
+      client.emit('error', { error: 'Could not find user details' });
+      return ;
+    }
+    const game = await this.service.joinGame(player, data.game_id);
+    console.log("11testttt", await this.service.getGameById(data.game_id));
     if (game)
+    {
       client.join(game.id);
+    }
     if (game.first && game.second)
       this.startGame(game.id);
+    console.log("testttt", await this.service.getGameById(data.game_id));
+    
   }
 
   @SubscribeMessage('disconnectGame')
@@ -209,8 +211,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     // console.log('Matchmaking: ' + tmp.length);
     if (tmp.length < 2) return;
     const game = await this.service.createGame();
-    await this.service.joinGame(tmp[0].socket_id, game.id);
-    await this.service.joinGame(tmp[1].socket_id, game.id);
+    await this.service.joinGame(tmp[0], game.id);
+    await this.service.joinGame(tmp[1], game.id);
     await this.playerService.updatePlayer({ id: tmp[0].id }, { status: 2 });
     await this.playerService.updatePlayer({ id: tmp[1].id }, { status: 2 });
 
@@ -311,13 +313,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         x: 0,
         y: 0,
       },
-      power: {
-        type: 0,
-        pos: {
-          x: 0,
-          y: 0,
-        },
-      }, //todo: implement powerups
+      power: null, //{
+      //   type: 0, //1: speed x2 2: teleportation
+      //   pos: {
+      //     x: 0,
+      //     y: 0,
+      //   },
+      //}, todo: implement powerups
       score: { first: 0, second: 0 },
     });
 
@@ -327,10 +329,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         return;
       }
       const data = this.stats.get(game.id);
+
+
+      //moving ball
       data.pos.x += data.speed.x;
       data.pos.y += data.speed.y;
       if (data.pos.y <= -50) {
-        //todo: considerer ball radius
+        //considerer ball radius
         data.pos.y = -50;
         data.speed.y *= -1;
       }
@@ -340,6 +345,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         data.speed.y *= -1;
       }
 
+
+      //win check
       if (data.pos.x <= -50) {
         data.speed = this.generateRandomSpeed();
         data.score.second++;
@@ -347,8 +354,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
           this.emitRoom(gameID, 'refresh', data);
           const player_1 = await this.playerService.getPlayerBySocketId(game.first);
           const user_1 = await this.userService.getUserById(player_1.user_id);
-          const player_2 = await this.playerService.getPlayerBySocketId(game.first);
-          const user_2 = await this.userService.getUserById(player_1.user_id);
+          const player_2 = await this.playerService.getPlayerBySocketId(game.second);
+          const user_2 = await this.userService.getUserById(player_2.user_id);
           this.playerWins(user_2.id);
           this.playerLoses(user_1.id);
           this.stopGame(game.id, data);
@@ -361,8 +368,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         data.score.first++;
         if (data.score.first >= game.limit_game) {
           this.emitRoom(gameID, 'refresh', data);
-          this.playerWins(game.first);
-          this.playerLoses(game.second);
+          const player_1 = await this.playerService.getPlayerBySocketId(game.first);
+          const user_1 = await this.userService.getUserById(player_1.user_id);
+          const player_2 = await this.playerService.getPlayerBySocketId(game.second);
+          const user_2 = await this.userService.getUserById(player_2.user_id);
+          this.playerWins(user_1.id);
+          this.playerLoses(user_2.id);
           this.stopGame(game.id, data);
           clearInterval(interval);
           return;
@@ -370,6 +381,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         this.newRound(data);
       }
 
+      //paddle collision
       if (data.pos.x <= -45 && data.speed.x < 0) {
         if (Math.abs(data.pos.y - data.first) <= this.paddle.HEIGHT / 2) {
           data.speed.x *= -1;
@@ -379,6 +391,58 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
           data.speed.x *= -1;
         }
       }
+
+      if (game.power)
+      {
+        if (data.power == null)
+        {
+          //percentage chance on 100 a power spawns
+          const tmp = Math.random() * 100;        
+          if (tmp > PERCENTAGE_POWER)
+          {
+            this.emitRoom(gameID, 'refresh', data);
+            return ;
+          }
+          
+          data.power = {
+            type : 0,
+            pos : {
+              x: (Math.random() * 50 - 25),
+              y: (Math.random() * 50 - 25)
+            }
+          }
+          if (game.power == 2) //speed x2
+          data.power.type = 2;
+          else if (game.power == 4) //teleportation
+          data.power.type = 4;
+          else //both
+          {
+            const yo = Math.random();
+            data.power.type = yo < 0.5 ? 2 : 4;
+            console.log("tessst", yo);
+            
+          }
+        }
+        else
+        {
+          if (Math.sqrt(Math.pow((data.power.pos.x - data.pos.x), 2) + Math.pow((data.power.pos.y - data.pos.y), 2)) <= this.ball_t.RADIUS * 5)
+          {
+            
+            if (data.power.type == 2) //speed * 2
+            {
+              data.speed.x *= 2;
+              data.speed.y *= 2;
+            } else if (data.power.type == 4) //teleportation
+            {
+              data.pos.x = Math.random() * 30 - 15;
+              data.pos.y = Math.random() * 30 - 15;
+              data.speed = this.generateRandomSpeed();
+            }
+            data.power = null;
+          }
+
+        }
+      }        
       this.emitRoom(gameID, 'refresh', data);
     }, TIME_TO_REFRESH);
   }
@@ -389,11 +453,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   generateRandomSpeed(): { x: number; y: number } {
-    let x = (Math.random() - 0.5) * SPEED_COEF;
-    const y = (Math.random() - 0.5) * SPEED_COEF;
+    let x = ((Math.random()) * MAX_SPEED * 2) - MAX_SPEED;
+    let y = ((Math.random()) * MAX_SPEED * 2) - MAX_SPEED;
 
     if (Math.abs(x) < XSPEED_MIN) x = x < 0 ? -XSPEED_MIN : XSPEED_MIN;
-    if (Math.abs(y) < YSPEED_MIN) x = x < 0 ? -YSPEED_MIN : YSPEED_MIN;
+    if (Math.abs(y) < YSPEED_MIN) y = y < 0 ? -YSPEED_MIN : YSPEED_MIN;
     return { x: x, y: y };
   }
 
