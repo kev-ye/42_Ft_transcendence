@@ -24,8 +24,8 @@ export const MAX_SPEED = 1;
 export const PERCENTAGE_POWER = 0.3;
 
 @WebSocketGateway(3002, {
-  path: '/game/socket.io',
-  namespace: 'game',
+  path: '/gameSockIo/socket.io',
+  namespace: 'gameSockIo',
   cors: {
     origin: [
       'http://localhost',
@@ -35,7 +35,7 @@ export const PERCENTAGE_POWER = 0.3;
     methods: ['GET', 'POST'],
     credentials: true,
   },
-  transports: ['websocket']
+  transports: ['websocket'],
 })
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(

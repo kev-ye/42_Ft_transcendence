@@ -10,8 +10,6 @@ import { UserLoginComponent } from './user-login/user-login.component';
 import { UserSubscriptionComponent } from './user-subscription/user-subscription.component';
 import { UserComponent } from './user/user.component';
 import { ChatComponent } from './chat/chat.component';
-import { LadderComponent } from './ladder/ladder.component';
-import { CookieModule } from 'ngx-cookie'
 import { DialogChannelSettings } from './chat/dialogs/dialog-channel-settings.component';
 import { DialogCreateChat } from './chat/dialogs/dialog-create-chat.component';
 import { DialogInvite } from './chat/dialogs/dialog-invite-channel.component';
@@ -75,7 +73,7 @@ import { SpectateRoom } from './spectate-room/spectate-room.component';
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    
+
   ],
   bootstrap: [AppComponent]
 })
