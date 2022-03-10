@@ -1,4 +1,4 @@
-import { OnModuleInit } from '@nestjs/common';
+import { Inject, OnModuleInit } from '@nestjs/common';
 import { Interval } from '@nestjs/schedule';
 import {
   ConnectedSocket,
@@ -13,7 +13,9 @@ import { stat } from 'fs';
 import { first } from 'rxjs';
 import { RemoteSocket, Server, Socket } from 'socket.io';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
+import { LadderService } from 'src/ladder/ladder.service';
 import { PlayersService } from 'src/players/players.service';
+import { UserService } from 'src/user/user.service';
 import { GameService } from './game.service';
 export const TIME_TO_REFRESH = 20; //milliseconds
 export const XSPEED_MIN = 1;
@@ -38,6 +40,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     private playerService: PlayersService,
     private service: GameService,
+    @Inject('USER_SERVICE') private userService: UserService,
+    @Inject('LADDER_SERVICE') private ladder: LadderService
   ) {}
 
   game = {
@@ -106,22 +110,34 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   async checkForfeit(client: Socket) {
     const player = await this.playerService.getPlayerBySocketId(client.id);
+    
+    if (!player || !player.game_id || !player.user_id) return;
+    const user = await this.userService.getUserById(player.user_id);
 
-    if (!player || !player.game_id) return;
+    if (!user) return;
     const game = await this.service.getGameById(player.game_id);
 
     if (game) {
       if (game.game_state == 1 && (game.first == client.id || game.second == client.id)) {
-        if (game.first == client.id) {
-          this.playerLoses(game.first);
-          this.playerWins(game.second);
+        if (game.first == client.id) { //second wins
+          const tmp = await this.playerService.getPlayerBySocketId(game.second);
+          const user_2 = await this.userService.getUserById(tmp.id);
+
+
+          this.playerLoses(player.id);
+          this.playerWins(user_2.id);
+          this.server.to(game.id).emit('win', {username: user_2.name})
+          this.stats.set(game.id, {...this.stats.get(game.id), score: {second: game.limit_game, first: 0}});
         }
-        else {
-          this.playerWins(game.first);
-          this.playerLoses(game.second);
+        else { //first wins
+          const tmp = await this.playerService.getPlayerBySocketId(game.first);
+          const user_2 = await this.userService.getUserById(tmp.id);
+          
+          this.playerWins(user.id);
+          this.playerLoses(user_2.id);
+          this.server.to(game.id).emit('win', {username: user.name})
+          this.stats.set(game.id, {...this.stats.get(game.id), score: {first: game.limit_game, second: 0}});
         }
-        //todo: save game in history
-        console.log('Deleting game -- forfeit');
         
         if (this.stats.get(game.id))
           this.stopGame(game.id, this.stats.get(game.id));
@@ -146,8 +162,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() data: any,
     @ConnectedSocket() client: Socket,
   ) {
-    console.log('received user', data);
-
     await this.playerService.setUserIdBySocketId(client.id, data.id);
   }
 
@@ -307,7 +321,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       score: { first: 0, second: 0 },
     });
 
-    const interval = setInterval(() => {
+    const interval = setInterval(async () => {
       if (!this.stats.has(game.id)) {
         clearInterval(interval);
         return;
@@ -331,8 +345,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         data.score.second++;
         if (data.score.second >= game.limit_game) {
           this.emitRoom(gameID, 'refresh', data);
-          this.playerWins(game.second);
-          this.playerLoses(game.first);
+          const player_1 = await this.playerService.getPlayerBySocketId(game.first);
+          const user_1 = await this.userService.getUserById(player_1.user_id);
+          const player_2 = await this.playerService.getPlayerBySocketId(game.first);
+          const user_2 = await this.userService.getUserById(player_1.user_id);
+          this.playerWins(user_2.id);
+          this.playerLoses(user_1.id);
           this.stopGame(game.id, data);
           clearInterval(interval);
           return;
@@ -407,13 +425,17 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
   }
 
-  async playerLoses(socketID: string) {
-    const sock = await this.getSocket(socketID);
-    if (sock) sock.emit('lose');
+  async playerLoses(user_id: string | undefined) {
+    if (user_id == undefined)
+      return ;
+    await this.ladder.createLadderUser(user_id);
+    await this.ladder.UserLoses(user_id);
   }
 
-  async playerWins(socketID: string) {
-    const sock = await this.getSocket(socketID);
-    if (sock) sock.emit('win');
+  async playerWins(user_id: string | undefined) {
+    if (user_id == undefined)
+      return ;
+    await this.ladder.createLadderUser(user_id);
+    await this.ladder.UserWins(user_id);
   }
 }

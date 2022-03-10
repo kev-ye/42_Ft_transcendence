@@ -4,11 +4,13 @@ import { UserGuard } from '../auth/user.guard';
 import { UserService } from '../user/user.service'
 import e, { Response } from 'express';
 import { MessageBody } from '@nestjs/websockets';
+import { PlayersService } from 'src/players/players.service';
 
 @Controller('game')
 export class GameController {
     constructor(private service: GameService,
-        @Inject('USER_SERVICE') private userService: UserService) {}
+        @Inject('USER_SERVICE') private userService: UserService,
+        private playerService: PlayersService) {}
         
         @Get()
         async getGames() {
@@ -25,18 +27,28 @@ export class GameController {
                 res.status(403).send();
                 return ;
             }
+            const player = await this.playerService.getPlayerByUserId(userID);
+            if (!player || player.find(val => val.game_id))
+            {
+                res.status(403).send();
+                return ;
+            }
             const games = [...(await this.service.getGameByStatus(0)), ...(await this.service.getGameByStatus(1))];
             if (games.length >= 1)
             {
+                let id: string = '';
                 let error: boolean = false;
                 games.forEach(val => {
                     if (val.creator_id == userID)
-                        error = true;
+                        {
+                            error = true;
+                            id = val.id;
+                        }
                     return ;
                 });
                 if (error)
                 {
-                    res.status(403).send();
+                    res.status(403).send({id: id});
                     return ;
                 }
             }

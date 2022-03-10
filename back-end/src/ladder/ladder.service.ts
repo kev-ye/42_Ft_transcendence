@@ -35,9 +35,7 @@ export class LadderService {
         if (!tmp)
             return false; //Can't find user in ladder table
         tmp.gamesPlayed++;
-        tmp.points += POINTS_WINNING;
-        console.log(id + " wins : " + tmp.points + " points");
-        
+        tmp.points += POINTS_WINNING;        
         await this.ladderRepo.update({id: id}, {gamesPlayed: tmp.gamesPlayed, points: tmp.points});
     }
 
@@ -49,7 +47,6 @@ export class LadderService {
         tmp.points -= POINTS_LOSING;
         if (tmp.points < 0)
             tmp.points = 0;
-        console.log(id + " loses : " + tmp.points + " points");
         await this.ladderRepo.update({id: id}, {gamesPlayed: tmp.gamesPlayed, points: tmp.points});
     }
 }
