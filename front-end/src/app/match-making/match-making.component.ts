@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from "@angular/router";
-import { MatFormFieldModule } from '@angular/material/form-field'
 import { HttpClient } from '@angular/common/http';
 
 @Component({
@@ -18,7 +17,7 @@ export class MatchMakingComponent implements OnInit {
 	}
 
 	getToGameRoom(): any {
-		this.router.navigate(['room']).then();
+		this.router.navigate(['game_room']).then();
 	}
 
 	matchMaking(value: any): any {
@@ -26,19 +25,19 @@ export class MatchMakingComponent implements OnInit {
 			if (res && res.id)
 				this.router.navigate(['game'], {queryParams: {
 					id: res.id
-				}})
+				}}).then()
 		});
-		
+
 	}
 
 	joinGame(id: string) {
 		this.router.navigate(['game'], {queryParams: {
 			id: id
-		}});
+		}}).then();
 	}
 
 	startMatchmaking() {
-		this.router.navigate(['game']);
+		this.router.navigate(['game']).then();
 	}
 
 	selectChangeHandler(event: any) {

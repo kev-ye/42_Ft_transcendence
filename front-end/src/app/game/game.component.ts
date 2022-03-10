@@ -85,7 +85,7 @@ export class GameComponent implements OnInit, OnDestroy {
 
 	initSocket() {
 
-		this.route.queryParams.subscribe((data: any) => {			
+		this.route.queryParams.subscribe((data: any) => {
 			if (data.id)
 			{
 				console.log("Connecting to game " + data.id);
@@ -116,7 +116,7 @@ export class GameComponent implements OnInit, OnDestroy {
 			}
 		})
 
-		this.socket.on('error', (data: any) => {			
+		this.socket.on('error', (data: any) => {
 			if (!data.error)
 				return;
 			this.leftPage = true;
@@ -129,7 +129,7 @@ export class GameComponent implements OnInit, OnDestroy {
 			})
 		});
 
-		this.socket.on('refresh', (data: any) => {			
+		this.socket.on('refresh', (data: any) => {
 			this.ball.x = data[0].pos.x + 50;
 			this.ball.y = data[0].pos.y + 50;
 			this.player1.score = data[0].score.first;
@@ -151,11 +151,11 @@ export class GameComponent implements OnInit, OnDestroy {
 			complete: () => console.info('Complete: get user in main')
 		}));
 	}
-	
-	
-	ngOnInit() : void {		
-		this.socket = io(`ws://localhost:3002/game`, {
-			path: '/game/socket.io',
+
+
+	ngOnInit() : void {
+		this.socket = io(`ws://localhost:3002/${GlobalConsts.gameSockIo}`, {
+			path: `/${GlobalConsts.gameSockIo}/socket.io`,
 			withCredentials: true,
 			closeOnBeforeunload: true,
 			reconnection: false,
@@ -174,19 +174,19 @@ export class GameComponent implements OnInit, OnDestroy {
 			}
 		}, 3000);
 
-		
+
 	}
-	
+
 	ngOnDestroy(): void {
 		this.socket.disconnect();
 	}
 
 	stopSocket() {
-		this.socket.disconnect();		
+		this.socket.disconnect();
 	}
 
 	resetBall() : void {
-		
+
 	}
 
 	start(): void {
@@ -219,8 +219,8 @@ export class GameComponent implements OnInit, OnDestroy {
 		let val: number = threshold < 0 ? -1 : 1
 		this.socket.emit('input', {value: val, game_id: this.gameID});
 		console.log("emit input", {value: val, game_id: this.gameID});
-		
-		
+
+
 		// window.requestAnimationFrame(() => this.movePaddle(threshold));
 	}
 
@@ -238,7 +238,7 @@ export class GameComponent implements OnInit, OnDestroy {
 	}
 
 	moveBall() : void {
-		
+
 	}
 
 	changeColor(): void {

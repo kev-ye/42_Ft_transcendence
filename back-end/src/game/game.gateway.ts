@@ -21,8 +21,8 @@ export const YSPEED_MIN = 1;
 export const SPEED_COEF = 5;
 
 @WebSocketGateway(3002, {
-  path: '/game/socket.io',
-  namespace: 'game',
+  path: '/gameSockIo/socket.io',
+  namespace: 'gameSockIo',
   cors: {
     origin: [
       'http://localhost',
@@ -32,7 +32,7 @@ export const SPEED_COEF = 5;
     methods: ['GET', 'POST'],
     credentials: true,
   },
-  transports: ['websocket']
+  transports: ['websocket'],
 })
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(

@@ -19,6 +19,7 @@ import * as twoFa from 'node-2fa';
 import { UserDto, LimitedUserDto } from './dto/user.dto';
 import { UserService } from './user.service';
 import { UserGuard } from '../auth/user.guard';
+import { RefererGuard } from '../auth/referer.guard';
 
 @Controller('user')
 export class UserController {
@@ -27,6 +28,7 @@ export class UserController {
   ) {}
 
   @Get('/')
+  @UseGuards(RefererGuard)
   async getUsers(): Promise<UserDto[]> {
     return await this.userService.getUsers();
   }
@@ -112,16 +114,17 @@ export class UserController {
   async ftLogIn(): Promise<void> {}
 
   @Get('auth/42/callback')
-  @Redirect('http://localhost:4200/main') // modify to :80 when prod
   @UseGuards(AuthGuard('42'))
-  ftAuthCallback(@Req() req: any): void {
+  ftAuthCallback(@Req() req: any, @Res() res: any): void {
     const user: LimitedUserDto = req.user;
 
     // set session when user exist
     if (user) req.session.userId = user.id;
+    res.redirect(`${process.env.FRONT_URL}/main`);
   }
 
   @Get('isLogin')
+  @UseGuards(RefererGuard)
   async isLogin(@Req() req: any): Promise<boolean> {
     const id = req.session.userId;
     const user = await this.userService.getUserById(id);
