@@ -10,35 +10,37 @@ import { MatListModule } from '@angular/material/list'
 import { MatBadgeModule } from '@angular/material/badge'
 import { MatTabsModule } from '@angular/material/tabs'
 import { MatDialogModule } from '@angular/material/dialog'
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @NgModule({
-  imports: [
-    MatButtonModule,
-    MatIconModule,
-    MatSidenavModule,
-    MatToolbarModule,
-    MatStepperModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatBadgeModule,
-    MatTabsModule,
-    MatDialogModule,
-    MatInputModule
-  ], 
-  exports: [
-    MatButtonModule,
-    MatIconModule,
-    MatSidenavModule,
-    MatToolbarModule,
-    MatStepperModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatListModule,
-    MatBadgeModule,
-    MatTabsModule,
-    MatDialogModule,
-    MatInputModule
-    
-  ]
+	imports: [
+		MatButtonModule,
+		MatIconModule,
+		MatSidenavModule,
+		MatToolbarModule,
+		MatStepperModule,
+		MatFormFieldModule,
+		MatInputModule,
+		MatBadgeModule,
+		MatTabsModule,
+		MatDialogModule,
+		MatInputModule,
+		MatCheckboxModule
+	],
+	exports: [
+		MatButtonModule,
+		MatIconModule,
+		MatSidenavModule,
+		MatToolbarModule,
+		MatStepperModule,
+		MatFormFieldModule,
+		MatInputModule,
+		MatListModule,
+		MatBadgeModule,
+		MatTabsModule,
+		MatDialogModule,
+		MatInputModule,
+		MatCheckboxModule
+	]
 })
-export class SharedMaterialModule {}
+export class SharedMaterialModule { }

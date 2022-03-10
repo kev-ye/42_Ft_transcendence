@@ -1,32 +1,53 @@
 <button mat-stroked-button class="btn-back" (click)="getToGameRoom()">Game Room</button>
 <br>
 
-<div class="form">
+<div class="container">
 
-	<mat-form-field appearance="fill" class="form-wrapper">
-		<mat-hint>Choose points to score</mat-hint>
-		<mat-label>Points</mat-label>
-		<select matNativeControl #select (change)="selectChangeHandler($event)">
-			<option value="3">3</option>
-			<option value="5">5</option>
-			<option value="10" selected>10</option>
-			<option value="20">20</option>
-			<option value="50">50</option>
-		</select>
-	</mat-form-field>
+	<div class="game_option">
 
-	<br>
-	<button mat-raised-button color="primary" (click)="matchMaking(select.value)">Start</button>
+		<h2>Match Making</h2>
 
-</div>
+		<div>
+			<button mat-raised-button color="primary" (click)="startMatchmaking()">Find a game NOW !</button>
+		</div>
 
-<div>
-	<label> Matchmaking </label>
-	<button (click)="startMatchmaking()"> Search </button>
-</div>
+		<mat-divider class="divider"></mat-divider>
 
-<div>
-	<label> Game ID </label>
-	<input type="text" #gameID>
-	<button (click)="joinGame(gameID.value)"> Join Game </button>
+		<div>
+			<mat-form-field class="example-full-width" appearance="fill">
+				<mat-label>Game ID</mat-label>
+				<input matInput type="text" #gameID>
+			</mat-form-field>
+
+			<br>
+			<button mat-stroked-button (click)="joinGame(gameID.value)"> Join Game </button>
+		</div>
+	</div>
+
+	<div class="game_option">
+
+		<h2>Custom Game</h2>
+
+		<div class="form">
+			<mat-checkbox #checkbox>Power ups</mat-checkbox>
+
+			<br>
+
+			<mat-form-field appearance="fill" class="form-wrapper">
+				<mat-hint>Choose points to score</mat-hint>
+				<mat-label>Points</mat-label>
+				<select matNativeControl #select>
+					<option value="3">3</option>
+					<option value="5">5</option>
+					<option value="10" selected>10</option>
+					<option value="20">20</option>
+					<option value="50">50</option>
+				</select>
+			</mat-form-field>
+		</div>
+
+		<br>
+		<button mat-raised-button color="primary" (click)="matchMaking(select.value, checkbox.value)">Start</button>
+	</div>
+
 </div>

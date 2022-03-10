@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, HostListener, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
 import { GlobalConsts } from '../common/global';
 import { UserApiService } from '../service/user_api/user-api.service';
