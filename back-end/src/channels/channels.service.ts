@@ -178,8 +178,8 @@ export class ChannelsService {
     return await this.privateInvService.createInvite(data);
   }
 
-  async inviteToChannelByName(userID: string, userName: string, data: any) {
-    const user = await this.userService.getUserById(userID);
+  async inviteToChannelByName(userID: string, username: string, data: any) {
+    const user = await this.userService.getUserByName(username);
 
     if (!(await this.checkModerator(userID, data))) return 2;
     if (!user) return 1;

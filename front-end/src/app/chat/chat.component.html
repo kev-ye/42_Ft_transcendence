@@ -44,7 +44,7 @@
                 <div style="height: 72%; width: 350px; position: relative; background-color: rgb(201, 201, 201); overflow-x: hidden; overflow-y: scroll; -ms-overflow-style: none; scrollbar-width: none;" #framePublic>
                     <div *ngFor="let msg of messages; let index = index">
                         <div style="position: relative;">
-                            <div [ngClass]="{'colorLabel': msg.user_id != user.id}" [style.--color]="colorMap.get(msg.user_id)">
+                            <div [ngClass]="{'colorLabel': msg.user_id != user.id && msg.type == 1}" [style.--color]="colorMap.get(msg.user_id)">
                                 <div *ngIf="msg.type == 1" [ngClass]="{'messages': true, 
                                 'yours': msg.user_id != user.id,
                                 'mine': msg.user_id == user.id}">
@@ -109,7 +109,7 @@
                 <div style="height: 72%; width: 350px; position: relative; background-color: rgb(201, 201, 201); overflow-x: hidden; overflow-y: scroll; -ms-overflow-style: none; scrollbar-width: none;" #framePrivate>
                     <div *ngFor="let msg of messages; let index = index">
                         <div style="position: relative;">
-                            <div [ngClass]="{'colorLabel': msg.user_id != user.id}" [style.--color]="colorMap.get(msg.user_id)">
+                            <div [ngClass]="{'colorLabel': msg.user_id != user.id && msg.type == 1}" [style.--color]="colorMap.get(msg.user_id)">
                                 <div *ngIf="msg.type == 1" [ngClass]="{'messages': msg.type == 1, 
                                 'yours': msg.user_id != user.id,
                                 'mine': msg.user_id == user.id}">

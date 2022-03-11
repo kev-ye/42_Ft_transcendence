@@ -21,7 +21,7 @@ export class MatchMakingComponent implements OnInit {
 	matchMaking(value: any, power_ups: any): any {
 		console.log("matchmakiiiing", power_ups);
 		
-		this.http.post(`/api/game/custom`, { limit_game: value, power: power_ups === true ? 6 : 0 }).subscribe((res: any) => {
+		this.http.post(`/pongApi/game/custom`, { limit_game: value, power: power_ups === true ? 6 : 0 }).subscribe((res: any) => {
 			if (res && res.id) {
 				this.router.navigate(['play'], {
 					queryParams: {

@@ -88,7 +88,9 @@ export class ChannelsController {
   @Post('invite/name')
   async inviteToChannel(@MessageBody() data: any, @Req() req: any) {
     const userID = req.session.userId;
-    return await this.service.inviteToChannelByName(userID, data.name, data);
+    const res = await this.service.inviteToChannelByName(userID, data.name, data);
+    console.log("invite ", data)
+    return res;
   }
 
   @Post()

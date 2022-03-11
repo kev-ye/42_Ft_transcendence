@@ -523,19 +523,20 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 			this.http.post(`${GlobalConsts.userApi}/game/custom`, {}).subscribe({
 				next: (data: any) => {
 					console.log("invite game ID", this.user);
-					let obj = { id: data.id, type: 2, user_id: this.user.id, message: data.id, chat: this.chat };
-					this.myGame = obj;
-					this.socket.emit('message', this.myGame);
+					let obj = { type: 2, user_id: this.user.id, message: data.id, chat: this.chat };
+					this.myGame = {id: data.id};
+					this.socket.emit('message', obj);
 					this.joinGame(this.myGame.id);
 				},
 				error: (err: any) => {
 					if (err.id)
+					{
+						let obj = { type: 2, user_id: this.user.id, message: err.id, chat: this.chat };
 						this.myGame = {id: err.id};
+						this.socket.emit('message', obj);
+					}
+					
 				},
-				complete: () => {
-					console.log("compleete");
-
-				}
 			});
 		}
 		else {

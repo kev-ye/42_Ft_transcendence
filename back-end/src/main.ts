@@ -40,7 +40,7 @@ async function bootstrap() {
     req.session.touch();
     next();
   });
-  app.setGlobalPrefix('api');
+  app.setGlobalPrefix('pongApi');
   await app.listen(3000);
   console.log(`Application is running on: ${await app.getUrl()}`);
 }
