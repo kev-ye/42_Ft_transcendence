@@ -1,6 +1,7 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+
 import { GlobalConsts } from '../common/global';
-import {DataSharedService} from "../service/data/data-shared.service";
+import { DataSharedService } from "../service/data/data-shared.service";
 
 @Component({
   selector: 'app-main',
