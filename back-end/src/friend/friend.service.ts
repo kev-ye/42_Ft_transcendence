@@ -20,7 +20,8 @@ export class FriendService {
       ],
     });
     if (!tmp) {
-      //todo : check if user IDs are valid
+      if (!(await this.userService.getUserById(data.first)) && !(await this.userService.getUserById(data.second)))
+        return null;
       //const user = await this.userService.findUser({id: data.first});
 
       const relation = this.repo.create({
@@ -31,12 +32,11 @@ export class FriendService {
       return await this.repo.save(relation);
     }
     if (tmp.status != 1) {
-      console.error('Cannot accept not pending friend invitation');
-      return;
+      return null;
     }
     if (tmp.first == data.first) {
       //if emitter of the invite is trying to add again -> don't do anything
-      return ;
+      return null;
     }
     return await this.repo.update(
       { first: tmp.first, second: tmp.second },
@@ -82,11 +82,10 @@ export class FriendService {
       ],
     });
     if (!tmp) {
-      console.error('Cannot deny non-existent invitation');
-      return;
+      return null;
     }
 
-    //todo: send notification
-    return await this.repo.remove(tmp);
+    await this.repo.remove(tmp);
+    return 1;
   }
 }

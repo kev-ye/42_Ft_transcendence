@@ -6,16 +6,19 @@ import {
   Logger,
   Param,
   Post,
+  Req,
   Res,
   Response,
   StreamableFile,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as fs from 'fs';
 import { diskStorage } from 'multer';
 import { join } from 'path';
+import { UserGuard } from 'src/auth/user.guard';
 import { UserService } from 'src/user/user.service';
 
 @Controller('image')
@@ -23,6 +26,7 @@ export class ImageController {
   constructor(@Inject('USER_SERVICE') private userService: UserService) {}
 
   @Post('upload/:id')
+  @UseGuards(UserGuard)
   @UseInterceptors(
     FileInterceptor('image', {
       storage: diskStorage({
@@ -40,8 +44,11 @@ export class ImageController {
   async uploadFile(
     @UploadedFile() file: Express.Multer.File,
     @Param('id') id: string,
+    @Req() req: any
   ) {
     //check cookie if authenticated
+    if (req.session.userId != id)
+      return;
 
     const user = await this.userService.getUserById(id);
     try {
@@ -58,6 +65,7 @@ export class ImageController {
   }
 
   @Get()
+  @UseGuards(UserGuard)
   async getDefaultAvatar(@Res() res: any) {
     let file;
     try {
@@ -70,6 +78,7 @@ export class ImageController {
   }
 
   @Get('user/:id')
+  @UseGuards(UserGuard)
   async getImageFromUser(
     @Param('id') id: string,
     @Response({ passthrough: true }) res: any,
@@ -95,6 +104,7 @@ export class ImageController {
   }
 
   @Get(':id')
+  @UseGuards(UserGuard)
   async getImage(
     @Param('id') id: string,
     @Response({ passthrough: true }) res: any,
@@ -106,7 +116,6 @@ export class ImageController {
     try {
       file = fs.createReadStream(join('../uploads/', id));
     } catch {
-      Logger.error('Could not load picture');
       file = fs.createReadStream('./static/default_avatar.png');
     }
 
@@ -115,7 +124,10 @@ export class ImageController {
   }
 
   @Delete(':id')
-  async deleteImage(@Param('id') id: string) {
+  @UseGuards(UserGuard)
+  async deleteImage(@Param('id') id: string, @Req() req: any) {
+    if (req.session.userId != id)
+      return ;
     const user = await this.userService.getUserById(id);
 
     if (user && user.avatar && user.avatar.length > 0) {

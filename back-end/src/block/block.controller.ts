@@ -1,4 +1,4 @@
-import { Controller, Get, Inject, Param, Post, UseGuards } from '@nestjs/common';
+import { Controller, Get, Inject, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { ConnectedSocket, MessageBody } from '@nestjs/websockets';
 import { Socket } from 'dgram';
 import { UserGuard } from 'src/auth/user.guard';
@@ -10,22 +10,18 @@ export class BlockController {
 
     @Post('block')
     @UseGuards(UserGuard)
-    async blockUser(@MessageBody() data, @ConnectedSocket() client: Socket) {
-        if (!data.first || !data.second || data.first == data.second)
-        {
+    async blockUser(@MessageBody() data, @ConnectedSocket() client: Socket, @Req() req: any) {
+        if (!data.first || !data.second || data.first == data.second || req.session.userId != data.first)
             return ;
-        }
         this.service.blockUser(data);
         return ;
     }
 
     @Post('unblock')
     @UseGuards(UserGuard)
-    async unblockUser(@MessageBody() data, @ConnectedSocket() client: Socket) {
-        if (!data.first || !data.second)// || data.first == data.second)
-        {
+    async unblockUser(@MessageBody() data, @ConnectedSocket() client: Socket, @Req() req: any) {
+        if (!data.first || !data.second || data.first == data.second || req.session.userId != data.first)
             return ;
-        }
         this.service.unblockUser(data);
         return ;
     }

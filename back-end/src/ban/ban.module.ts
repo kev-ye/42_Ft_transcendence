@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BanService } from './ban.service';
 import { BanEntity } from './entity/ban.entity';
-import { BanController } from './ban.controller';
 
 @Module({
   imports: [TypeOrmModule.forFeature([BanEntity])],
@@ -18,6 +17,6 @@ import { BanController } from './ban.controller';
       useClass: BanService,
     },
   ],
-  controllers: [BanController],
+  controllers: [],
 })
 export class BanModule {}

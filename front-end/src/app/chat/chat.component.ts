@@ -494,36 +494,21 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 	}
 
 	inviteGame() {
-
-		if (!this.myGame) {
-
 			this.http.post(`${GlobalConsts.userApi}/game/custom`, {}).subscribe({
 				next: (data: any) => {
 					let obj = { type: 2, user_id: this.user.id, message: data.id, chat: this.chat };
 					this.myGame = {id: data.id};
 					this.socket.emit('message', obj);
-					this.joinGame(this.myGame.id);
+					if (data.join)
+						this.joinGame(this.myGame.id);
 				},
 				error: (err: any) => {
 					
-					if (err && err.error && err.error.id)
-					{
-						let obj = { type: 2, user_id: this.user.id, message: err.error.id, chat: this.chat };
-						this.myGame = {id: err.error.id};
-						this.socket.emit('message', obj);
-					}
-					
 				},
 			});
-		}
-		else {
-			this.socket.emit('message', this.myGame);
-			this.joinGame(this.myGame.id);
-		}
 	}
 
 	createChat() {
-		//todo implement creating chat
 		const tmp = this.dialog.open(DialogCreateChat, {
 			data: {
 				user_id: this.user.id

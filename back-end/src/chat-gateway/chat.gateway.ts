@@ -47,6 +47,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @Inject('ACTIVE_USERS_SERVICE') private activeService: ActiveUsersService,
   ) {}
 
+  async getSocket(id: string) {
+    const tmp = await this.server.fetchSockets();
+    return tmp.find(val => val.id == id);
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async handleConnection(client: any, ...args: any[]) {
     this.rooms.set(client.id, '');
@@ -104,17 +109,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     const tmp = await this.activeService.getUser(data.user_id);
 
-    if (tmp.length > 0) {
-      tmp.forEach((val) => {
-        if (this.server.sockets.sockets.has(val.id)) {
-
-          if (val.chat_id == data.chat_id) {
-            const sock = this.server.sockets.sockets.get(val.id);
-            sock.emit('ban');
-            this.switchChannel(sock);
-          }
-        }
-      });
+    for (let sock of tmp)
+    {
+      if (sock.chat_id == data.chat_id)
+      {
+        const sock_2 = await this.getSocket(sock.id);
+        sock_2.emit('ban');
+        this.switchChannel(sock);
+      }
     }
   }
 

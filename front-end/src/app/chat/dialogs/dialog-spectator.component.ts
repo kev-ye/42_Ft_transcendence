@@ -79,16 +79,6 @@ import { DialogUser } from "./dialog-user.component";
     banUser(usr: any) {
       
       const sock: Socket = this.data.socket;
-      /*
-      this.http.post(`${GlobalConsts.userApi}/channels/ban`,
-      {
-        user_id: usr.id, 
-        chat_id: this.data.chat.id 
-      }, {withCredentials: true})
-      .subscribe({next: () => {
-        this.fetchUsers();
-      }}) //todo
-      */
      sock.emit('ban', {
        user_id: usr.id,
        chat_id: this.data.chat.id

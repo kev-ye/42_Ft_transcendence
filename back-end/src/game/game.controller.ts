@@ -13,6 +13,7 @@ export class GameController {
         private playerService: PlayersService) {}
         
         @Get()
+        @UseGuards(UserGuard)
         async getGames() {
             return await this.service.getAllGames();
         }
@@ -29,14 +30,14 @@ export class GameController {
             }
             const player = await this.playerService.getPlayerByUserId(userID);
             let game;
-            if (!player)// || (game = player.find(val => val.game_id))
+            if (!player)
             {
                 res.status(403).send({error: 'Could not find user'});
                 return ;
             }
             if ((game = player.find(val => val.game_id)))
             {
-                res.status(403).send({id: game.game_id});
+                res.send({id: game.game_id, join: false});
                 return ;
             }
             let obj: any = {};
@@ -46,7 +47,7 @@ export class GameController {
             if (data.power != undefined)
                 obj.power = +data.power;
             const newGame = (await this.service.createGameWithCreator(userID, obj));
-            res.send({id: newGame.id});
+            res.send({id: newGame.id, join: true});
             setTimeout(async () => {
                 const tmp = await this.service.getGameById(newGame.id);
                 if (tmp.first == null)
@@ -56,6 +57,7 @@ export class GameController {
         }
 
         @Get('custom/:id')
+        @UseGuards(UserGuard)
         async getCustomGameById(@Param('id') id: string) {
             const tmp = await this.service.getGameById(id);
             if (tmp && tmp.creator_id)

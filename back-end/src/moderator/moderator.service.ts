@@ -9,7 +9,6 @@ export class ModeratorService {
     constructor(@InjectRepository(ModeratorEntity) private repo: Repository<ModeratorEntity>) {}
 
     async createModerator(userID: string, data: {user_id: string, chat_id: string}) {
-        //todo check if userID is creator of channel and if channel exists
         if (await this.repo.findOne({user_id: data.user_id, chat_id: data.chat_id}))
             return ;
         const tmp = this.repo.create(data);

@@ -28,6 +28,8 @@ import { MatchMakingComponent } from './match-making/match-making.component';
 import { GameRoomTestComponent } from './game-room-test/game-room-test.component';
 import { DialogError } from './game/dialogs/error.component';
 import { SpectateRoom } from './spectate-room/spectate-room.component';
+import { DialogChangeUsername } from './user/dialogs/dialog-change-username.component';
+import { DialogChangeImage } from './user/dialogs/dialog-change-image.component';
 
 @NgModule({
   declarations: [
@@ -50,6 +52,8 @@ import { SpectateRoom } from './spectate-room/spectate-room.component';
     DialogMuted,
     DialogMute,
     DialogError,
+    DialogChangeUsername,
+    DialogChangeImage,
     GameRoomComponent,
     MatchMakingComponent,
     GameRoomTestComponent,

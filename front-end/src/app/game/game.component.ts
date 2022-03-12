@@ -178,7 +178,7 @@ export class GameComponent implements OnInit, OnDestroy {
 		});
 
 		setTimeout(() => {
-			if (this.socket.disconnected)
+			if (this.socket.disconnected && !this.leftPage)
 			{
 				this.showError('Could not connect to game server');
 			}
@@ -189,6 +189,7 @@ export class GameComponent implements OnInit, OnDestroy {
 
 	ngOnDestroy(): void {
 		this.socket.disconnect();
+		this.leftPage = true;
 	}
 
 	stopSocket() {

@@ -20,6 +20,7 @@ import { UserDto, LimitedUserDto } from './dto/user.dto';
 import { UserService } from './user.service';
 import { UserGuard } from '../auth/user.guard';
 import { RefererGuard } from '../auth/referer.guard';
+import { Response } from 'express';
 
 @Controller('user')
 export class UserController {
@@ -103,7 +104,26 @@ export class UserController {
 
   @Put('update')
   @UseGuards(UserGuard)
-  updateUserById(@Body() user: UserDto): Promise<UserDto> {
+  async updateUserById(@Body() user: UserDto, @Res() res: Response): Promise<UserDto> {
+    if (user.name && user.name.length < 6)
+    {
+      res.status(403).send('Username is too short');
+      return ;
+    }
+    if (user.name)
+    {
+      const tmp = await this.userService.getUserByName(user.name);
+      if (tmp)
+      {
+        if (user.id != tmp.id)
+        {
+          res.status(403).send('Username is already being used\n');
+          return;
+        }
+      }
+
+    }
+    res.status(200).send();
     return this.userService.updateUser(user);
   }
 

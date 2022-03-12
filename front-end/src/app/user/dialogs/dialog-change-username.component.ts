@@ -19,12 +19,14 @@ import { GlobalConsts } from "src/app/common/global";
   
     @ViewChild('statusText') private statusText: ElementRef<HTMLDivElement>;
   
-    changeUsername(newUsername: string) {
+    changeUsername(event: any, newUsername: string) {
+      event.preventDefault();
       this.http.put(`${GlobalConsts.userApi}/user/update`, {id: this.userID, name: newUsername}, {withCredentials: true}).subscribe({
         next: data => {
           this.dialogRef.close(true);
         },
         error : data => {
+          alert(data.error);
         }
       })
     }

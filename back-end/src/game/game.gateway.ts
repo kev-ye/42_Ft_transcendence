@@ -169,7 +169,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {
     const tmp = await this.service.getGameById(data.game_id);
     
-    if (!tmp) {
+    if (!tmp || tmp.game_state == 2) {
       client.emit('error', { error: 'Game was not found' });
       return;
     }
@@ -181,6 +181,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (!player || !player.user_id) {
       client.emit('error', { error: 'Could not find user details' });
       return ;
+    }
+    if ((await this.playerService.getPlayerByUserId(player.user_id)).find(val => val.game_id))
+    {
+      client.emit('error', {error: 'You are already playing a game'})
     }
     const game = await this.service.joinGame(player, data.game_id);
     if (game)
@@ -231,21 +235,24 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('startMatchmaking')
   async joinMatchmaking(@ConnectedSocket() client: Socket) {
     
-    const error = false;
+    let error = false;
     const tmp = await this.playerService.getPlayerBySocketId(client.id);
     
 
     if (!tmp || !tmp.user_id) return;
 
-    //todo: check if same user is in matchmaking
     const players = await this.playerService.getLookingPlayers();
     players.forEach((val) => {
-      /*
+
         if (val.user_id == tmp.user_id)
           error = true;
-          */
+          
     });
-    if (error) return;
+    if (error)
+    {
+      client.emit('error', {error: 'User already in queue'});
+      return;
+    }
 
     
     await this.playerService.updatePlayer({ id: tmp.id }, { status: 1 });
@@ -309,7 +316,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       //     x: 0,
       //     y: 0,
       //   },
-      //}, todo: implement powerups
+      //},
       score: { first: 0, second: 0 },
     });
 
