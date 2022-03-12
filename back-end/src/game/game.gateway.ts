@@ -24,8 +24,8 @@ export const MAX_SPEED = 1;
 export const PERCENTAGE_POWER = 0.3;
 
 @WebSocketGateway(3002, {
-  path: '/game/socket.io',
-  namespace: 'game',
+  path: '/gameSockIo/socket.io',
+  namespace: 'gameSockIo',
   cors: {
     origin: [
       'http://localhost',
@@ -35,7 +35,7 @@ export const PERCENTAGE_POWER = 0.3;
     methods: ['GET', 'POST'],
     credentials: true,
   },
-  transports: ['websocket']
+  transports: ['websocket'],
 })
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
@@ -121,27 +121,24 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (game) {
       if (game.game_state == 1 && (game.first == client.id || game.second == client.id)) {
         if (game.first == client.id) { //second wins
-          const tmp = await this.playerService.getPlayerBySocketId(game.second);
-          const user_2 = await this.userService.getUserById(tmp.id);
+          const user_2 = await this.userService.getUserById(game.second_user);
 
 
-          this.playerLoses(player.id);
-          if (user_2)
-            this.playerWins(user_2.id);
+          this.playerLoses(game.first_user);
+          this.playerWins(game.second_user);
           this.server.to(game.id).emit('win', {username: user_2 ? user_2.name : 'Anonymous'})
           this.stats.set(game.id, {...this.stats.get(game.id), score: {second: game.limit_game, first: 0}});
         }
         else { //first wins
-          const tmp = await this.playerService.getPlayerBySocketId(game.first);
-          const user_2 = await this.userService.getUserById(tmp.id);
-          this.playerWins(user.id);
-          if (user_2)
-            this.playerLoses(user_2.id);
-          this.server.to(game.id).emit('win', {username: user.name})
+          const user_2 = await this.userService.getUserById(game.first_user);
+
+          this.playerWins(game.first_user);
+          this.playerLoses(game.second_user);
+          this.server.to(game.id).emit('win', {username: user_2 ? user_2.name : 'Anonymous'})
           this.stats.set(game.id, {...this.stats.get(game.id), score: {first: game.limit_game, second: 0}});
         }
         
-        if (this.stats.get(game.id))
+        if (this.stats.has(game.id))
           this.stopGame(game.id, this.stats.get(game.id));
         else
           this.stats.delete(game.id);
@@ -353,8 +350,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         if (data.score.second >= game.limit_game) {
           this.emitRoom(gameID, 'refresh', data);
           const player_1 = await this.playerService.getPlayerBySocketId(game.first);
-          const user_1 = await this.userService.getUserById(player_1.user_id);
           const player_2 = await this.playerService.getPlayerBySocketId(game.second);
+          if (!player_1 || !player_2)
+            return ;
+          const user_1 = await this.userService.getUserById(player_1.user_id);
           const user_2 = await this.userService.getUserById(player_2.user_id);
           this.playerWins(user_2.id);
           this.playerLoses(user_1.id);
@@ -370,8 +369,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         if (data.score.first >= game.limit_game) {
           this.emitRoom(gameID, 'refresh', data);
           const player_1 = await this.playerService.getPlayerBySocketId(game.first);
-          const user_1 = await this.userService.getUserById(player_1.user_id);
           const player_2 = await this.playerService.getPlayerBySocketId(game.second);
+          if (!player_1 || !player_2)
+            return ;
+          const user_1 = await this.userService.getUserById(player_1.user_id);
           const user_2 = await this.userService.getUserById(player_2.user_id);
           this.playerWins(user_1.id);
           this.playerLoses(user_2.id);

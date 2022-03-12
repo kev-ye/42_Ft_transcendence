@@ -57,6 +57,7 @@ constructor(public dialog: MatDialog,
         this.http.get(`${GlobalConsts.userApi}/ladder/` + this.user.id, {withCredentials: true}).subscribe({
           next: (data: any) => {
             this.user.ladder = data.points;
+			this.user.gamesPlayed = data.gamesPlayed;
           },
           error: data => {
             console.log("Could not fetch user ladder points");

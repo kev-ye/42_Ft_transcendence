@@ -32,15 +32,15 @@ export class GameEntity {
     @Column({default: 0})
     game_state: number;
 
+    //0: waiting
+    //1: playing
+    //2: finished
+
     @Column({default: 0})
     power: number;
     //0 - none
     //2 - speed x2
     //4 - teleportation
-
-    //0: waiting
-    //1: playing
-    //2: finished
 
     @Column({nullable: true})
     creator_id: string; //userID of game's creator

@@ -5,9 +5,8 @@ import { Router } from '@angular/router';
 import { UserApiService } from '../service/user_api/user-api.service';
 import { GlobalConsts } from '../common/global';
 import { Subscription } from "rxjs";
-import {DataService} from "angular-auth-oidc-client/lib/api/data.service";
-import {DataSharedService} from "../service/data/data-shared.service";
-import {UserAuthService} from "../service/user_auth/user-auth.service";
+import { DataSharedService } from "../service/data/data-shared.service";
+import { UserAuthService } from "../service/user_auth/user-auth.service";
 
 @Component({
   selector: 'app-user-subscription',

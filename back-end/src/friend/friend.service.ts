@@ -24,8 +24,6 @@ export class FriendService {
       //todo : check if user IDs are valid
       //const user = await this.userService.findUser({id: data.first});
 
-      //todo: send notification?
-
       const relation = this.repo.create({
         first: data.first,
         second: data.second,
@@ -39,7 +37,7 @@ export class FriendService {
     }
     if (tmp.first == data.first) {
       //if emitter of the invite is trying to add again -> don't do anything
-      //return ;
+      return ;
     }
     return await this.repo.update(
       { first: tmp.first, second: tmp.second },
@@ -56,8 +54,8 @@ export class FriendService {
     tmp.forEach((value) => {
       if (value.status) {
         if (value.first == id)
-          result.push({ friend: value.second, status: value.status });
-        else result.push({ friend: value.first, status: value.status });
+          result.push({ friend: value.second, status: value.status, emitter: value.first });
+        else result.push({ friend: value.first, status: value.status, emitter: value.first });
       }
     });
 
@@ -71,6 +69,7 @@ export class FriendService {
           id: friend.id,
           online: friend.online,
           avatar: friend.avatar,
+          emitter: userID.emitter
         });
     }
     return final;

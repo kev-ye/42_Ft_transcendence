@@ -1,5 +1,6 @@
-import { Controller, Get, Inject, Post } from '@nestjs/common';
+import { Controller, Get, Inject, Post, UseGuards } from '@nestjs/common';
 import { MessageBody } from '@nestjs/websockets';
+import { UserGuard } from 'src/auth/user.guard';
 import { ChatGateway } from 'src/chat-gateway/chat.gateway';
 import { BanService } from './ban.service';
 
@@ -8,6 +9,7 @@ export class BanController {
     constructor(@Inject('BAN_SERVICE') private service: BanService) {}//, @Inject('CHAT_GATEWAY') private gateway: ChatGateway) {}
 
     @Post('ban')
+    @UseGuards(UserGuard)
     async banUser(@MessageBody() data: any) {
         //check if user is moderator
         console.log("received for ban :", data);

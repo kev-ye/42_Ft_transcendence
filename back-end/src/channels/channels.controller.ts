@@ -8,10 +8,13 @@ import {
   Post,
   Put,
   Req,
-  Res
+  Res,
+  Headers,
+  UseGuards
 } from '@nestjs/common';
 import { MessageBody } from '@nestjs/websockets';
 import { Response } from 'express';
+import { UserGuard } from 'src/auth/user.guard';
 import { ChannelsService } from './channels.service';
 
 @Controller('channels')
@@ -20,6 +23,7 @@ export class ChannelsController {
   //@Inject('CHAT_HISTORY_SERVICE') private historyService: ChatHistoryService) {}
 
   @Get('access/:chatID')
+  @UseGuards(UserGuard)
   async checkAccess(
     @Req() req: any,
     @MessageBody() data: any,
@@ -31,7 +35,33 @@ export class ChannelsController {
     return await this.service.checkAccess(userID, chatID);
   }
 
+  @Get('history/:id')
+  @UseGuards(UserGuard)
+  async getHistory(@Param('id') id: string, @Headers() headers: any, @Res() res: Response) {
+    const tmp = await this.service.getChannelById(id);
+    if (!tmp)
+    {
+      res.status(404).send();
+      return;
+    }
+    if (tmp.access == 1)
+    {
+      if (headers['password'] == undefined)
+      {
+        res.status(404).send();
+        return ;
+      }
+      if (!this.service.checkPassword(headers['password'], tmp.id)) 
+      {
+        res.status(404).send();
+        return ;
+      }
+      
+    }
+  }
+
   @Get()
+  @UseGuards(UserGuard)
   async getChannels(@Req() req: any) {
     const userID = req.session.userId;
 
@@ -39,6 +69,7 @@ export class ChannelsController {
   }
 
   @Post('password/:chatID')
+  @UseGuards(UserGuard)
   async checkPassword(
     @Param('chatID') chatID: string,
     @MessageBody() data: any,
@@ -47,6 +78,7 @@ export class ChannelsController {
   }
 
   @Post('ban')
+  @UseGuards(UserGuard)
   async banUser(@Req() req: any, @MessageBody() data: any) {
     const userID = req.session.userId;
 
@@ -54,6 +86,7 @@ export class ChannelsController {
   }
 
   @Post('mute')
+  @UseGuards(UserGuard)
   async createMute(@MessageBody() data: any, @Req() req: any) {
     console.log('test', data);
 
@@ -72,6 +105,7 @@ export class ChannelsController {
   }
 
   @Post('moderator')
+  @UseGuards(UserGuard)
   async createModerator(@MessageBody() data: any, @Req() req: any) {
     const userID = req.session.userId;
 
@@ -79,6 +113,7 @@ export class ChannelsController {
   }
 
   @Patch('moderator')
+  @UseGuards(UserGuard)
   async deleteModerator(@MessageBody() data: any, @Req() req: any) {
     const userID = req.session.userId;
 
@@ -86,6 +121,7 @@ export class ChannelsController {
   }
 
   @Post('invite/name')
+  @UseGuards(UserGuard)
   async inviteToChannel(@MessageBody() data: any, @Req() req: any) {
     const userID = req.session.userId;
     const res = await this.service.inviteToChannelByName(userID, data.name, data);
@@ -94,6 +130,7 @@ export class ChannelsController {
   }
 
   @Post()
+  @UseGuards(UserGuard)
   async createChannel(
     @MessageBody() data: any,
     @Req() req: any,
@@ -111,6 +148,7 @@ export class ChannelsController {
   }
 
   @Put()
+  @UseGuards(UserGuard)
   async updateChannel(@MessageBody() data: any, @Req() req: any) {
     const userID = req.session.userId;
 
@@ -118,6 +156,7 @@ export class ChannelsController {
   }
 
   @Delete()
+  @UseGuards(UserGuard)
   async deleteChannel(@MessageBody() data: any) {
     //check if user is owner
     //this.historyService.deleteByChatID(data.chat_id);

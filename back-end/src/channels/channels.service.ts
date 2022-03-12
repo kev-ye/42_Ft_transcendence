@@ -10,6 +10,7 @@ import { PrivateInviteService } from 'src/private-invite/private-invite.service'
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { ChannelEntity } from './entity/channels.entity';
+import * as argon from 'argon2'
 
 @Injectable()
 export class ChannelsService {
@@ -61,9 +62,14 @@ export class ChannelsService {
     const tmp = await this.repo.findOne({ id: chat_id });
     if (tmp && tmp.access == 1 && tmp.password) {
       //check hashed version of password
-      console.log('test password : ', password == tmp.password);
-
-      if (password == tmp.password) return true;
+      try
+      {        
+        return await argon.verify(tmp.password, password);
+      }
+      catch
+      {
+        return false;
+      }
     }
     return false;
   }
@@ -87,7 +93,12 @@ export class ChannelsService {
   }
 
   async createChannel(userID: string, data: any) {
-    const result = this.repo.create({ ...data, creator_id: userID });
+    let result;
+  
+    console.log("loool : " + await argon.hash(data.password));
+    
+    if (data.access == 1)
+      result = this.repo.create({ ...data, creator_id: userID, password: await argon.hash(data.password)});
 
     if (!result) return;
     const tmp = (await this.repo.save(result)) as any;

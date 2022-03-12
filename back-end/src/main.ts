@@ -6,11 +6,11 @@ import * as pg from 'pg';
 
 async function bootstrap() {
   const pgPool = new pg.Pool({
-    host: 'postgres',
-    database: 'db',
-    user: 'user',
-    port: 5432,
-    password: 'password',
+    host: process.env.PG_HOST,
+    database: process.env.PG_DATABASE,
+    user: process.env.PG_USER,
+    port: parseInt(process.env.PG_PORT) || 5432,
+    password: process.env.PG_PW,
   });
   const MAX_AGE: number = 60 * 60 * 24 * 1000; // one day
   const connectPgSession = pgSession(session);
@@ -22,10 +22,10 @@ async function bootstrap() {
         pool: pgPool,
         createTableIfMissing: true,
         pruneSessionInterval: 60,
-        tableName: 'session',
+        tableName: process.env.SESSION_TABLE_NAME,
       }),
-      secret: 'transcendence-session-id-secret',
-      name: '__pong_session_id__',
+      secret: process.env.SESSION_SECRET,
+      name: process.env.SESSION_NAME,
       resave: false,
       saveUninitialized: false,
       cookie: {
@@ -40,8 +40,9 @@ async function bootstrap() {
     req.session.touch();
     next();
   });
-  app.setGlobalPrefix('pongApi');
-  await app.listen(3000);
+  app.setGlobalPrefix(process.env.GLOBAL_API_PREFIX);
+  await app.listen(parseInt(process.env.BACKEND_PORT) || 3000);
   console.log(`Application is running on: ${await app.getUrl()}`);
 }
+
 bootstrap().then();

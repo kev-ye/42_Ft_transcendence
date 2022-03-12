@@ -28,29 +28,16 @@ export class GameController {
                 return ;
             }
             const player = await this.playerService.getPlayerByUserId(userID);
-            if (!player || player.find(val => val.game_id))
+            let game;
+            if (!player)// || (game = player.find(val => val.game_id))
             {
-                res.status(403).send();
+                res.status(403).send({error: 'Could not find user'});
                 return ;
             }
-            const games = [...(await this.service.getGameByStatus(0)), ...(await this.service.getGameByStatus(1))];
-            if (games.length >= 1)
+            if ((game = player.find(val => val.game_id)))
             {
-                let id: string = '';
-                let error: boolean = false;
-                games.forEach(val => {
-                    if (val.creator_id == userID)
-                        {
-                            error = true;
-                            id = val.id;
-                        }
-                    return ;
-                });
-                if (error)
-                {
-                    res.status(403).send({id: id});
-                    return ;
-                }
+                res.status(403).send({id: game.game_id});
+                return ;
             }
             let obj: any = {};
             

@@ -1,6 +1,7 @@
-import { Controller, Get, Inject, Param, Post } from '@nestjs/common';
+import { Controller, Get, Inject, Param, Post, UseGuards } from '@nestjs/common';
 import { ConnectedSocket, MessageBody } from '@nestjs/websockets';
 import { Socket } from 'dgram';
+import { UserGuard } from 'src/auth/user.guard';
 import { BlockService } from './block.service';
 
 @Controller()
@@ -8,6 +9,7 @@ export class BlockController {
     constructor(@Inject('BLOCK_SERVICE') private service: BlockService) {}
 
     @Post('block')
+    @UseGuards(UserGuard)
     async blockUser(@MessageBody() data, @ConnectedSocket() client: Socket) {
         if (!data.first || !data.second)// || data.first == data.second)
         {
@@ -20,6 +22,7 @@ export class BlockController {
     }
 
     @Post('unblock')
+    @UseGuards(UserGuard)
     async unblockUser(@MessageBody() data, @ConnectedSocket() client: Socket) {
         if (!data.first || !data.second)// || data.first == data.second)
         {
@@ -32,6 +35,7 @@ export class BlockController {
     }
 
     @Get('block/:id')
+    @UseGuards(UserGuard)
     async getList(@Param('id') id: number) {
         return this.service.getList(id);
     }

@@ -1,5 +1,6 @@
-import { Controller, Get, Headers, Inject, Param, Post } from '@nestjs/common';
+import { Controller, Get, Headers, Inject, Param, Post, UseGuards } from '@nestjs/common';
 import { MessageBody } from '@nestjs/websockets';
+import { UserGuard } from 'src/auth/user.guard';
 import { ChannelsService } from 'src/channels/channels.service';
 import { UserService } from 'src/user/user.service';
 import { ChatHistoryService } from './chat-history.service';
@@ -7,25 +8,26 @@ import { ChatHistoryService } from './chat-history.service';
 @Controller('history')
 export class ChatHistoryController {
     constructor(@Inject('CHAT_HISTORY_SERVICE') private service: ChatHistoryService,
-    @Inject('USER_SERVICE') private user: UserService) {}//,
+    @Inject('USER_SERVICE') private user: UserService){}//,
     //@Inject('CHANNELS_SERVICE') private chanService: ChannelsService) {}
 
 
     @Get(':id')
+    @UseGuards(UserGuard)
     async getChatHistory(@Param('id') id: string, @Headers() headers: any) {
-        //const tmp = await this.chanService.getChannelById(id);
+        // const tmp = await this.chanService.getChannelById(id);
 
-        /*
-        if (!tmp)
-            return false;
-        if (tmp.access == 1)
-        {
-            if (!headers['password'])
-                return false;
-            if (!this.chanService.checkPassword(headers['password'], id))
-                return false;
-        }
-        */
+        
+        // if (!tmp)
+        //     return false;
+        // if (tmp.access == 1)
+        // {
+        //     if (!headers['password'])
+        //         return false;
+        //     if (!this.chanService.checkPassword(headers['password'], id))
+        //         return false;
+        // }
+        
         const result = await this.service.showChat(id);
         let lastResult: any[] = [];
 
@@ -39,20 +41,21 @@ export class ChatHistoryController {
         return lastResult;
     }
 
-    @Post(':id')
-    async postMessage(@Param('id') id: string, @MessageBody() data: any, @Headers() headers: any) {
-        /*const tmp = await this.chanService.getChannelById(id);
-        if (!tmp)
-            return false;
-        if (tmp.access == 1)
-        {
-            if (!headers['password'])
-                return false;
-            if (!this.chanService.checkPassword(headers['password'], id))
-                return false;
-        }*/
+    // @Post(':id')
+    // @UseGuards(UserGuard)
+    // async postMessage(@Param('id') id: string, @MessageBody() data: any, @Headers() headers: any) {
+    //     const tmp = await this.chanService.getChannelById(id);
+    //     if (!tmp)
+    //         return false;
+    //     if (tmp.access == 1)
+    //     {
+    //         if (!headers['password'])
+    //             return false;
+    //         if (!this.chanService.checkPassword(headers['password'], id))
+    //             return false;
+    //     }
 
-        this.service.create(data);
-    }
+    //     this.service.create(data);
+    // }
 
 }

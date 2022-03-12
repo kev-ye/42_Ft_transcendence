@@ -4,12 +4,12 @@
 		"secure": false,
 		"changeOrigin": true
 	},
-	"/chat": {
+	"/chatSockIo": {
 		"target": "http://back-end:3001",
 		"secure": false,
 		"changeOrigin": true
 	},
-	"/game": {
+	"/gameSockIo": {
 		"target": "http://back-end:3002",
 		"secure": false,
 		"changeOrigin": true

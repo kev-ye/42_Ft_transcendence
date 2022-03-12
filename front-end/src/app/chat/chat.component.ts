@@ -194,8 +194,8 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 		this.subscription.add(this.data.isLoginData.subscribe(data => this.isLogin = data));
 
 		if (this.isLogin) {
-			this.socket = io('ws://localhost:3001/chat', {
-				path: '/chat/socket.io',
+			this.socket = io(`ws://localhost:3001/${GlobalConsts.chatSockIo}`, {
+				path: `/${GlobalConsts.chatSockIo}/socket.io`,
 				withCredentials: true,
 				transports: ['websocket']
 			});
@@ -529,10 +529,11 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 					this.joinGame(this.myGame.id);
 				},
 				error: (err: any) => {
-					if (err.id)
+					
+					if (err && err.error && err.error.id)
 					{
-						let obj = { type: 2, user_id: this.user.id, message: err.id, chat: this.chat };
-						this.myGame = {id: err.id};
+						let obj = { type: 2, user_id: this.user.id, message: err.error.id, chat: this.chat };
+						this.myGame = {id: err.error.id};
 						this.socket.emit('message', obj);
 					}
 					
@@ -559,11 +560,16 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 		})
 	}
 
-	joinGame(id: string | undefined, user?: any) {
+	joinGame(id: string | undefined, user?: string) {
+		console.log('joining :' + id, user, this.user.id);
 		
 		if (id != undefined) {			
 			if (user == undefined || user != this.user.id)
+			{
 				this.join.emit(id)
+				console.log("emitting");
+				
+			}
 		}
 		else
 			this.join.emit(id)

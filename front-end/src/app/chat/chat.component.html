@@ -55,7 +55,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div style="font-size:75%; cursor: pointer; display: inline-block;" (click)="openUserDialog(msg)" *ngIf="(index == messages.length - 1 || msg.username != messages[index + 1].username) && msg.user_id != user.id && msg.type == 1">
+                        <div style="font-size:75%; cursor: pointer; display: inline-block;" (click)="openUserDialog(msg)" *ngIf="(index == messages.length - 1 || msg.username != messages[index + 1].username || messages[index + 1].type != 1) && msg.user_id != user.id && msg.type == 1">
                             {{ msg.username }}
                         </div>
                     </div>
@@ -91,7 +91,7 @@
                 <div *ngFor="let invite of friendList">
                     <div *ngIf="invite.status == 1" class="friend"  (mouseover)="focusFriend(invite.username)" (mouseleave)="unfocusFriend()" [style.--color]="getStatusColor(invite)">
                         <div> {{ invite.username }} </div>
-                        <mat-icon *ngIf="focus == invite.username" style="position: absolute ;cursor: pointer; margin-right: 20px; transform: translate(0, -50%); top: 50%; left: 90%" (click)="addFriend(invite)">add_box</mat-icon>
+                        <mat-icon *ngIf="focus == invite.username && invite.emitter != user.id" style="position: absolute ;cursor: pointer; margin-right: 20px; transform: translate(0, -50%); top: 50%; left: 90%" (click)="addFriend(invite)">add_box</mat-icon>
                         <mat-icon *ngIf="focus == invite.username" style="position: absolute ;cursor: pointer; margin-right: 20px; transform: translate(0, -50%); top: 50%; left: 80%" (click)="deleteFriend(invite)">remove_circle</mat-icon>
 
                     </div>

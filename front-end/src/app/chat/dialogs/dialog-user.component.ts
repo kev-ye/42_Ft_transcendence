@@ -14,7 +14,7 @@ import { GlobalConsts } from "src/app/common/global";
       this.my_id = data.my_id;
       
       (data.friends as any[]).forEach(val => {
-        if (val.id == this.id)
+        if (val.id == this.id && val.status == 2)
           this.friend = true;
       });
 
