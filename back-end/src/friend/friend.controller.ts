@@ -9,6 +9,8 @@ export class FriendController {
 
   @Post()
   async addFriend(@MessageBody() data: { first: string; second: string }) {
+    console.log("adding friend", data);
+    
     return await this.service.addFriend(data);
   }
 

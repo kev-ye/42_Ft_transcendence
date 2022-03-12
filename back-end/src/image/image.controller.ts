@@ -6,6 +6,7 @@ import {
   Logger,
   Param,
   Post,
+  Res,
   Response,
   StreamableFile,
   UploadedFile,
@@ -57,8 +58,14 @@ export class ImageController {
   }
 
   @Get()
-  async getDefaultAvatar() {
-    const file = fs.createReadStream('./static/default_avatar.png');
+  async getDefaultAvatar(@Res() res: any) {
+    let file;
+    try {
+      file = fs.createReadStream('./static/default_avatar.png');
+    } catch {
+      return; 
+    }
+    res.set('Content-Disposition', 'inline');
     return new StreamableFile(file);
   }
 
@@ -80,6 +87,10 @@ export class ImageController {
     } else file = fs.createReadStream('./static/default_avatar.png');
 
     res.set('Content-Disposition', 'inline'); //'attachment; filename=' + user.picture)
+    res.set('Pragma-directive', 'no-cache');
+    res.set('Cache-control', 'no-cache');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
     return new StreamableFile(file);
   }
 

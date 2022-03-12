@@ -15,6 +15,8 @@ export class DialogAddFriend {
     submitFriend(username: string) {
         this.http.get(`${GlobalConsts.userApi}/user/name/` + username, {withCredentials: true}).subscribe({
             next: data => {
+                console.log("tesst: " + username, data);
+                
                 if (!data)
                     this.error.nativeElement.textContent = 'Could not find user';
                 else

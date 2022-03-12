@@ -40,10 +40,9 @@ import { GlobalConsts } from "src/app/common/global";
             this.user = data;
           else
             this.error = true;
-          if (data.avatar && data.avatar != "")
-            this.link = `${GlobalConsts.userApi}/image/${data.avatar}`
-          else
-            this.link = `${GlobalConsts.userApi}/image`
+          
+          this.link = `${GlobalConsts.userApi}/image/user/${this.id}?random=${Math.random()}`
+          
         },
         error: data => {
           this.error = true;

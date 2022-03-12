@@ -64,7 +64,7 @@ export class UserController {
 
     if (user) {
       const getUserByName: UserDto = await this.userService.getUserByName(name);
-      if (getUserByName) res.status(200).json(user);
+      if (getUserByName) res.status(200).json(getUserByName);
       else res.status(200).json(null);
     } else
       res.status(403).json({

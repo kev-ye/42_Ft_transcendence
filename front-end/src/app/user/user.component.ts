@@ -49,7 +49,7 @@ constructor(public dialog: MatDialog,
         const tmp = data as any;
         this.user = tmp;
         this.user.username = tmp.name;
-        this.user.avatar = `${GlobalConsts.userApi}/image/user/` + this.user.id;
+        this.user.avatar = `${GlobalConsts.userApi}/image/user/` + this.user.id + `?random=${Math.random()}`;
 
         this.connected = true;
 
@@ -97,7 +97,7 @@ constructor(public dialog: MatDialog,
     });
     tmp.afterClosed().subscribe(data => {
       if (data)
-        this.user.avatar = data;
+	  	this.user.avatar = `${GlobalConsts.userApi}/image/user/` + this.user.id + `?random=${Math.random()}`;
     });
   }
 

@@ -221,10 +221,12 @@ export class GameComponent implements OnInit, OnDestroy {
 			e.preventDefault();
 			threshold = -this.paddle.SPEED
 		}
-		if (e.code === "ArrowDown") {
+		else if (e.code === "ArrowDown") {
 			e.preventDefault();
 			threshold = this.paddle.SPEED
 		}
+		else
+			return;
 
 		/* animation was too slow - had to do this trick */
 		let val: number = threshold < 0 ? -1 : 1
