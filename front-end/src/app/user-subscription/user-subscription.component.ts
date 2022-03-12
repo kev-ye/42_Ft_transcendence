@@ -44,7 +44,6 @@ export class UserSubscriptionComponent implements OnInit, OnDestroy {
 		if (confirm$)
 			this.subscription.add(this.userApi.createUser(this.subscriptionForm.value.name).subscribe({
 				next: (v) => {
-					console.log('name:', this.subscriptionForm.value.name);
 					if (v && v.name === this.subscriptionForm.value.name) {
 						this.data.changeIsLoginData(true);
 						this.router.navigate(['main']).then();
@@ -53,7 +52,6 @@ export class UserSubscriptionComponent implements OnInit, OnDestroy {
 						alert('something wrong, try again!');
 				},
 				error: (e) => {
-					console.error('Error: create user:', e);
 					this.router.navigate(['user_login']).then();
 				},
 				complete: () => console.info('Complete: create user done')
@@ -80,8 +78,6 @@ export class UserSubscriptionComponent implements OnInit, OnDestroy {
 	nameVerify() {
 		this.subscription.add(this.userApi.nameVerify(this.subscriptionForm.value.name).subscribe({
 			next: (v) => {
-				console.log('name:', this.subscriptionForm.value.name);
-				console.log('result:', v);
 				if (v)
 					alert('User name valid');
 				else

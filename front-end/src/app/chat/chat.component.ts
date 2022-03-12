@@ -85,7 +85,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
 	ngAfterViewChecked(): void {
 		if (this.scroll) {
-			console.log("scrolling..");
 			if (this.chat.public && this.framePublic)
 				this.framePublic.nativeElement.scroll({ top: this.framePublic.nativeElement.scrollHeight, behavior: "smooth" });
 			else if (!this.chat.public && this.framePrivate)
@@ -99,11 +98,9 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 			withCredentials: true
 		}).subscribe({
 			next: data => {
-				console.log("fetched channels", data);
 				this.channelList = data as any[];
 			},
 			error: _ => {
-				console.error("error during channels fetch");
 			}});
 	}
 
@@ -114,11 +111,9 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 			second: friend.id
 		}, {withCredentials: true}).subscribe({
 			next: data => {
-				console.log("Deleted friend");
 				this.fetchFriends();
 
 			}, error: data => {
-				console.log("Could not delete friend");
 			}
 		});
 	}
@@ -151,7 +146,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 	fetchPrivateMessage(friend: any) {
 		this.messages = [];
 		this.http.get(`${GlobalConsts.userApi}/private/` + this.user.id + "/" + friend.id, { withCredentials: true }).subscribe(data => {
-			console.log("fetched private history", data);
 			this.messages = data as { id: string, username: string, user_id: string, type: number, message?: string }[];
 
 			this.messages.forEach(msg => {
@@ -166,8 +160,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 	}
 
 	fetchChannelHistory(channel: any) {
-		this.http.get(`${GlobalConsts.userApi}/history/` + channel.id, { headers: { password: this.password }, withCredentials: true }).subscribe(data => {
-			console.log("fetched history", data);
+		this.http.get(`${GlobalConsts.userApi}/channels/history/` + channel.id, { headers: { password: this.password }, withCredentials: true }).subscribe(data => {
 
 			this.messages = data as { id: string, user_id: string, type: number, username: string, message?: string }[];
 
@@ -243,7 +236,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 				message: string,
 				type: number
 			}) => {
-				console.log("received message", data);
 
 				data.user_id = String(data.user_id);
 
@@ -263,7 +255,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 	}
 
 	ngOnDestroy(): void {
-		console.log("test: ", this.socket.connected);
 
 		if (this.socket.connected)
 			this.socket.disconnect();
@@ -302,7 +293,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 		}, { withCredentials: true }).subscribe({
 			next:
 				data => {
-					console.log("accepted invite from user " + friend.id);
 					this.fetchFriends();
 				}
 		})
@@ -330,7 +320,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 			type: 1,
 			chat: { public: this.chat.public, id: this.chat.id },
 		};
-		console.log('sending message', obj);
 
 		if (this.chat.public)
 			obj = { ...obj, password: this.password, message: this.input.nativeElement.value }
@@ -342,8 +331,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 	}
 
 	openPrivate(friend: any) {
-		console.log("Opening chat " + friend.id + " with ", friend);
-		console.log("user:", this.user);
 
 		this.socket.emit('connectRoom', { user_id: this.user.id, chat: { public: false, id: friend.id } });
 		this.fetchPrivateMessage(friend);
@@ -362,17 +349,15 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 			{ withCredentials: true })
 			.subscribe({
 				next: (data) => {
-					console.log("received response from connectRoom:", data);
-
+					
 					if (data == 0) {
 						this.socket.emit('connectRoom', { user_id: this.user.id, chat: { public: true, id: channel.id }, password: this.password });
 						this.messages = [];
-						this.fetchChannelHistory(channel);
+						this.chat = channel;
 						this.chat.show = true;
-						this.chat.creator_id = channel.creator_id;
-						this.chat.moderator = channel.moderator;
-						this.chat.access = channel.access;
+						this.chat.public = true;
 						this.scroll = true;
+						this.fetchChannelHistory(channel);
 					} else if (data == 2) //user is banned
 					{
 						this.dialog.open(DialogBanned);
@@ -385,7 +370,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 	}
 
 	openPublic(channel: any) {
-		console.log("opening channel", channel);
 
 		if (channel.access == 1) //protected channel
 		{
@@ -425,12 +409,10 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 		this.http.get(`${GlobalConsts.userApi}/friend/` + this.user.id, { withCredentials: true }).subscribe({
 			next:
 				data => {
-					console.log("fetched friends", data);
 					this.friendList = data as any[];
 				},
 			error:
 				data => {
-					console.error("could not fetch friends");
 				}
 		})
 	}
@@ -449,7 +431,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 	}
 
 	openUserDialog(message?: any) {
-		console.log("opening dialog", message);
 		if (message) {
 
 
@@ -464,7 +445,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 			});
 			tmp.afterClosed().subscribe(() => {
 				this.fetchBlockedUsers();
-				console.log("fetching blocked", this.blocked);
 
 			});
 		}
@@ -481,7 +461,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
 			tmp.afterClosed().subscribe(() => {
 				this.fetchBlockedUsers();
-				console.log("fetching blocked 2", this.blocked);
 
 			})
 		}
@@ -515,14 +494,11 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 	}
 
 	inviteGame() {
-		console.log("test invite game");
 
 		if (!this.myGame) {
-			console.log("posting a new game");
 
 			this.http.post(`${GlobalConsts.userApi}/game/custom`, {}).subscribe({
 				next: (data: any) => {
-					console.log("invite game ID", this.user);
 					let obj = { type: 2, user_id: this.user.id, message: data.id, chat: this.chat };
 					this.myGame = {id: data.id};
 					this.socket.emit('message', obj);
@@ -541,8 +517,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 			});
 		}
 		else {
-			console.log("sending invite");
-
 			this.socket.emit('message', this.myGame);
 			this.joinGame(this.myGame.id);
 		}
@@ -561,13 +535,11 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 	}
 
 	joinGame(id: string | undefined, user?: string) {
-		console.log('joining :' + id, user, this.user.id);
 		
 		if (id != undefined) {			
 			if (user == undefined || user != this.user.id)
 			{
 				this.join.emit(id)
-				console.log("emitting");
 				
 			}
 		}

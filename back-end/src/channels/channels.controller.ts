@@ -30,7 +30,6 @@ export class ChannelsController {
     @Param('chatID') chatID: string,
   ) {
     const userID = req.session.userId;
-    console.log('check access', userID, data);
     if (!userID) return false;
     return await this.service.checkAccess(userID, chatID);
   }
@@ -38,25 +37,18 @@ export class ChannelsController {
   @Get('history/:id')
   @UseGuards(UserGuard)
   async getHistory(@Param('id') id: string, @Headers() headers: any, @Res() res: Response) {
-    const tmp = await this.service.getChannelById(id);
-    if (!tmp)
+    const tmp = await this.service.getHistory(id, headers['password']);
+    
+
+    if (typeof(tmp) == 'boolean')
     {
-      res.status(404).send();
+      res.status(403).send();
       return;
     }
-    if (tmp.access == 1)
+    else
     {
-      if (headers['password'] == undefined)
-      {
-        res.status(404).send();
-        return ;
-      }
-      if (!this.service.checkPassword(headers['password'], tmp.id)) 
-      {
-        res.status(404).send();
-        return ;
-      }
-      
+      res.send(tmp);
+      return tmp;
     }
   }
 
@@ -88,7 +80,6 @@ export class ChannelsController {
   @Post('mute')
   @UseGuards(UserGuard)
   async createMute(@MessageBody() data: any, @Req() req: any) {
-    console.log('test', data);
 
     const date = new Date();
     const userID = req.session.userId;
@@ -125,7 +116,6 @@ export class ChannelsController {
   async inviteToChannel(@MessageBody() data: any, @Req() req: any) {
     const userID = req.session.userId;
     const res = await this.service.inviteToChannelByName(userID, data.name, data);
-    console.log("invite ", data)
     return res;
   }
 

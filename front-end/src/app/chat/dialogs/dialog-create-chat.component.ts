@@ -59,11 +59,9 @@ export class DialogCreateChat {
       }});
       return ;
     }
-    console.log("Dadas");
     
     this.http.post(`${GlobalConsts.userApi}/channels`, {name: name, access: this.access, creator_id: this.user_id}, {withCredentials: true}).subscribe({next: 
     data => {
-      console.log("teest");
       
       this.dialogRef.close(true);
       
@@ -72,7 +70,6 @@ export class DialogCreateChat {
       this.error.nativeElement.textContent = "Could not create channel"
     },
   complete: () => {
-    console.log("completed");
     
   }});
   }

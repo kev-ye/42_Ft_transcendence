@@ -35,7 +35,6 @@ import { GlobalConsts } from "src/app/common/global";
     ngOnInit(): void {
       this.http.get(`${GlobalConsts.userApi}/user/id/` + this.id, {withCredentials: true}).subscribe({
         next: (data: any) => {
-          console.log("fetched user details", data);
           
           if (data)
             this.user = data;
@@ -86,11 +85,9 @@ import { GlobalConsts } from "src/app/common/global";
         second: this.id
       }, {withCredentials: true}).subscribe({
         next: data => {
-        console.log("deleted friend");
         this.friend = false;
       },
     error: data => {
-      console.log("could not delete friend");
       
     }});
     }
@@ -98,7 +95,6 @@ import { GlobalConsts } from "src/app/common/global";
     addFriend() {
         this.http.post(`${GlobalConsts.userApi}/friend`, {first: this.my_id, second: this.id}, {withCredentials: true}).subscribe({
             next: data => {
-                console.log("sent friend request", data);
                 this.friend = true;
             }
         })

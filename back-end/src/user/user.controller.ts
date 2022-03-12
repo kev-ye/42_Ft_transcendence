@@ -87,7 +87,6 @@ export class UserController {
         user,
         name.name,
       );
-      console.log('user:', newUser);
       if (!newUser) res.status(201).json({});
       else res.status(201).json(newUser);
     } else
@@ -158,7 +157,6 @@ export class UserController {
       await this.userService.updateUser(user);
     }
     req.session.destroy((err) => {
-      if (err) console.log('error by session destroy:', err);
     });
     res.status(200).json({
       ok: 'ok',

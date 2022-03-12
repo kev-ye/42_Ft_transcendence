@@ -8,7 +8,6 @@ import { GlobalConsts } from "src/app/common/global";
   })
   export class DialogChannelSettings {
     constructor(private http: HttpClient, private dialogRef: MatDialogRef<DialogChannelSettings>, @Inject(MAT_DIALOG_DATA) public data: any) {
-      console.log("data channel settings", data);
       this.chatName = data.name;
     }
   

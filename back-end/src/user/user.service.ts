@@ -26,10 +26,8 @@ export class UserService {
   }
 
   async createUser(tmpUser: UserDto, name: string): Promise<UserDto | null> {
-    console.log('name:', name);
     if (!(await this.nameFormatVerify(name))) return null;
     else {
-      console.log('here:', name);
       const toCreate: UserDto = tmpUser;
 
       toCreate.name = name;
@@ -57,7 +55,6 @@ export class UserService {
   async nameFormatVerify(name: string): Promise<boolean> {
     if (!UserService._checkUserNameFormat(name)) return false;
     const check = await this._checkDuplicateName(name);
-    console.log('check:', check);
     return check;
   }
 

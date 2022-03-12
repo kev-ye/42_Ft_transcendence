@@ -39,7 +39,6 @@ export class AppComponent implements OnInit, OnDestroy {
 	) {}
 
 	ngOnInit() {
-		console.log('re init');
 		this.subscription.add(this.data.isLoginData.subscribe(data => this.isLogin = data));
 		this.subscription.add(this.intervalObs
 			.pipe(
@@ -80,20 +79,16 @@ export class AppComponent implements OnInit, OnDestroy {
 	}
 
 	openUser(e: any) {
-		console.log("test", e);
 
 		// if (!this.userTab.nativeElement)
 		// 	return;
-		console.log("opening user");
 		this.userTab.refreshUserDetails();
 	}
 
 	openChat(e: any) {
-		console.log("test", e);
 
 		// if (!this.chatTab.nativeElement)
 		// 	return;
-		console.log("opening chat");
 		this.chatTab.fetchChannels();
 		this.chatTab.fetchFriends();
 	}

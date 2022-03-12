@@ -12,7 +12,6 @@ export class BanController {
     @UseGuards(UserGuard)
     async banUser(@MessageBody() data: any) {
         //check if user is moderator
-        console.log("received for ban :", data);
         
         this.service.banUser(data);
         /*

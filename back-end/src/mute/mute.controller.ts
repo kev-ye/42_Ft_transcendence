@@ -11,13 +11,10 @@ export class MuteController {
         let date = new Date();
         
         let tmp: number = +data.seconds;
-        console.log("create mute", tmp, date.getSeconds());
         tmp += date.getSeconds();
-        console.log(tmp);
         
         
         date.setSeconds(tmp)
-        console.log("new mute ", date);
         
 
 

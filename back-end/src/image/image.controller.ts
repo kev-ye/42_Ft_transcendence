@@ -42,13 +42,11 @@ export class ImageController {
   ) {
     //check cookie if authenticated
 
-    console.log('file', file, id);
     const user = await this.userService.getUserById(id);
     try {
       if (user && user.avatar.length > 0)
         fs.unlinkSync('../uploads/' + user.avatar);
     } catch {
-      console.log('Could not find file to delete');
     }
 
     // modify by kaye bcs use updateUserById not run
@@ -111,7 +109,6 @@ export class ImageController {
 
     if (user && user.avatar && user.avatar.length > 0) {
       try {
-        console.log('trying to delete');
 
         fs.unlinkSync('../uploads/' + user.avatar);
         user.avatar = null;

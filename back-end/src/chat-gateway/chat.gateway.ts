@@ -91,7 +91,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('ban')
   async banUser(@ConnectedSocket() client: Socket, @MessageBody() data: any) {
     //check if user is moderator
-    Logger.log('banning', data);
 
     const user = await this.activeService.getUserBySocketId(client.id);
     if (!user || !user.user_id) return;
@@ -99,18 +98,15 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       !(await this.chanService.checkModerator(user.user_id, data)) ||
       (await this.chanService.checkModerator(data.user_id, data))
     ) {
-      Logger.log('moderator was targeted for ban');
       return; //return if emitter is not moderator or if target is moderator of channel
     }
     await this.chanService.banUser(user.user_id, data);
 
     const tmp = await this.activeService.getUser(data.user_id);
-    console.log('banService', tmp);
 
     if (tmp.length > 0) {
       tmp.forEach((val) => {
         if (this.server.sockets.sockets.has(val.id)) {
-          console.log('emit ban to ' + val.user_id);
 
           if (val.chat_id == data.chat_id) {
             const sock = this.server.sockets.sockets.get(val.id);
@@ -157,20 +153,15 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     },
   ) {
     const tmp = await this.activeService.getUserBySocketId(client.id);
-    console.log('message', data, tmp);
     if (!tmp || !tmp.user_id || !data.chat.id) return;
 
     const user = await this.userService.getUserById(tmp.user_id);
-    console.log('message 2', user);
 
     if (!user) return;
-    console.log('message 3', data);
 
     if (data.chat.public) {
-      console.log('check access');
 
       if (await this.chanService.checkAccess(user.id, data.chat.id)) return;
-      console.log('checkmute');
 
       const mute = await this.chanService.getMute(data.chat.id, user.id);
       if (mute) {
@@ -187,7 +178,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         type: data.type,
         chat_id: data.chat.id,
       });
-      console.log('emitting message');
 
       this.server.to(data.chat.id).emit('message', {
         id: id.id,

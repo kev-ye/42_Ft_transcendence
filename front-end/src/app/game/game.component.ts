@@ -90,7 +90,6 @@ export class GameComponent implements OnInit, OnDestroy {
 		this.route.queryParams.subscribe((data: any) => {
 			if (data.id)
 			{
-				console.log("Connecting to game " + data.id);
 				this.socket.emit('connectGame', {game_id: data.id})
 			}
 			else if (data.spec)
@@ -153,7 +152,6 @@ export class GameComponent implements OnInit, OnDestroy {
 		this.subscription.add(this.userApi.getUser().subscribe({
 			next: (data) => {
 				this.user = { ...data }
-				console.log('game_data:', this.user)
 			},
 			error: (e) => console.error('Error: get user in main:', e),
 			complete: () => console.info('Complete: get user in main')
@@ -231,7 +229,6 @@ export class GameComponent implements OnInit, OnDestroy {
 		/* animation was too slow - had to do this trick */
 		let val: number = threshold < 0 ? -1 : 1
 		this.socket.emit('input', {value: val, game_id: this.gameID});
-		console.log("emit input", {value: val, game_id: this.gameID});
 
 
 		// window.requestAnimationFrame(() => this.movePaddle(threshold));

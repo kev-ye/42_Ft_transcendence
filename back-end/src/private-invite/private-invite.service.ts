@@ -9,14 +9,12 @@ export class PrivateInviteService {
 
     async createInvite(data: any)
     {
-        console.log("tryyy", data);
         
         if (await this.repo.findOne({chat_id: data.chat_id, user_id: data.user_id}))
             return;
         const tmp = this.repo.create(data);
         if (tmp)
         {
-            console.log("saving", tmp);
             
             return await this.repo.save(tmp);
         }

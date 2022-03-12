@@ -21,7 +21,6 @@ export class MatchMakingComponent implements OnInit {
 	}
 
 	matchMaking(value: any, power_ups: any): any {
-		console.log("matchmakiiiing", power_ups);
 		
 		this.http.post(`/${GlobalConsts.userApi}/game/custom`, { limit_game: value, power: power_ups === true ? 6 : 0 }).subscribe((res: any) => {
 			if (res && res.id) {

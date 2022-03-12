@@ -13,10 +13,8 @@ import { DialogUser } from "./dialog-user.component";
   })
   export class DialogSpectator implements OnInit{
     constructor(private http: HttpClient, @Inject(MAT_DIALOG_DATA) public data: any, public dialogRef: MatDialogRef<DialogSpectator>, public dialog: MatDialog) {
-      console.log("data spectator", data);
       http.get(`${GlobalConsts.userApi}/moderator/` + data.chat.id).subscribe(data => {
         this.moderators = data as any[];
-        console.log("moderators", this.moderators);
         
       })
     }
@@ -25,7 +23,6 @@ import { DialogUser } from "./dialog-user.component";
   
     fetchUsers() {
       this.http.get(`${GlobalConsts.userApi}/active-users/` + this.data.chat.id, {withCredentials: true}).subscribe(val => {
-          console.log("fetched active users ", val);
           
           this.users = val as any[];
           let result: any[] = [];
@@ -45,7 +42,6 @@ import { DialogUser } from "./dialog-user.component";
     }
 
     modUser(usr: any) {
-      console.log("modding", usr);
       
       this.http.post(`${GlobalConsts.userApi}/channels/moderator`, {
         chat_id: this.data.chat.id,
@@ -61,7 +57,6 @@ import { DialogUser } from "./dialog-user.component";
         user_id: usr.id
       }, {withCredentials: true}).subscribe({next: res => {
         const index = this.moderators.findIndex(val => val.user_id == usr.id);
-        console.log("removing moderator index", index);
         
         if (index >= 0)
           this.moderators.splice(index);
@@ -82,7 +77,6 @@ import { DialogUser } from "./dialog-user.component";
     }
   
     banUser(usr: any) {
-      console.log("banning ", {user_id: usr.id, chat_id: this.data.chat.id});
       
       const sock: Socket = this.data.socket;
       /*

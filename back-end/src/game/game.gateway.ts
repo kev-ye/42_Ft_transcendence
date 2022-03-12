@@ -103,7 +103,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   async handleConnection(client: any, ...args: any[]) {
     await this.playerService.createPlayer(client.id);
-    console.log('handleConnection gameSocket', args);
 
     client.emit('user');
     //client must send his user details when he receives this signal
@@ -149,7 +148,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   async handleDisconnect(client: Socket) {
-    console.log("handle disconnect game gateway");
     
     await this.checkForfeit(client);
     await this.playerService.deletePlayerBySocketId(client.id);
@@ -185,14 +183,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       return ;
     }
     const game = await this.service.joinGame(player, data.game_id);
-    console.log("11testttt", await this.service.getGameById(data.game_id));
     if (game)
     {
       client.join(game.id);
     }
     if (game.first && game.second)
       this.startGame(game.id);
-    console.log("testttt", await this.service.getGameById(data.game_id));
     
   }
 
@@ -205,7 +201,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @Interval(3000)
   async checkMatchmaking() {
     const tmp = await this.playerService.getLookingPlayers();
-    // console.log('Matchmaking: ' + tmp.length);
     if (tmp.length < 2) return;
     const game = await this.service.createGame();
     await this.service.joinGame(tmp[0], game.id);
@@ -239,7 +234,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const error = false;
     const tmp = await this.playerService.getPlayerBySocketId(client.id);
     
-    console.log("startMatchmaking received", tmp);
 
     if (!tmp || !tmp.user_id) return;
 
@@ -253,7 +247,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     });
     if (error) return;
 
-    console.log("updated matchmaking player");
     
     await this.playerService.updatePlayer({ id: tmp.id }, { status: 1 });
   }
@@ -422,7 +415,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
           {
             const yo = Math.random();
             data.power.type = yo < 0.5 ? 2 : 4;
-            console.log("tessst", yo);
             
           }
         }

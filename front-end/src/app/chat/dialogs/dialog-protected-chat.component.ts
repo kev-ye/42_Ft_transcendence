@@ -15,7 +15,6 @@ import { GlobalConsts } from "src/app/common/global";
   
     ngOnInit(): void {
       this.chat_id = this.data.id;
-      console.log(this.data);
         
     }
   

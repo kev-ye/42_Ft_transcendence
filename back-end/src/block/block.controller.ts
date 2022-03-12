@@ -11,12 +11,10 @@ export class BlockController {
     @Post('block')
     @UseGuards(UserGuard)
     async blockUser(@MessageBody() data, @ConnectedSocket() client: Socket) {
-        if (!data.first || !data.second)// || data.first == data.second)
+        if (!data.first || !data.second || data.first == data.second)
         {
-            console.error("Wrong formatting for blocking user");
             return ;
         }
-        console.log("User " + data.first + " is blocking user " + data.second);
         this.service.blockUser(data);
         return ;
     }
@@ -26,10 +24,8 @@ export class BlockController {
     async unblockUser(@MessageBody() data, @ConnectedSocket() client: Socket) {
         if (!data.first || !data.second)// || data.first == data.second)
         {
-            console.error("Wrong formatting for unblocking user");
             return ;
         }
-        console.log("User " + data.first + " is unblocking user " + data.second);
         this.service.unblockUser(data);
         return ;
     }

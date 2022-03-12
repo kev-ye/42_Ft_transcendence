@@ -94,11 +94,11 @@ export class ChannelsService {
 
   async createChannel(userID: string, data: any) {
     let result;
-  
-    console.log("loool : " + await argon.hash(data.password));
-    
+      
     if (data.access == 1)
       result = this.repo.create({ ...data, creator_id: userID, password: await argon.hash(data.password)});
+    else
+      result = this.repo.create({ ...data, creator_id: userID});
 
     if (!result) return;
     const tmp = (await this.repo.save(result)) as any;
@@ -112,7 +112,6 @@ export class ChannelsService {
     userID: string,
     data: { user_id: string; chat_id: string },
   ) {
-    Logger.log('Trying to mod user');
     if (!(await this.checkOwner(userID, data))) return;
 
     return await this.modService.createModerator(userID, data);
@@ -210,5 +209,29 @@ export class ChannelsService {
     await this.privateInvService.deleteAllByChat(chatID);
     await this.historyService.deleteByChatID(chatID);
     return await this.banService.deleteAllByChatId(chatID);
+  }
+
+  async getHistory(id: string, password?: string) {
+    const tmp = await this.getChannelById(id);
+    if (!tmp)
+      return false;
+    if (tmp.access == 1)
+    {
+      if (password == undefined)
+        return false;
+      if (!this.checkPassword(password, tmp.id)) 
+        return false;
+    }
+    const res = await this.historyService.showChat(id);
+
+    let lastResult: any[] = [];
+
+    for (const val of res)
+    {
+      const tmp = await this.userService.getUserById(val.user_id);
+      if (tmp)
+        lastResult.push({...val, username: tmp.name});
+    }      
+    return lastResult;
   }
 }

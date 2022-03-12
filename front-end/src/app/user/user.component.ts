@@ -43,7 +43,6 @@ constructor(public dialog: MatDialog,
     this.http.get(`${GlobalConsts.userApi}/user/id/`, {withCredentials: true}).subscribe({
       next: data => {
         if (!data) {
-          console.log("Could not fetch user details");
           return ;
         }
         // console.log("fetched user details", data);
@@ -60,11 +59,9 @@ constructor(public dialog: MatDialog,
 			this.user.gamesPlayed = data.gamesPlayed;
           },
           error: data => {
-            console.log("Could not fetch user ladder points");
 
         }});
     }, error: data => {
-      console.log("Could not fetch user details");
 
     }});
   }
@@ -123,7 +120,6 @@ constructor(public dialog: MatDialog,
 	turnOnTwoFa() {
 		this.subscription.add(this.userAuth.twoFaGenerate().subscribe({
 			next: (v) => {
-			console.log('info:', v);
 			this.qrCode = v.qr;
 			this.twoFaActive = true;
 			},

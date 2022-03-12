@@ -20,7 +20,6 @@ import { GlobalConsts } from "src/app/common/global";
     changeImage(e: any) {
       if (!e.target.files || !e.target.files.item(0))
         return ;
-      console.log("change ", e);
       const reader = new FileReader();
       reader.readAsDataURL(e.target.files.item(0));
       if (reader)
@@ -41,7 +40,6 @@ import { GlobalConsts } from "src/app/common/global";
   
       if (!this.file.nativeElement.files?.length)
       {
-        console.log("No file was loaded");
         return ;
       }
   
@@ -55,11 +53,9 @@ import { GlobalConsts } from "src/app/common/global";
         if ((index = ((image.name as string).lastIndexOf('.'))) > 0)
         {
           ext = (image.name as string).substring(index).toUpperCase();
-          console.log("extension " + ext);
   
           if (ext != ".PNG" && ext != ".JPG")
           {
-            console.log("Bad extension 1: " + ext);
             return;
           }
           let fd = new FormData();
@@ -68,8 +64,6 @@ import { GlobalConsts } from "src/app/common/global";
   
           });
         }
-        else
-          console.log("Bad extension 2: " + index);
         this.dialogRef.close(this.link);
     }
   

@@ -8,7 +8,6 @@ export class MuteService {
     constructor(@InjectRepository(MuteEntity) private repo: Repository<MuteEntity>) {}
 
     async addMute(data: any) {
-        console.log("creating mute", data);
         
         const tmp = await this.repo.findOne({user_id: data.user_id, chat_id: data.chat_id});
         if (tmp) 

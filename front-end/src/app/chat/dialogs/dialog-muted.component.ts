@@ -6,7 +6,6 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 })
 export class DialogMuted {
     constructor(@Inject(MAT_DIALOG_DATA) private data: any) {  
-        console.log("data muted", data);
               
         this.date = new Date(data.date);
 
@@ -16,7 +15,6 @@ export class DialogMuted {
         if (this.diff < 0)
             this.diff = 0;
         this.str = this.diff.toFixed(0).toString();
-        console.log("diff", this.diff, this.str);
         
     }
 

@@ -22,11 +22,9 @@ import { GlobalConsts } from "src/app/common/global";
     changeUsername(newUsername: string) {
       this.http.put(`${GlobalConsts.userApi}/user/update`, {id: this.userID, name: newUsername}, {withCredentials: true}).subscribe({
         next: data => {
-          console.log("Changed successfully username");
           this.dialogRef.close(true);
         },
         error : data => {
-          console.log("Could not change username");
         }
       })
     }

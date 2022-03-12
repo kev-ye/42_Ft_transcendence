@@ -27,7 +27,6 @@ export class ActiveUsersService implements OnModuleInit {
             if (user)
             result.push({name: user.name, id: user.id})
         }
-        console.log("testActiveUsers", result);
         return result;
     }
 
@@ -44,13 +43,11 @@ export class ActiveUsersService implements OnModuleInit {
     }
 
     async updateUser(data: any) {
-        console.log("Update active user", data);
         
         return await this.repo.update({id: data.id}, data)
     }
 
     async addUser(data: any) {
-        console.log("addUser ", data); 
          
         const tmp = this.repo.create(data);
         return await this.repo.save(tmp);

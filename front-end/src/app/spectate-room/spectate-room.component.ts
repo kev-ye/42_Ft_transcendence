@@ -27,9 +27,7 @@ import { Router } from "@angular/router";
 	}
 
 	ngOnInit(): void {
-		console.log('this.games', this.games);
 		this.http.get('/pongApi/game/').subscribe((games: any) => {
-			console.log('games', games);
 			if (games) {
 				//this.games = games; // to replace with line below
 				 this.games = games.filter((game: any) => game.game_state === 1);

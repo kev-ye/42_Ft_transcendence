@@ -66,7 +66,6 @@ export class GameService implements OnModuleInit {
 
     async createGameWithCreator(userID: string, data?: any) {
         let tmp;
-        console.log("creating game", data);
         
         if (data)
             tmp = this.repo.create({creator_id: userID, ...data});
@@ -80,7 +79,6 @@ export class GameService implements OnModuleInit {
     }
 
     async joinGame(player: any, gameID: string) {
-        console.log("joining", player);
         
         if (player == undefined)
             return null;

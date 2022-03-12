@@ -14,8 +14,6 @@ export class FriendController {
 
   @Patch()
   async deleteFriend(@MessageBody() data: { first: number; second: number }) {
-    console.log('Deleting', data.first, data.second);
-
     return await this.service.deleteFriend(data);
   }
 

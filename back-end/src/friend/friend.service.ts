@@ -10,7 +10,6 @@ export class FriendService {
     @InjectRepository(FriendEntity) private repo: Repository<FriendEntity>,
     @Inject('USER_SERVICE') private userService: UserService,
   ) {
-    console.log('friendService');
   }
 
   async addFriend(data: { first: string; second: string }) {
