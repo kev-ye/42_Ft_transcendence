@@ -8,6 +8,9 @@
 </style>
 
 <p> Please enter password for channel </p>
-<input type="password" #input>
-<button (click)="submitPassword(input.value)"> Enter </button>
+<form (ngSubmit)="submitPassword(input.value)">
+
+    <input type="password" #input>
+    <button type="submit"> Enter </button>
+</form>
 <div #error class="error"></div>

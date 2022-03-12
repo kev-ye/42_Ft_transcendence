@@ -92,7 +92,7 @@ export class UserController {
       else res.status(201).json(newUser);
     } else
       res.status(403).json({
-        Forbidden: `Can't found user by id: ${id}`,
+        Forbidden: `Can't find user by id: ${id}`,
       });
   }
 
@@ -105,9 +105,9 @@ export class UserController {
   @Put('update')
   @UseGuards(UserGuard)
   async updateUserById(@Body() user: UserDto, @Res() res: Response): Promise<UserDto> {
-    if (user.name && user.name.length < 6)
+    if (user.name && !(await this.userService.nameFormatVerify(user.name)))
     {
-      res.status(403).send('Username is too short');
+      res.status(403).send('Username formatting is incorrect');
       return ;
     }
     if (user.name)

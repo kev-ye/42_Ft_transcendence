@@ -1,5 +1,6 @@
-import { Controller, Delete, Get, Logger, Param, Patch, Post, Req } from '@nestjs/common';
+import { Controller, Delete, Get, Logger, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { MessageBody } from '@nestjs/websockets';
+import { UserGuard } from 'src/auth/user.guard';
 import { ModeratorService } from './moderator.service';
 
 @Controller('moderator')
@@ -7,11 +8,13 @@ export class ModeratorController {
     constructor(private service: ModeratorService) {}
 
     @Get(':chatID')
+    @UseGuards(UserGuard)
     async getModerators(@Param('chatID') chatID: string) {
         return this.service.getModeratorsByChatID(chatID);
     }
 
     @Post()
+    @UseGuards(UserGuard)
     async createModerator(@MessageBody() data: any, @Req() req: any) {
         const userID = req.session.userId;
 
@@ -19,6 +22,7 @@ export class ModeratorController {
     }
 
     @Patch()
+    @UseGuards(UserGuard)
     async deleteModerator(@MessageBody() data: any, @Req() req: any) {
         const userID = req.session.userId;
         Logger.log("Trying delete moderator")
@@ -28,6 +32,7 @@ export class ModeratorController {
     }
 
     @Patch('all')
+    @UseGuards(UserGuard)
     async deleteAllModerators(@MessageBody() data: any, @Req() req: any) {
         const userID = req.session.userId;
 

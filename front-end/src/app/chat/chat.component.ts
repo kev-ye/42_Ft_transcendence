@@ -8,10 +8,8 @@ import { DialogCreateChat } from './dialogs/dialog-create-chat.component';
 import { DialogProtectedChat } from './dialogs/dialog-protected-chat.component';
 import { DialogSpectator } from './dialogs/dialog-spectator.component';
 import { DialogUser } from './dialogs/dialog-user.component';
-import { DialogBanned } from './dialogs/dialog-banned.component';
 import { DialogAddFriend } from './dialogs/dialog-add-friend.component';
 import { DialogMuted } from './dialogs/dialog-muted.component';
-import { DialogAccessChat } from './dialogs/dialog-access-chat.component';
 import { GlobalConsts } from '../common/global';
 import {DataSharedService} from "../service/data/data-shared.service";
 import {Subscription} from "rxjs";
@@ -360,9 +358,9 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 						this.fetchChannelHistory(channel);
 					} else if (data == 2) //user is banned
 					{
-						this.dialog.open(DialogBanned);
+						alert('You were banned from this channel')
 					} else if (data == 1) {
-						this.dialog.open(DialogAccessChat);
+						alert('You have no access to this channel')
 					}
 
 				}

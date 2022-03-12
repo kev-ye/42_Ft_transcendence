@@ -55,8 +55,7 @@ constructor(public dialog: MatDialog,
 
         this.http.get(`${GlobalConsts.userApi}/ladder/` + this.user.id, {withCredentials: true}).subscribe({
           next: (data: any) => {
-            this.user.ladder = data.points;
-			this.user.gamesPlayed = data.gamesPlayed;
+			this.user = {...this.user, ladder: data.points, gamesPlayed: data.gamesPlayed, win: data.win}
           },
           error: data => {
 

@@ -22,21 +22,14 @@ export class LadderService {
         return true;
     }
 
-    async getLadder() {
-        let users = await this.ladderRepo.find();
-        users.forEach(async v => {
-            //use userService to identify each IDs with the associated username
-        })
-        return users;
-    }
-
     async UserWins(id: string) {
         let tmp = await this.ladderRepo.findOne({id: id});
         if (!tmp)
             return false; //Can't find user in ladder table
         tmp.gamesPlayed++;
+        tmp.win++;
         tmp.points += POINTS_WINNING;        
-        await this.ladderRepo.update({id: id}, {gamesPlayed: tmp.gamesPlayed, points: tmp.points});
+        await this.ladderRepo.update({id: id}, {gamesPlayed: tmp.gamesPlayed, points: tmp.points, win: tmp.win});
     }
 
     async UserLoses(id: string) {
@@ -47,6 +40,6 @@ export class LadderService {
         tmp.points -= POINTS_LOSING;
         if (tmp.points < 0)
             tmp.points = 0;
-        await this.ladderRepo.update({id: id}, {gamesPlayed: tmp.gamesPlayed, points: tmp.points});
+        await this.ladderRepo.update({id: id}, {gamesPlayed: tmp.gamesPlayed, points: tmp.points, win: tmp.win});
     }
 }

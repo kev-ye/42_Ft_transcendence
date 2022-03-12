@@ -10,6 +10,9 @@ export class LadderEntity {
 	@Column({ nullable: false })
 	gamesPlayed: number;
 
+	@Column({default: 0})
+	win: number;
+
 	@Column({ nullable: false })
 	points: number; //start at 100 ? 500 ?
 }

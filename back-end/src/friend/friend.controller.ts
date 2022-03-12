@@ -18,7 +18,8 @@ export class FriendController {
       return;
     }
     const tmp = await this.service.addFriend(data);
-    if (tmp)
+    
+    if (!tmp)
       res.status(403).send('Could not add user');
     else
       res.status(200).send();

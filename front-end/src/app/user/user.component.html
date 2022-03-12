@@ -17,6 +17,7 @@
 
 		<div>
 			<p class="category"> Games played : <span class="information"> {{ user.gamesPlayed }} </span> </p>
+			<p class="category"> <span class="information" style="color: green;"> {{ user.win }} </span>- <span class="information" style="color: red;"> {{ user.gamesPlayed - user.win }}</span></p>
 		</div>
 	</div>
 
