@@ -164,7 +164,10 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
 			this.messages.forEach(msg => {
 				if (this.blocked.find(val => val == msg.user_id))
+				{
 					msg.message = '<message blocked>'
+					msg.type = 1;
+				}
 			})
 
 			this.chat.id = channel.id;
@@ -238,7 +241,10 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 				data.user_id = String(data.user_id);
 
 				if (this.blocked.find(val => val == data.user_id))
+				{
 					data.message = '<message blocked>'
+					data.type = 1;
+				}
 
 				this.addMessage(data);
 			})

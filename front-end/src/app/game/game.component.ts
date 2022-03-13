@@ -17,13 +17,14 @@ export class GameComponent implements OnInit, OnDestroy {
 
 	private user: any;
 	private subscription: Subscription = new Subscription();
-	private gameStarted: boolean = false;
 	private leftPage: boolean = false;
 	gameColor = 'rgb(20, 20, 20)';
 	movablesColor = 'rgb(255, 255, 255)'
 
 	public socket: Socket;
 	gameID: string;
+	first_name: string = '';
+	second_name: string = '';
 
 	game = {
 		WIDTH: 100,
@@ -112,6 +113,8 @@ export class GameComponent implements OnInit, OnDestroy {
 					{
 						this.gameID = data.game_id;
 						tmp.close();
+						this.first_name = data.first;
+						this.second_name = data.second;
 					}
 					else
 					{
@@ -151,6 +154,8 @@ export class GameComponent implements OnInit, OnDestroy {
 
 		this.socket.on('joinedGame', (data: any) => {
 			this.gameID = data.game_id;
+			this.first_name = data.first;
+			this.second_name = data.second;
 		})
 
 		this.subscription.add(this.userApi.getUser().subscribe({
@@ -205,13 +210,6 @@ export class GameComponent implements OnInit, OnDestroy {
 
 	}
 
-	start(): void {
-		if (!this.gameStarted) {
-			this.gameStarted = true
-			this.resetBall()
-			window.requestAnimationFrame(() => this.moveBall());
-		}
-	}
 
 	startMatchmaking() {
 		this.socket.emit('startMatchmaking')
