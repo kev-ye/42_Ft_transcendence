@@ -1,5 +1,5 @@
 <!-- tool bar -->
-<mat-toolbar [ngClass]="isLogin? 'toolbar' : 'toolbar-offline'">
+<mat-toolbar [ngClass]="isLogin ? 'toolbar' : 'toolbar-offline'">
 	<div *ngIf="isLogin">
 		<button mat-raised-button mat-icon-button (click)="userSidenav.toggle(); openUser(userSidenav)" class="item">
 			<mat-icon class="material-icon">{{ userSidenav.opened ? 'close' : 'person' }}</mat-icon>

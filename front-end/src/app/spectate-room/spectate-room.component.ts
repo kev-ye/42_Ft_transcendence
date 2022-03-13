@@ -1,5 +1,5 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from "@angular/core";
+import { HttpClient } from '@angular/common/http';
 import { Router } from "@angular/router";
 
 @Component({
@@ -29,10 +29,13 @@ import { Router } from "@angular/router";
 	ngOnInit(): void {
 		this.http.get('/pongApi/game/').subscribe((games: any) => {
 			if (games) {
-				//this.games = games; // to replace with line below
-				 this.games = games.filter((game: any) => game.game_state === 1);
+				this.games = games.filter((game: any) => game.game_state === 1);
 			}
 		});
+	}
+
+	getToGameRoom(): any {
+		this.router.navigate(['game_room']).then();
 	}
 
 	spectateGame(id: string) {

@@ -1,5 +1,9 @@
+.btn-back {
+	margin: 80px 0 0 20px;
+}
+
 .container {
-	margin: 120px auto;
+	margin: 80px auto;
 	text-align: center;
 	justify-content: center;
 }
@@ -22,10 +26,6 @@ h2 {
 
 .form-wrapper {
 	margin-top: 50px;
-}
-
-.btn-back {
-	margin: 80px 0 0 20px;
 }
 
 .no-game {

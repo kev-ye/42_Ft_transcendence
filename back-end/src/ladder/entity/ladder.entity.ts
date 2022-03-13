@@ -10,7 +10,7 @@ export class LadderEntity {
 	@Column({ nullable: false })
 	gamesPlayed: number;
 
-	@Column({default: 0})
+	@Column({ default: 0 })
 	win: number;
 
 	@Column({ nullable: false })

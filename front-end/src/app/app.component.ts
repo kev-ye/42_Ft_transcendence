@@ -14,9 +14,9 @@ import { UserComponent } from './user/user.component';
 import { ChatComponent } from './chat/chat.component';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+	selector: 'app-root',
+	templateUrl: './app.component.html',
+	styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit, OnDestroy {
 	title: string = GlobalConsts.siteTitle;
@@ -34,9 +34,8 @@ export class AppComponent implements OnInit, OnDestroy {
 		private router: Router,
 		private location: PlatformLocation,
 		private userAuth: UserAuthService,
-		private userApi: UserApiService,
 		private data: DataSharedService
-	) {}
+	) { }
 
 	ngOnInit() {
 		this.subscription.add(this.data.isLoginData.subscribe(data => this.isLogin = data));
@@ -96,7 +95,7 @@ export class AppComponent implements OnInit, OnDestroy {
 	roomActive() {
 		this.inRoom = !this.inRoom;
 		if (this.inRoom)
-				this.router.navigate(['game_room']).then();
+			this.router.navigate(['game_room']).then();
 		else {
 			const result: boolean = confirm('Leave room?');
 			if (result)
@@ -107,12 +106,12 @@ export class AppComponent implements OnInit, OnDestroy {
 	}
 
 	joinGame(id: string) {
-		this.router.navigate(['play'], {queryParams: {id: id}}).then()
+		this.router.navigate(['play'], { queryParams: { id: id } }).then()
 	}
 
-/*
- private
- */
+	/*
+	 private
+	 */
 	private _logOut() {
 		this.subscription.add(this.userAuth.logout().subscribe({
 			next: _ => {

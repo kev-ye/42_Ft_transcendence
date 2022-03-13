@@ -12,9 +12,9 @@ import { DataSharedService } from "../service/data/data-shared.service";
 
 
 @Component({
-  selector: 'app-user',
-  templateUrl: './user.component.html',
-  styleUrls: ['./user.component.css']
+	selector: 'app-user',
+	templateUrl: './user.component.html',
+	styleUrls: ['./user.component.css']
 })
 export class UserComponent implements OnInit {
 	private subscription: Subscription = new Subscription();
@@ -30,46 +30,48 @@ export class UserComponent implements OnInit {
 	isLogin: boolean = true;
 	@Output() closeEmitter = new EventEmitter<boolean>()
 
-constructor(public dialog: MatDialog,
+	constructor(public dialog: MatDialog,
 		private http: HttpClient,
 		private router: Router,
 		private userApi: UserApiService,
 		private userAuth: UserAuthService,
 		private data: DataSharedService) { }
 
-  refreshUserDetails() {
-    //load data from backend server
+	refreshUserDetails() {
+		//load data from backend server
 
-    this.http.get(`${GlobalConsts.userApi}/user/id/`, {withCredentials: true}).subscribe({
-      next: data => {
-        if (!data) {
-          return ;
-        }
-        // console.log("fetched user details", data);
-        const tmp = data as any;
-        this.user = tmp;
-        this.user.username = tmp.name;
-        this.user.avatar = `${GlobalConsts.userApi}/image/user/` + this.user.id + `?random=${Math.random()}`;
+		this.http.get(`${GlobalConsts.userApi}/user/id/`, { withCredentials: true }).subscribe({
+			next: data => {
+				if (!data) {
+					return;
+				}
+				// console.log("fetched user details", data);
+				const tmp = data as any;
+				this.user = tmp;
+				this.user.username = tmp.name;
+				this.user.avatar = `${GlobalConsts.userApi}/image/user/` + this.user.id + `?random=${Math.random()}`;
 
-        this.connected = true;
+				this.connected = true;
 
-        this.http.get(`${GlobalConsts.userApi}/ladder/` + this.user.id, {withCredentials: true}).subscribe({
-          next: (data: any) => {
-			this.user = {...this.user, ladder: data.points, gamesPlayed: data.gamesPlayed, win: data.win}
-          },
-          error: data => {
+				this.http.get(`${GlobalConsts.userApi}/ladder/` + this.user.id, { withCredentials: true }).subscribe({
+					next: (data: any) => {
+						this.user = { ...this.user, ladder: data.points, gamesPlayed: data.gamesPlayed, win: data.win }
+					},
+					error: data => {
 
-        }});
-    }, error: data => {
+					}
+				});
+			}, error: data => {
 
-    }});
-  }
+			}
+		});
+	}
 
-  ngOnInit(): void {
+	ngOnInit(): void {
 		this.subscription.add(this.data.isLoginData.subscribe(data => this.isLogin = data));
 
 		if (this.isLogin) {
-    	this.refreshUserDetails();
+			this.refreshUserDetails();
 			this.subscription.add(this.userApi.getUser().subscribe({
 				next: (v) => {
 					if (v.twoFactorSecret) {
@@ -81,49 +83,49 @@ constructor(public dialog: MatDialog,
 				complete: () => console.info('Complete: get user in main')
 			}))
 		}
-  }
+	}
 
-  ngOnDestroy() {
+	ngOnDestroy() {
 		this.subscription.unsubscribe();
-  }
+	}
 
-  openImageDialog() {
-    const tmp = this.dialog.open(DialogChangeImage, {
-      data: {
-        user_id: this.user.id
-        //data
-      }
-    });
-    tmp.afterClosed().subscribe(data => {
-		this.user.avatar = `${GlobalConsts.userApi}/image/user/` + this.user.id + `?random=${Math.random()}`;
-    });
-  }
+	openImageDialog() {
+		const tmp = this.dialog.open(DialogChangeImage, {
+			data: {
+				user_id: this.user.id
+				// data
+			}
+		});
+		tmp.afterClosed().subscribe(data => {
+			this.user.avatar = `${GlobalConsts.userApi}/image/user/` + this.user.id + `?random=${Math.random()}`;
+		});
+	}
 
-  openUsername() {
-    if (this.changeUsername)
-      this.changeUsername = false;
-    else
-      this.changeUsername = true;
-    const ref = this.dialog.open(DialogChangeUsername, {
-      data: {
-        id: this.user.id
-      } //change data to send to dialog
-    });
-    ref.afterClosed().subscribe(data => {
-      if (data == true)
-        this.refreshUserDetails();
-    })
-  }
+	openUsername() {
+		if (this.changeUsername)
+			this.changeUsername = false;
+		else
+			this.changeUsername = true;
+		const ref = this.dialog.open(DialogChangeUsername, {
+			data: {
+				id: this.user.id
+			} //change data to send to dialog
+		});
+		ref.afterClosed().subscribe(data => {
+			if (data == true)
+				this.refreshUserDetails();
+		})
+	}
 
 	turnOnTwoFa() {
 		this.subscription.add(this.userAuth.twoFaGenerate().subscribe({
 			next: (v) => {
-			this.qrCode = v.qr;
-			this.twoFaActive = true;
+				this.qrCode = v.qr;
+				this.twoFaActive = true;
 			},
 			error: (e) => {
-			console.error('Error: two-fa generate:', e);
-			alert('Something wrong, try again!');
+				console.error('Error: two-fa generate:', e);
+				alert('Something wrong, try again!');
 			},
 			complete: () => console.info('Complete: two-fa generate done')
 		}));
@@ -132,12 +134,12 @@ constructor(public dialog: MatDialog,
 	turnOffTwoFa() {
 		this.subscription.add(this.userAuth.twoFaTurnOff().subscribe({
 			next: _ => {
-			this.qrCode = '';
-			this.twoFaActive = false;
+				this.qrCode = '';
+				this.twoFaActive = false;
 			},
 			error: (e) => {
-			console.error('Error: two-fa: turn off:', e);
-			alert('Something wrong, try again!');
+				console.error('Error: two-fa: turn off:', e);
+				alert('Something wrong, try again!');
 			},
 			complete: () => console.info('Complete: two-fa turn off done')
 		}));
