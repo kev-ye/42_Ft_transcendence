@@ -82,7 +82,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 	@Output() join = new EventEmitter<string>();
 
 	ngAfterViewChecked(): void {
-		if (this.scroll) {
+		if (this.scroll && this.chat.id) {			
 			if (this.chat.public && this.framePublic)
 				this.framePublic.nativeElement.scroll({ top: this.framePublic.nativeElement.scrollHeight, behavior: "smooth" });
 			else if (!this.chat.public && this.framePrivate)
@@ -329,7 +329,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 	}
 
 	openPrivate(friend: any) {
-
 		this.socket.emit('connectRoom', { user_id: this.user.id, chat: { public: false, id: friend.id } });
 		this.fetchPrivateMessage(friend);
 
@@ -368,7 +367,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 	}
 
 	openPublic(channel: any) {
-
 		if (channel.access == 1) //protected channel
 		{
 			const tmp = this.dialog.open(DialogProtectedChat, {
