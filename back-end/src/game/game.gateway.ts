@@ -292,9 +292,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   async startGame(gameID: string) {
     const game = await this.service.getGameById(gameID);
-    if (!game) return;
+    if (!game || !game.first_user || !game.second_user || !game.first || !game.second) {
+      this.server.to(gameID).emit('error', {error: 'Could not load game, please try again'});
+      return ;
+    }
 
-    this.server.to(gameID).emit('joinedGame', { game_id: gameID });
+    
+    this.server.to(gameID).emit('joinedGame', { game_id: gameID, first: (await this.userService.getUserById(game.first_user))?.name, second: (await this.userService.getUserById(game.second_user))?.name });
     //wait 3 seconds to start
     await this.sleep(3000);
 
@@ -385,12 +389,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       }
 
       //paddle collision
-      if (data.pos.x <= -45 && data.speed.x < 0) {
+      if (data.pos.x <= -45 && data.pos.x - data.speed.x > -45 && data.speed.x < 0) {
         if (Math.abs(data.pos.y - data.first) <= this.paddle.HEIGHT / 2) {
           data.pos.x = -45;
           data.speed.x *= -1;
         }
-      } else if (data.pos.x >= 45 && data.speed.x > 0) {
+      } else if (data.pos.x >= 45 && data.pos.x - data.speed.x < 45 && data.speed.x > 0) {
         if (Math.abs(data.pos.y - data.second) <= this.paddle.HEIGHT / 2) {
           data.pos.x = 45;
           data.speed.x *= -1;

@@ -9,15 +9,15 @@
                     </p>
                 </ng-template>
 
-            <div *ngIf="!chat.show" id="roomsList" style="height: 540px; overflow-x: hidden; overflow-y: scroll;">
-                <div style="height: 25px; position: relative;">
+            <div *ngIf="!chat.show" id="roomsList" style="height: 100%; overflow-x: hidden; overflow-y: scroll;">
+                <div style="height: 5%; position: relative;">
 
                     <div (click)="createChat()" style="position: absolute; left: 50%; top: 50%; cursor: pointer; transform: translate(-50%, -50%);" (click)="createChat()">
                         Create Chat
                     </div>
                 </div>
                 <div *ngFor="let channel of channelList">
-                    <div style="position: relative; height: 25px; cursor: pointer;" (click)="openPublic(channel)" class="channel">
+                    <div style="position: relative; height: 10%; cursor: pointer;" (click)="openPublic(channel)" class="channel">
                         <mat-icon *ngIf="channel.access == 1"> lock </mat-icon>
                         <mat-icon *ngIf="channel.access == 0"> lock_open </mat-icon>
                         <mat-icon *ngIf="channel.access == 2"> block_icon </mat-icon>
@@ -30,8 +30,8 @@
                     </div>
                 </div>
             </div>
-            <div *ngIf="chat.show" style="overflow: hidden; height: 580px; width: 350px">
-                <div class="ChatInformation" style="position: relative; height: 50px; width: 350px;">
+            <div *ngIf="chat.show" style="overflow: hidden; height: 100%; width: 350px">
+                <div class="ChatInformation" style="position: relative; height: 15%; width: 350px;">
                     <div (click)="openChannelSettings()" style="position: absolute; top: 0%; left: 50%; transform: translate(-50%, 0); text-decoration: underline;" [ngStyle]="{'font-weight': chat.moderator ? 'bold': '',
                                                                                               'cursor': chat.moderator ? 'pointer': 'default'}">
                         {{ chat.name }}
@@ -76,7 +76,7 @@
                   </p>
             </ng-template>
             <div id="friendList" *ngIf="!chat.show">
-                <div style="position: relative; height: 25px;">
+                <div style="position: relative; height: 20px;">
 
                     <div class="addFriend" (click)="openFriendDialog()"> Friends </div>
                 </div>
@@ -97,7 +97,7 @@
                     </div>
                 </div>
             </div>
-            <div *ngIf="chat.show" style="overflow: hidden; height: 580px; width: 350px; position: relative;">
+            <div *ngIf="chat.show" style="overflow: hidden; 100%; width: 350px; position: relative;">
                 <div class="ChatInformation" style="position: relative; height: 8%;">
                     <div style="position: absolute; top: 0%; left: 50%; transform: translate(-50%, 0); text-decoration: underline;">
                         {{ chat.name }}

@@ -11,6 +11,12 @@
 			{{ player2.score | number:"2.0-0" }}
 		</p>
 	</div>
+	
+	<div *ngIf="first_name && second_name; font-family: 'Press Start 2P';" style="height: 30px">
+		<div style="position: absolute; left: 20%; font-family: 'Press Start 2P';"> {{first_name}} </div>
+		<div style="position: absolute; right: 20%; font-family: 'Press Start 2P';">{{second_name}}</div>
+	</div>
+
 
 	<div id="game-wrapper">
 		<svg class="game" [attr.fill]="gameColor">
@@ -58,9 +64,9 @@
 
 
 	<div id="game-preferences">
-		<div class="preferences">
+		<!-- <div class="preferences">
 			<button  class="btn btn-dark" (click)="start()">Start</button>
-		</div>
+		</div> -->
 		<div class="preferences">
 			<button class="btn" (click)="changeColor()">Change Background Color</button>
 		</div>
