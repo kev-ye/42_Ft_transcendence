@@ -72,6 +72,10 @@ export class GameComponent implements OnInit, OnDestroy {
 		// this.start()
 	}
 
+	async sleep(ms: number) {
+		return new Promise((r) => setTimeout(r, ms));
+	  }
+
 	showError(error: string, redirect: boolean = true) {
 		const tmp = this.dialog.open(DialogError, {
 			data: {
@@ -170,8 +174,9 @@ export class GameComponent implements OnInit, OnDestroy {
 			timeout: 3000
 		}).on('connect', () => {
 			this.socket.on('user', () => {
-				this.http.get(`${GlobalConsts.userApi}/user/id`).subscribe((data: any) => {
+				this.http.get(`${GlobalConsts.userApi}/user/id`).subscribe(async (data: any) => {
 					this.socket.emit('user', {id: data.id});
+					await this.sleep(500);
 					this.initSocket();
 				})
 			});

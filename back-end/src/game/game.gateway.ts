@@ -387,10 +387,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       //paddle collision
       if (data.pos.x <= -45 && data.speed.x < 0) {
         if (Math.abs(data.pos.y - data.first) <= this.paddle.HEIGHT / 2) {
+          data.pos.x = -45;
           data.speed.x *= -1;
         }
       } else if (data.pos.x >= 45 && data.speed.x > 0) {
         if (Math.abs(data.pos.y - data.second) <= this.paddle.HEIGHT / 2) {
+          data.pos.x = 45;
           data.speed.x *= -1;
         }
       }
