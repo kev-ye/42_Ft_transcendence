@@ -69,12 +69,24 @@ export class ChannelsController {
     return await this.service.checkPassword(data.password, chatID);
   }
 
+  @Get('ban/:id')
+  @UseGuards(UserGuard)
+  async getBanByChat(@Param('id') id: string) {
+    return await this.service.getBanByChat(id);
+  }
+
   @Post('ban')
   @UseGuards(UserGuard)
   async banUser(@Req() req: any, @MessageBody() data: any) {
     const userID = req.session.userId;
 
     return await this.service.banUser(userID, data);
+  }
+
+  @Patch('ban')
+  @UseGuards(UserGuard)
+  async unbanUser(@Req() req: any, @MessageBody() data: any) {
+    return await this.service.deleteBan(req.session.userId, data);
   }
 
   @Post('mute')
@@ -105,10 +117,14 @@ export class ChannelsController {
 
   @Patch('moderator')
   @UseGuards(UserGuard)
-  async deleteModerator(@MessageBody() data: any, @Req() req: any) {
+  async deleteModerator(@MessageBody() data: any, @Req() req: any, @Res() res: Response) {
     const userID = req.session.userId;
 
-    return await this.service.deleteModerator(userID, data);
+    const tmp = await this.service.deleteModerator(userID, data);
+    if (tmp)
+      res.status(200).send();
+    else
+      res.status(403).send();
   }
 
   @Post('invite/name')

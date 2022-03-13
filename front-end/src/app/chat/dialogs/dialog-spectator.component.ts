@@ -13,10 +13,10 @@ import { DialogUser } from "./dialog-user.component";
   })
   export class DialogSpectator implements OnInit{
     constructor(private http: HttpClient, @Inject(MAT_DIALOG_DATA) public data: any, public dialogRef: MatDialogRef<DialogSpectator>, public dialog: MatDialog) {
-      http.get(`${GlobalConsts.userApi}/moderator/` + data.chat.id).subscribe(data => {
-        this.moderators = data as any[];
+      http.get(`${GlobalConsts.userApi}/moderator/` + data.chat.id).subscribe(val => {
+        this.moderators = val as any[];
         
-      })
+      })      
     }
     public moderators: any[] = [];
     public users: any[] = [];
@@ -78,8 +78,8 @@ import { DialogUser } from "./dialog-user.component";
   
     banUser(usr: any) {
       
-      const sock: Socket = this.data.socket;
-     sock.emit('ban', {
+    const sock: Socket = this.data.socket;
+    sock.emit('ban', {
        user_id: usr.id,
        chat_id: this.data.chat.id
      });

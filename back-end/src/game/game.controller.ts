@@ -50,7 +50,7 @@ export class GameController {
             res.send({id: newGame.id, join: true});
             setTimeout(async () => {
                 const tmp = await this.service.getGameById(newGame.id);
-                if (tmp.first == null)
+                if (tmp && tmp.first == null)
                     this.service.deleteGameById(newGame.id);
             }, 5000);
             return ;

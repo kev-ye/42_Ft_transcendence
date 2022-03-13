@@ -50,12 +50,12 @@ export class AppComponent implements OnInit, OnDestroy {
 			)
 			.subscribe());
 
-		this.location.onPopState(() => {
-			if (this.isLogin) {
-				window.alert("You are logout");
-				this._logOut();
-			}
-		});
+		// this.location.onPopState(() => {
+		// 	if (this.isLogin) {
+		// 		window.alert("You are logout");
+		// 		this._logOut();
+		// 	}
+		// });
 	}
 
 	ngOnDestroy() {

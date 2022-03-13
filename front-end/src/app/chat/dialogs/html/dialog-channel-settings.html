@@ -107,6 +107,8 @@
 		<label for="accessChat" style="display: block; text-align: center;"> Access Mode </label>
 		<br>
 		<button class="btn" (click)="changeChat(passwordOne.value, passwordTwo.value)"> Update </button>
+		<button class="btn" (click)="openModerators()"> List Moderators </button>
+		<button class="btn" (click)="openBans()"> List Ban </button>
 		<div #printError class="error"></div>
 	</div>
 

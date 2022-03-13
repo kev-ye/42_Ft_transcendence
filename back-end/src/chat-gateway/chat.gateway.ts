@@ -115,7 +115,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       {
         const sock_2 = await this.getSocket(sock.id);
         sock_2.emit('ban');
-        this.switchChannel(sock);
+        this.switchChannel(sock_2);
       }
     }
   }

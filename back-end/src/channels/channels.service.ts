@@ -123,10 +123,10 @@ export class ChannelsService {
   ) {
     if (!(await this.checkOwner(userID, data))) {
       Logger.log('Deleting moderator request made by non-owner');
-      return;
+      return null;
     } else if (await this.checkOwner(data.user_id, data)) {
       Logger.log('Deleting moderator request made on owner');
-      return;
+      return null;
     }
 
     return await this.modService.deleteModerator(userID, data);
@@ -165,6 +165,10 @@ export class ChannelsService {
     else if (await this.checkOwner(data.user_id, data)) return;
 
     return await this.banService.banUser(data);
+  }
+
+  async getBanByChat(chatID: string) {
+    return await this.banService.getBanByChat(chatID);
   }
 
   async getBanByUser(userID: string) {

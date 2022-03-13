@@ -29,6 +29,8 @@ import { DialogError } from './game/dialogs/error.component';
 import { SpectateRoom } from './spectate-room/spectate-room.component';
 import { DialogChangeUsername } from './user/dialogs/dialog-change-username.component';
 import { DialogChangeImage } from './user/dialogs/dialog-change-image.component';
+import { DialogModerators } from './chat/dialogs/dialog-moderators.component';
+import { DialogBans } from './chat/dialogs/dialog-bans.component';
 
 @NgModule({
   declarations: [
@@ -50,6 +52,8 @@ import { DialogChangeImage } from './user/dialogs/dialog-change-image.component'
     DialogMuted,
     DialogMute,
     DialogError,
+    DialogBans,
+    DialogModerators,
     DialogChangeUsername,
     DialogChangeImage,
     GameRoomComponent,
