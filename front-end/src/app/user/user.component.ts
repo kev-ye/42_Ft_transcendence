@@ -95,8 +95,7 @@ constructor(public dialog: MatDialog,
       }
     });
     tmp.afterClosed().subscribe(data => {
-      if (data)
-	  	this.user.avatar = `${GlobalConsts.userApi}/image/user/` + this.user.id + `?random=${Math.random()}`;
+		this.user.avatar = `${GlobalConsts.userApi}/image/user/` + this.user.id + `?random=${Math.random()}`;
     });
   }
 

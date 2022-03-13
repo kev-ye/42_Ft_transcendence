@@ -54,10 +54,11 @@ import { GlobalConsts } from "src/app/common/global";
         {
           ext = (image.name as string).substring(index).toUpperCase();
   
-          if (ext != ".PNG" && ext != ".JPG")
-          {
-            return;
-          }
+          // if (ext != ".PNG" && ext != ".JPG")
+          // {
+          //   alert('Image extension is not authorized (.png or .jpg only)');
+          //   return;
+          // }
           let fd = new FormData();
           fd.append('image', image);
           this.http.post<FormData>(`${GlobalConsts.userApi}/image/upload/` + this.data.user_id, fd, {headers: {extension: ext}, withCredentials: true}).subscribe((res) => {

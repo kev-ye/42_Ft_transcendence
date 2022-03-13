@@ -18,7 +18,7 @@
 </div>
 <br>
 <form>
-    <input type="file" name="newImage" (change)="changeImage($event)" #file>
+    <input type="file" name="newImage" (change)="changeImage($event)" #file accept="image/*">
     <br>
     <button type="button" (click)="submitImage()"> Submit image </button>
     <button type="button" (click)="deleteImage()"> Delete </button>
