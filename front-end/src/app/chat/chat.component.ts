@@ -14,7 +14,7 @@ import { GlobalConsts } from '../common/global';
 import {DataSharedService} from "../service/data/data-shared.service";
 import {Subscription} from "rxjs";
 
-export const MAX_MESSAGE = 25;
+export const MAX_MESSAGE = 50;
 
 @Component({
 	selector: 'app-chat',
@@ -274,7 +274,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 		username?: string,
 	}) {
 		this.messages.push({ id: data.id, username: data.username, message: data.message, user_id: data.user_id, type: data.type });
-		if (this.messages.length > 25)
+		if (this.messages.length > MAX_MESSAGE)
 			this.messages.splice(0, 1);
 		this.generateRandomColors();
 		this.scroll = true;
