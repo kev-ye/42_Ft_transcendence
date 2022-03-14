@@ -359,6 +359,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 				next: (data) => {
 					
 					if (data == 0) {
+						
 						this.socket.emit('connectRoom', { user_id: this.user.id, chat: { public: true, id: channel.id }, password: this.password });
 						this.messages = [];
 						this.chat = channel;
@@ -378,16 +379,16 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 			});
 	}
 
-	openPublic(channel: any) {
+	openPublic(channel: any) {		
 		if (channel.access == 1) //protected channel
-		{
+		{			
 			const tmp = this.dialog.open(DialogProtectedChat, {
 				data: {
 					id: channel.id
 				}
 			});
 
-			tmp.afterClosed().subscribe(data => {
+			tmp.afterClosed().subscribe(data => {				
 				if (data && data.password)
 					this.password = data.password;
 				if (data && data.success) {
@@ -539,6 +540,8 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 			this.fetchChannels()
 			if (data)
 			{
+				if (data.password)
+					this.password = data.password;
 				this.connectRoom({...data, moderator: true, creator: true});
 			}
 		})

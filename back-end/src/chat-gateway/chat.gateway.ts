@@ -228,6 +228,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       password?: string;
     },
   ) {
+    
     const user = await this.activeService.getUserBySocketId(client.id);
     if (!user || !user.user_id) return;
 
@@ -258,6 +259,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('disconnectRoom')
   async disconnectChannel(@ConnectedSocket() client: Socket) {
+    
     const user = await this.activeService.getUserBySocketId(client.id);
     if (!user || !user.chat_id)
       return ;
