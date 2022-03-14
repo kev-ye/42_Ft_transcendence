@@ -9,7 +9,7 @@
                     </p>
                 </ng-template>
 
-            <div *ngIf="!chat.show" id="roomsList" style="height: 75vh; overflow-x: hidden; overflow-y: scroll;">
+            <div *ngIf="!chat.show" id="roomsList" style="height: 90vh; overflow-x: hidden; overflow-y: scroll;">
                 <div style="height: 5vh; position: relative;">
 
                     <div (click)="createChat()" style="position: absolute; left: 50%; top: 50%; cursor: pointer; transform: translate(-50%, -50%);" (click)="createChat()">
@@ -41,7 +41,7 @@
                     <mat-icon (click)="inviteGame()" class="btn" style="bottom: 0%; right: 0%; margin-right: 15px;"> gamepad </mat-icon>
                     <mat-icon (click)="openSpec()" class="btn" style="bottom: 0%; left: 0%; margin-left: 15px;"> remove_red_eye </mat-icon>
                 </div>
-                <div style="height: 65%; width: 350px; position: relative; background-color: rgb(177, 177, 177); overflow-x: hidden; overflow-y: scroll; -ms-overflow-style: none; scrollbar-width: none;" #framePublic>
+                <div style="width: 350px; position: relative; background-color: rgb(177, 177, 177); overflow-x: hidden; overflow-y: scroll; -ms-overflow-style: none; scrollbar-width: none;" class="responsive" #framePublic>
                     <div *ngFor="let msg of messages; let index = index">
                         <div style="position: relative;">
                             <div [ngClass]="{'colorLabel': msg.user_id != user.id && msg.type == 1}" [style.--color]="colorMap.get(msg.user_id)">
@@ -60,7 +60,7 @@
                         </div>
                     </div>
                 </div>
-                <div style="position: relative; height: 100%; padding-top: 10px; background-color: rgb(201, 201, 201); width: 350px;">
+                <div style="padding-top: 10px; width: 350px;" class="inputDiv">
                     <form (ngSubmit)="sendMessage()">
                         <input type="text" placeholder="Enter text.." style="width: -webkit-fill-available; height: 30px; position: absolute; border-radius: 15px; width: 80%; left: 50%; transform: translate(-50%, 0);" #input>
                     </form>
@@ -106,7 +106,7 @@
                     <mat-icon (click)="inviteGame()" class="btn" style="bottom: 0%; right: 0%; margin-right: 15px;"> gamepad </mat-icon>
                     <mat-icon (click)="openUserDialog()" class="btn" style="bottom: 0%; left: 0%; margin-left: 15px;"> person_pin </mat-icon>
                 </div>
-                <div style="height: 65%; width: 350px; position: relative; background-color: rgb(177, 177, 177); overflow-x: hidden; overflow-y: scroll; -ms-overflow-style: none; scrollbar-width: none;" #framePrivate>
+                <div style="width: 350px; position: relative; background-color: rgb(177, 177, 177); overflow-x: hidden; overflow-y: scroll; -ms-overflow-style: none; scrollbar-width: none;" #framePrivate class="responsive">
                     <div *ngFor="let msg of messages; let index = index">
                         <div style="position: relative;">
                             <div [ngClass]="{'colorLabel': msg.user_id != user.id && msg.type == 1}" [style.--color]="colorMap.get(msg.user_id)">
@@ -122,10 +122,10 @@
                         </div>
                     </div>
                 </div>
-                <div style="position: relative; height: 100%; padding-top: 10px; background-color: rgb(201, 201, 201); width: 350px;">
+                <div style="padding-top: 10px; width: 350px;" class="inputDiv">
                     <form (ngSubmit)="sendMessage()">
                         <!--<button type="submit" style="width: 100%;"> Send </button> -->
-                        <input type="text" placeholder="Enter text.." style="width: -webkit-fill-available; height: 30px; position: absolute; border-radius: 15px; width: 80%; left: 50%; transform: translate(-50%, 0); margin-bottom: 35px;" #inputPrivate>
+                        <input type="text" placeholder="Enter text.." style="width: -webkit-fill-available; height: 30px; position: absolute; border-radius: 15px; width: 80%; left: 50%; transform: translate(-50%, 0);" #inputPrivate>
                     </form>
                 </div>
             </div>

@@ -2,13 +2,54 @@
 
 .background-one {
 	background-color: rgb(223, 223, 223);
-	height: 100%;
-	width: 343px;
-	border-top-right-radius: 15px;
-	border-bottom-right-radius: 15px;
+	height: 90%;
+	width: 350px;
 	position: fixed;
 	overflow-y: hidden;
 	overflow-x: hidden;
+}
+
+
+.inputDiv {
+	position: relative;
+	height: 100%;
+	min-height: 30px;
+}
+
+@media screen and (min-height: 585px) {
+	/* .inputDiv {
+		position: relative;
+		height: 100%;
+		min-height: 30px;
+	} */
+	.responsive {
+		height: 60%;
+	}
+
+}
+
+@media screen and (max-height: 585px) {
+	/* .inputDiv {
+		position: fixed;
+		height: 30px;
+		bottom: 70px;
+	}	 */
+
+	.responsive {
+		height: 40%;
+	}
+}
+
+@media screen and (max-height: 430px) {
+	/* .inputDiv {
+		position: fixed;
+		height: 30px;
+		bottom: 70px;
+	}	 */
+
+	.responsive {
+		height: 20%;
+	}
 }
 
 .inviteGame {
