@@ -27,7 +27,7 @@ export class GameService implements OnModuleInit {
     }
 
     async getAllGames() {
-        return await this.repo.find();
+        return await this.repo.find({order: {created: "DESC"}});
     }
 
     @WebSocketServer()

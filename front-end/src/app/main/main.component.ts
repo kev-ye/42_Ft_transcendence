@@ -54,21 +54,24 @@ export class MainComponent implements OnInit {
 			.subscribe((user: any) => this.user = user );
 
 		// get all games played
-		this.http.get('/pongApi/game/', { withCredentials: true }).subscribe((games: any) => {
-
-			if (!games || !this.user)
-				return;
-
-			this.games = games.filter((game: GameEntity) => game.first_user === this.user.id);
-
-			// get users for each game
-			for (let game of this.games) {
-				this.http.get(`${GlobalConsts.userApi}/user/id/` + game.first_user, { withCredentials: true })
-					.subscribe((user: any) => game.first_user_obj = user );
-
-				this.http.get(`${GlobalConsts.userApi}/user/id/` + game.second_user, { withCredentials: true })
-					.subscribe((user: any) => game.second_user_obj = user );
-			}
-		});
+		setTimeout(() => {
+			
+			this.http.get('/pongApi/game/', { withCredentials: true }).subscribe((games: any) => {
+	
+				if (!games || !this.user)
+					return;
+	
+				this.games = games.filter((game: GameEntity) => game.game_state == 2 && (game.first_user === this.user.id) || game.second_user == this.user.id);
+	
+				// get users for each game
+				for (let game of this.games) {
+					this.http.get(`${GlobalConsts.userApi}/user/id/` + game.first_user, { withCredentials: true })
+						.subscribe((user: any) => game.first_user_obj = user );
+	
+					this.http.get(`${GlobalConsts.userApi}/user/id/` + game.second_user, { withCredentials: true })
+						.subscribe((user: any) => game.second_user_obj = user );
+				}
+			});
+		}, 500);
 	}
 }
