@@ -1,33 +1,25 @@
 # Stage 1: build development image
-FROM node:16.13.2-alpine AS development
+FROM node:17-alpine AS development
 
 WORKDIR /pong/front-end/
 
-RUN npm cache clean --force
 COPY . .
-#COPY package*.json ./
 
-RUN npm install -g npm@8.5.4
 RUN npm install
 RUN npm install -g @angular/cli
-
 
 RUN npm run build
 
 EXPOSE 4200
 
 # Stage 2.1: build production - app image
-FROM node:16.13.2-alpine AS production_dist
+FROM node:17-alpine AS production_dist
 
 WORKDIR /pong/front-end
 
-RUN npm cache clean --force
 COPY . .
-#COPY package*.json ./
 
-RUN npm install -g npm@8.5.4
 RUN npm install
-
 
 RUN npm run build --configuration=production
 
