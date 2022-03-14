@@ -184,8 +184,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
     if ((await this.playerService.getPlayerByUserId(player.user_id)).find(val => val.game_id))
     {
-      client.emit('error', {error: 'You are already playing a game'})
+      client.emit('error', {error: 'You are already playing a game'});
+      return;
     }
+    await this.playerService.updatePlayer({id: player.id}, {status: 0});
     const game = await this.service.joinGame(player, data.game_id);
     if (game)
     {

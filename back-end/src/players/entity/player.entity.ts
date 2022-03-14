@@ -19,6 +19,6 @@ export class PlayerEntity {
     status: number;
     //0 - no status
     //1 - looking for game (matchmaking)
-    //2 - playing
+    //2 - playing ?
     //3 - spectating ?
 }
