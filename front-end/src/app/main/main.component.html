@@ -8,7 +8,7 @@
 <div class="history">
 	<h2>The Last games you played :</h2>
 
-	<h2 *ngIf="this.games && this.games.length === 0" class="no-game">No games played !</h2>
+	<h2 *ngIf="!this.games || this.games.length === 0" class="no-game">No games played !</h2>
 
 	<div *ngIf="this.games && this.games.length > 0" class="game-list">
 		<mat-list>

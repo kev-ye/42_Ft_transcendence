@@ -91,6 +91,10 @@
 	.main h1 {
 		font-size: 17px;
 	}
+
+	.hero {
+		width: 80%;
+	}
 	
 	.history h2 {
 		font-size: 12px;
