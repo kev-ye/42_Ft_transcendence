@@ -46,6 +46,9 @@ export class ChannelsService {
       const tab = await this.modService.getModeratorsByChatID(data.id);
       if (tab.find((val) => val.user_id == userID)) data['moderator'] = true;
       else data['moderator'] = false;
+
+      if (data.creator_id && userID == data.creator_id) data['creator'] = true;
+      else data['creator'] = false;
     }
     return tmp;
   }
@@ -91,10 +94,14 @@ export class ChannelsService {
       { ...data, creator_id: userID },
     );
   }
+  
+  async deleteCreator(chatID: string) {
+    return await this.repo.update({id: chatID}, {creator_id: null});
+  }
 
   async createChannel(userID: string, data: any) {
     let result;
-      
+        
     if (data.access == 1)
       result = this.repo.create({ ...data, creator_id: userID, password: await argon.hash(data.password)});
     else
@@ -102,10 +109,11 @@ export class ChannelsService {
 
     if (!result) return;
     const tmp = (await this.repo.save(result)) as any;
-    return await this.modService.createModerator(userID, {
+    await this.modService.createModerator(userID, {
       user_id: data.creator_id,
       chat_id: tmp.id,
     });
+    return tmp;
   }
 
   async createModerator(
@@ -122,10 +130,6 @@ export class ChannelsService {
     data: { chat_id: string; user_id: string },
   ) {
     if (!(await this.checkOwner(userID, data))) {
-      Logger.log('Deleting moderator request made by non-owner');
-      return null;
-    } else if (await this.checkOwner(data.user_id, data)) {
-      Logger.log('Deleting moderator request made on owner');
       return null;
     }
 
@@ -208,6 +212,7 @@ export class ChannelsService {
   }
 
   async deleteChannel(userID: string, chatID: string) {
+    await this.repo.delete({id: chatID});
     await this.modService.deleteAllModerator({ chat_id: chatID });
     await this.muteService.deleteAllByChatId(chatID);
     await this.privateInvService.deleteAllByChat(chatID);

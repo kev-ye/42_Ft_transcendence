@@ -12,7 +12,7 @@
 		</p>
 	</div>
 	
-	<div *ngIf="first_name && second_name; font-family: 'Press Start 2P';" style="height: 30px">
+	<div *ngIf="first_name && second_name;" style="height: 30px; font-family: 'Press Start 2P';">
 		<div style="position: absolute; left: 20%; font-family: 'Press Start 2P';"> {{first_name}} </div>
 		<div style="position: absolute; right: 20%; font-family: 'Press Start 2P';">{{second_name}}</div>
 	</div>

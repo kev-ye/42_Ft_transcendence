@@ -56,7 +56,7 @@ export class MainComponent implements OnInit {
 		// get all games played
 		this.http.get('/pongApi/game/', { withCredentials: true }).subscribe((games: any) => {
 
-			if (!games)
+			if (!games || !this.user)
 				return;
 
 			this.games = games.filter((game: GameEntity) => game.first_user === this.user.id);

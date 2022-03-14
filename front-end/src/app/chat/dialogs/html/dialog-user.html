@@ -16,6 +16,14 @@
 			<img [src]="link" class="avatar">
 		</div>
 		<br>
+		<div>
+			Games Played : {{ ladder.gamesPlayed }}
+			<br>
+			Wins: {{ ladder.win }}
+			<br>
+			Loss: {{ ladder.gamesPlayed - ladder.win }}
+		</div>
+		<br>
 		<div *ngIf="my_id != user.id">
 
 			<button *ngIf="!friend" (click)="addFriend()"> Add as friend </button>

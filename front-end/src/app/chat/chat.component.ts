@@ -39,7 +39,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 		user_id: string,
 		name: string,
 		moderator: boolean,
-		creator_id: string
+		creator_id: string,
 	} = {
 		show: false,
 		public: true,
@@ -91,12 +91,17 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 		}
 	}
 
+	async sleep(ms: number) {
+		return new Promise((r) => setTimeout(r, ms));
+	  }
+
 	fetchChannels() {
-		this.http.get(`${GlobalConsts.userApi}/channels/`, {
+		return this.http.get(`${GlobalConsts.userApi}/channels/`, {
 			withCredentials: true
 		}).subscribe({
 			next: data => {
 				this.channelList = data as any[];
+				
 			},
 			error: _ => {
 			}});
@@ -128,7 +133,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 	}
 
 	openChannelSettings() {
-		if (!this.chat.moderator)
+		if (!this.user || !this.chat || this.chat.creator_id != this.user.id)
 			return;
 		const tmp = this.dialog.open(DialogChannelSettings, {
 			data: {
@@ -360,6 +365,8 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 						this.chat.show = true;
 						this.chat.public = true;
 						this.scroll = true;
+						console.log("joined channel", this.chat, this.user);
+						
 						this.fetchChannelHistory(channel);
 					} else if (data == 2) //user is banned
 					{
@@ -419,17 +426,19 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 		})
 	}
 
-	openFriendList(event?: any) {
-		this.chat.show = false;
-
+	async openFriendList(event?: any) {
+		
+		this.socket.emit('disconnectRoom');
+		this.chat.moderator = false;
+		await this.sleep(100);
 		this.fetchChannels();
 		this.fetchFriends();
+		this.chat.show = false;
 		/*this.friendList.sort((a, b) => {
 			return b.status - a.status;
 		})
 		*/
 
-		this.socket.emit('disconnectRoom')
 	}
 
 	openUserDialog(message?: any) {
@@ -469,21 +478,32 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 	}
 
 	openSpec() {
-		const tmp = this.dialog.open(DialogSpectator, {
-			data:
+		this.http.get(`${GlobalConsts.userApi}/channels/${this.chat.id}`, {withCredentials: true}).subscribe(data => {
+			if (data)
 			{
-				chat: this.chat,
-				my_id: this.user.id,
-				friends: this.friendList,
-				blocked: this.blocked,
-				socket: this.socket
-				//channel name to send and moderator status
+				this.chat = {...this.chat, ...data};
+				
+				const tmp = this.dialog.open(DialogSpectator, {
+					data:
+					{
+						chat: this.chat,
+						my_id: this.user.id,
+						friends: this.friendList,
+						blocked: this.blocked,
+						socket: this.socket
+					}
+				});
+		
+				tmp.afterClosed().subscribe(() => {
+					this.fetchBlockedUsers();
+				});
 			}
-		});
+			else
+			{
+				alert('Could not fetch channel details');
+			}
 
-		tmp.afterClosed().subscribe(() => {
-			this.fetchBlockedUsers();
-		});
+		})
 
 	}
 
@@ -517,7 +537,11 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 			}
 		});
 		tmp.afterClosed().subscribe(data => {
-			this.fetchChannels();
+			this.fetchChannels()
+			if (data)
+			{
+				this.connectRoom({...data, moderator: true, creator: true});
+			}
 		})
 	}
 

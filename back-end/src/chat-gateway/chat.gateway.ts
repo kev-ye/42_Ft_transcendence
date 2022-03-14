@@ -77,10 +77,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
   }
 
-  switchChannel(client: any, to?: string) {
+  async switchChannel(client: any, to?: string) {
     if (to != undefined)
-      this.activeService.updateUser({ id: client.id, chat_id: to }).then();
-    else this.activeService.updateUser({ id: client.id, chat_id: null }).then();
+      await this.activeService.updateUser({ id: client.id, chat_id: to }).then();
+    else await this.activeService.updateUser({ id: client.id, chat_id: null }).then();
     let tmp = this.rooms.get(client.id);
     if (tmp != '') {
       client.leave(tmp);
@@ -258,6 +258,29 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('disconnectRoom')
   async disconnectChannel(@ConnectedSocket() client: Socket) {
-    return this.switchChannel(client);
+    const user = await this.activeService.getUserBySocketId(client.id);
+    if (!user || !user.chat_id)
+      return ;
+    const users = await this.activeService.getUsersByChatId(user.chat_id);
+    await this.switchChannel(client);
+    if (users.length == 1)
+      await this.chanService.deleteChannel(user.user_id, user.chat_id);
+    else
+    {
+      const chan = await this.chanService.getChannelById(user.chat_id);
+      if (!chan)
+        return ;
+      const tmp = users.filter(val => val.id == user.user_id).length;
+      
+      if (tmp == 1)
+      {
+        await this.chanService.deleteModerator(chan.creator_id, {chat_id: user.chat_id, user_id: user.user_id})
+        if (chan.creator_id && user.user_id == chan.creator_id)
+        {             
+          await this.chanService.deleteCreator(chan.id)
+        }
+      }
+    }
+    
   }
 }

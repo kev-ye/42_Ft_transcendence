@@ -15,11 +15,12 @@ import {
 import { MessageBody } from '@nestjs/websockets';
 import { Response } from 'express';
 import { UserGuard } from 'src/auth/user.guard';
+import { ModeratorService } from 'src/moderator/moderator.service';
 import { ChannelsService } from './channels.service';
 
 @Controller('channels')
 export class ChannelsController {
-  constructor(@Inject('CHANNELS_SERVICE') private service: ChannelsService) {}
+  constructor(@Inject('CHANNELS_SERVICE') private service: ChannelsService, private modService: ModeratorService) {}
   //@Inject('CHAT_HISTORY_SERVICE') private historyService: ChatHistoryService) {}
 
   @Get('access/:chatID')
@@ -50,6 +51,24 @@ export class ChannelsController {
       res.send(tmp);
       return tmp;
     }
+  }
+
+  @Get(':id')
+  @UseGuards(UserGuard)
+  async getChannel(@Param('id') id: string, @Req() req: any) {
+    const user = req.session.userId;
+    const tmp = await this.service.getChannelById(id);
+    let res: any = {};
+    if (tmp)
+    {
+      res = {...tmp};
+      if (tmp.creator_id == user)
+        res.creator = true;
+      if (await this.modService.isModerator(id, user))
+        res.moderator = true;
+      return res;
+    }
+    return null;
   }
 
   @Get()
@@ -144,13 +163,19 @@ export class ChannelsController {
   ) {
     const userID = req.session.userId;
 
+    if (!data.name || !/^[a-zA-Z]{6,16}$/.test(data.name))
+    {
+      res.status(403).send();
+      return ;
+    }
+
     if (await this.service.getChannelByName(data.name)) {
       res.status(403).send();
       return;
     }
 
-    await this.service.createChannel(userID, data);
-    res.status(201).send();
+    const tmp = await this.service.createChannel(userID, data);
+    res.status(201).send(tmp);
   }
 
   @Put()
