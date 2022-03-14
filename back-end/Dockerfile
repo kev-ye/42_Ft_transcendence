@@ -3,11 +3,11 @@ FROM node:16.13.2-alpine AS development
 
 WORKDIR /pong/back-end
 
-COPY package*.json ./
+RUN npm cache clean --force
+#COPY package*.json ./
+COPY . .
 
 RUN npm install
-
-COPY . .
 
 RUN npm run build
 
@@ -21,11 +21,11 @@ ENV NODE_ENV=${NODE_ENV}
 
 WORKDIR /pong/back-end
 
-COPY package*.json ./
+RUN npm cache clean --force
+#COPY package*.json ./
+COPY . .
 
 RUN npm install
-
-COPY . .
 
 COPY --from=development /pong/back-end/dist ./dist
 

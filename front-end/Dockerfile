@@ -3,12 +3,14 @@ FROM node:16.13.2-alpine AS development
 
 WORKDIR /pong/front-end/
 
-COPY package*.json ./
+RUN npm cache clean --force
+COPY . .
+#COPY package*.json ./
 
+RUN npm install -g npm@8.5.4
 RUN npm install
 RUN npm install -g @angular/cli
 
-COPY . .
 
 RUN npm run build
 
@@ -19,11 +21,13 @@ FROM node:16.13.2-alpine AS production_dist
 
 WORKDIR /pong/front-end
 
-COPY package*.json ./
+RUN npm cache clean --force
+COPY . .
+#COPY package*.json ./
 
+RUN npm install -g npm@8.5.4
 RUN npm install
 
-COPY . .
 
 RUN npm run build --configuration=production
 
