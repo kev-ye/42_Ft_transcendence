@@ -29,7 +29,8 @@
 				<div>
 					<button mat-raised-button (click)="spectateGame(game.id)">Watch</button>
 				</div>
-				<div>{{ game.id }} <mat-icon style="color: orange;">flash_on</mat-icon> {{ game.id }}</div>
+				<div>{{ game.first_user_obj.name }} <mat-icon style="color: orange;">flash_on</mat-icon> {{
+					game.second_user_obj.name }}</div>
 
 			</mat-list-item>
 		</mat-list>
