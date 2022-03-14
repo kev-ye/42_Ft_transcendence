@@ -7,6 +7,7 @@ RUN npm cache clean --force
 #COPY package*.json ./
 COPY . .
 
+RUN npm install -g npm@8.5.4
 RUN npm install
 
 RUN npm run build
@@ -21,6 +22,7 @@ ENV NODE_ENV=${NODE_ENV}
 
 WORKDIR /pong/back-end
 
+RUN npm install -g npm@8.5.4
 RUN npm cache clean --force
 #COPY package*.json ./
 COPY . .
