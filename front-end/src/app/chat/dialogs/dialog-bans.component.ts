@@ -22,7 +22,6 @@ import { DialogUser } from "./dialog-user.component";
     fetchBans() {
       this.http.get(`${GlobalConsts.userApi}/channels/ban/` + this.data.chat.id).subscribe(val => {
         this.bans = val as any[];
-        console.log("Fetched bans", this.bans);
       })
     }
 

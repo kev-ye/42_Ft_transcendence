@@ -15,7 +15,6 @@ export class BlockService {
             ]
         }))
         {
-            console.error("Trying to block twice a user");
             return ;
         }
         const tmp = this.repo.create({first: data.first, second: data.second});
@@ -31,7 +30,6 @@ export class BlockService {
 
         if (!tmp)
         {
-            console.error("trying to unblock a non-blocked user");
             return ;
         }
         return await this.repo.remove(tmp);

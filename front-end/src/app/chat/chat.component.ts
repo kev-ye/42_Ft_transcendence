@@ -365,7 +365,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 						this.chat.show = true;
 						this.chat.public = true;
 						this.scroll = true;
-						console.log("joined channel", this.chat, this.user);
 						
 						this.fetchChannelHistory(channel);
 					} else if (data == 2) //user is banned

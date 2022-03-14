@@ -37,10 +37,8 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
 					this.router.navigate(['main']).then();
 			},
 			error: (e) => {
-				console.error('Error: two-fa init:', e);
 				this.router.navigate(['main']).then();
 			},
-			complete: () => console.info('Complete: two-fa init done')
 		}));
   }
 
@@ -56,8 +54,6 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
 				else
 					window.alert((v.delta === -1)? 'Your token has expired' : 'Your Token is invalid');
 			},
-			error: (e) => console.log('Error: two-fa verify: ', e),
-			complete: () => console.log('Complete: two-fa verify done')
 		}));
 	}
 

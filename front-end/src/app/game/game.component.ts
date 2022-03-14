@@ -118,7 +118,6 @@ export class GameComponent implements OnInit, OnDestroy {
 					}
 					else
 					{
-						console.error("No gameID was sent to player");
 					}
 				})
 			}
@@ -162,8 +161,6 @@ export class GameComponent implements OnInit, OnDestroy {
 			next: (data) => {
 				this.user = { ...data }
 			},
-			error: (e) => console.error('Error: get user in main:', e),
-			complete: () => console.info('Complete: get user in main')
 		}));
 	}
 

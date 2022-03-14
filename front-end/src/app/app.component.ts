@@ -119,10 +119,8 @@ export class AppComponent implements OnInit, OnDestroy {
 				this.router.navigate(['user_login']).then();
 			},
 			error: e => {
-				console.error('Error: user logout:', e);
 				this.router.navigate(['user_login']).then();
 			},
-			complete: () => console.info('Complete: user logout done')
 		}));
 	}
 }

@@ -45,7 +45,6 @@ export class UserComponent implements OnInit {
 				if (!data) {
 					return;
 				}
-				// console.log("fetched user details", data);
 				const tmp = data as any;
 				this.user = tmp;
 				this.user.username = tmp.name;
@@ -79,8 +78,6 @@ export class UserComponent implements OnInit {
 						this.qrCode = v.twoFactorQR;
 					}
 				},
-				error: (e) => console.error('Error: get user in main:', e),
-				complete: () => console.info('Complete: get user in main')
 			}))
 		}
 	}
@@ -124,10 +121,8 @@ export class UserComponent implements OnInit {
 				this.twoFaActive = true;
 			},
 			error: (e) => {
-				console.error('Error: two-fa generate:', e);
 				alert('Something wrong, try again!');
 			},
-			complete: () => console.info('Complete: two-fa generate done')
 		}));
 	}
 
@@ -138,10 +133,8 @@ export class UserComponent implements OnInit {
 				this.twoFaActive = false;
 			},
 			error: (e) => {
-				console.error('Error: two-fa: turn off:', e);
 				alert('Something wrong, try again!');
 			},
-			complete: () => console.info('Complete: two-fa turn off done')
 		}));
 	}
 
@@ -155,10 +148,8 @@ export class UserComponent implements OnInit {
 					this.router.navigate(['user_login']).then();
 				},
 				error: e => {
-					console.error('Error: user logout:', e);
 					this.router.navigate(['user_login']).then();
 				},
-				complete: () => console.info('Complete: user logout done')
 			}));
 		}
 	}

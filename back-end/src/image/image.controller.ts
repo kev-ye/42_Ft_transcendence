@@ -137,7 +137,6 @@ export class ImageController {
         user.avatar = null;
         await this.userService.updateUser(user);
       } catch {
-        console.error('Could not delete image: ' + user.avatar);
       }
     }
   }

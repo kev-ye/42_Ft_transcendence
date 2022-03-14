@@ -14,7 +14,6 @@ import { DialogUser } from "./dialog-user.component";
   export class DialogModerators {
     constructor(private http: HttpClient, @Inject(MAT_DIALOG_DATA) public data: any, public dialogRef: MatDialogRef<DialogModerators>, public dialog: MatDialog) {
       this.fetchModerators(); 
-      console.log("modInit", data);
            
     }
     public moderators: any[] = [];
@@ -23,7 +22,6 @@ import { DialogUser } from "./dialog-user.component";
     fetchModerators() {
       this.http.get(`${GlobalConsts.userApi}/moderator/` + this.data.chat.id).subscribe(val => {
         this.moderators = val as any[];
-        console.log("Fetched moderators", this.moderators);
       })
     }
 

@@ -54,7 +54,6 @@ export class UserSubscriptionComponent implements OnInit, OnDestroy {
 				error: (e) => {
 					this.router.navigate(['user_login']).then();
 				},
-				complete: () => console.info('Complete: create user done')
 			}));
   }
 
@@ -67,10 +66,8 @@ export class UserSubscriptionComponent implements OnInit, OnDestroy {
 					this.router.navigate(['user_login']).then();
 				},
 				error: e => {
-					console.error('Error: user logout:', e);
 					this.router.navigate(['user_login']).then();
 				},
-				complete: () => console.info('Complete: user logout done')
 			}));
 		}
 	}
@@ -83,7 +80,6 @@ export class UserSubscriptionComponent implements OnInit, OnDestroy {
 				else
 					alert('User name no valid');
 			},
-			error: (e) => console.error('Error: create user:', e),
 			complete: () => {}
 		}));
 	}

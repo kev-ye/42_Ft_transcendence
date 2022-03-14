@@ -11,7 +11,6 @@ import { DialogModerators } from "./dialog-moderators.component";
   export class DialogChannelSettings {
     constructor(private http: HttpClient, private dialog: MatDialog, private dialogRef: MatDialogRef<DialogChannelSettings>, @Inject(MAT_DIALOG_DATA) public data: any) {
       this.chatName = data.name;
-      console.log("testt", data);
           
     }
   
