@@ -145,10 +145,6 @@
 	background-color: rgb(165, 164, 164);
 }
 
-.ChatInformation {
-	/* height: 50px; */
-}
-
 ::-webkit-scrollbar {
 	display: none;
 }
