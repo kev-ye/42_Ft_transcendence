@@ -51,7 +51,7 @@ export class DialogCreateChat {
       }
       this.http.post(`${GlobalConsts.userApi}/channels`, {name: name, access: this.access, password: passwordOne, creator_id: this.user_id}, {withCredentials: true}).subscribe({next:
       data => {
-        this.dialogRef.close(data);
+        this.dialogRef.close({...data, password: passwordOne});
       },
       error: data => {
         this.error.nativeElement.textContent = "Could not create channel"
