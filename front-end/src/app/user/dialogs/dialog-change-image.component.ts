@@ -9,7 +9,7 @@ import { GlobalConsts } from "src/app/common/global";
   export class DialogChangeImage {
     constructor(@Inject(MAT_DIALOG_DATA) private data: any, private http: HttpClient,
     private dialogRef: MatDialogRef<DialogChangeImage>) {
-      this.link = `${GlobalConsts.userApi}/image/user/` + data.user_id;
+      this.link = `${GlobalConsts.userApi}/image/user/` + data.user_id + `?random=${Math.random()}`;
     }
   
     link: string = "";
