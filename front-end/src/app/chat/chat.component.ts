@@ -67,6 +67,8 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 	socket: Socket;
 	blocked: any[] = [];
 
+	fetchSub: any | null = null;
+
 	myGame: any = null;
 
 	user: any = {}
@@ -192,6 +194,20 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 	ngOnInit(): void {
 		this.subscription.add(this.data.isLoginData.subscribe(data => this.isLogin = data));
 
+		this.fetchSub = setInterval(() => {
+			
+			if (this.isLogin)
+			{
+				
+				this.fetchFriends();
+				this.fetchChannels();
+			}
+			else
+			{
+				clearInterval(this.fetchSub);
+			}
+
+		}, 5000)
 		if (this.isLogin) {
 			this.socket = io(`ws://localhost:3001/${GlobalConsts.chatSockIo}`, {
 				path: `/${GlobalConsts.chatSockIo}/socket.io`,
@@ -268,6 +284,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 		if (this.socket.connected)
 			this.socket.disconnect();
 
+		clearInterval(this.fetchSub);
 		this.subscription.unsubscribe();
 	}
 
@@ -290,6 +307,8 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 			return '#e9d901';
 		if (!friend.online)
 			return '#700303';
+		else if (friend.playing == true)
+			return '#3843a7';
 		else if (friend.online == 1)
 			return '#3e7739';
 		return '#e9d901';
@@ -418,6 +437,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 		this.http.get(`${GlobalConsts.userApi}/friend/` + this.user.id, { withCredentials: true }).subscribe({
 			next:
 				data => {
+					
 					this.friendList = data as any[];
 				},
 			error:

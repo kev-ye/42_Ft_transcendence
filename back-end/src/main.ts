@@ -32,6 +32,7 @@ async function bootstrap() {
         httpOnly: true,
         secure: false,
         maxAge: MAX_AGE,
+        sameSite: 'strict'
       },
       rolling: true,
     }),
