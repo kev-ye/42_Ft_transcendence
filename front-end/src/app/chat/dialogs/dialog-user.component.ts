@@ -31,6 +31,7 @@ import { GlobalConsts } from "src/app/common/global";
     blocked: boolean = false;
     user: any = {};
     error: boolean = false;
+    ladder: any = {points: 500, win: 0, gamesPlayed: 0};
   
     ngOnInit(): void {
       this.http.get(`${GlobalConsts.userApi}/user/id/` + this.id, {withCredentials: true}).subscribe({
@@ -44,11 +45,20 @@ import { GlobalConsts } from "src/app/common/global";
           this.link = `${GlobalConsts.userApi}/image/user/${this.id}?random=${Math.random()}`
           
         },
-        error: data => {
+        error: (data: any) => {
           this.error = true;
           
         },
         complete: () => {
+        }
+      });
+
+      this.http.get(`${GlobalConsts.userApi}/ladder/${this.id}`, {withCredentials: true}).subscribe({
+        next: (data: any) => {
+          this.ladder = data;
+        },
+        error: () => {
+          alert('Could not fetch ladder details')
         }
       });
       

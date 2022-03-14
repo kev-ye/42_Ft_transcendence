@@ -101,7 +101,7 @@ export class ChannelsService {
 
   async createChannel(userID: string, data: any) {
     let result;
-      
+        
     if (data.access == 1)
       result = this.repo.create({ ...data, creator_id: userID, password: await argon.hash(data.password)});
     else
