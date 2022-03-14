@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { PlayersService } from 'src/players/players.service';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { FriendEntity } from './entity/friend.entity';
@@ -9,6 +10,7 @@ export class FriendService {
   constructor(
     @InjectRepository(FriendEntity) private repo: Repository<FriendEntity>,
     @Inject('USER_SERVICE') private userService: UserService,
+    private playerService: PlayersService
   ) {
   }
 
@@ -49,12 +51,19 @@ export class FriendService {
     const tmp = await this.repo.find({
       where: [{ first: id }, { second: id }],
     });
+    
     const result = [];
     tmp.forEach((value) => {
       if (value.status) {
-        if (value.first == id)
+        if (value.first == id) //friend is second
+        {
           result.push({ friend: value.second, status: value.status, emitter: value.first });
-        else result.push({ friend: value.first, status: value.status, emitter: value.first });
+
+        }
+        else //friend is first
+        {
+          result.push({ friend: value.first, status: value.status, emitter: value.first });
+        }
       }
     });
 
@@ -62,14 +71,18 @@ export class FriendService {
     for (const userID of result) {
       const friend = await this.userService.getUserById(userID.friend);
       if (friend)
+      {
+        const players = await this.playerService.getPlayerByUserId(friend.id);
         final.push({
           status: userID.status,
           username: friend.name,
           id: friend.id,
+          playing: players && players.find(val => val.game_id) ? true : false,
           online: friend.online,
           avatar: friend.avatar,
           emitter: userID.emitter
         });
+      }
     }
     return final;
   }
