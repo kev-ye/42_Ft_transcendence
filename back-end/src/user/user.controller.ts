@@ -104,24 +104,22 @@ export class UserController {
 
   @Put('update')
   @UseGuards(UserGuard)
-  async updateUserById(@Body() user: UserDto, @Res() res: Response): Promise<UserDto> {
-    if (user.name && !(await this.userService.nameFormatVerify(user.name)))
-    {
+  async updateUserById(
+    @Body() user: UserDto,
+    @Res() res: Response,
+  ): Promise<UserDto> {
+    if (user.name && !(await this.userService.nameFormatVerify(user.name))) {
       res.status(403).send('Username formatting is incorrect');
-      return ;
+      return;
     }
-    if (user.name)
-    {
+    if (user.name) {
       const tmp = await this.userService.getUserByName(user.name);
-      if (tmp)
-      {
-        if (user.id != tmp.id)
-        {
+      if (tmp) {
+        if (user.id != tmp.id) {
           res.status(403).send('Username is already being used\n');
           return;
         }
       }
-
     }
     res.status(200).send();
     return this.userService.updateUser(user);
@@ -145,7 +143,7 @@ export class UserController {
 
     // set session when user exist
     if (user) req.session.userId = user.id;
-    res.redirect(`${process.env.FRONT_URL}/main`);
+    res.redirect('http://localhost:80/main');
   }
 
   @Get('isLogin')
@@ -176,8 +174,8 @@ export class UserController {
       user.online = 0;
       await this.userService.updateUser(user);
     }
-    req.session.destroy((err) => {
-    });
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    req.session.destroy(() => {});
     res.status(200).json({
       ok: 'ok',
     });
