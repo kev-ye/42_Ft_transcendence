@@ -258,6 +258,26 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('disconnectRoom')
   async disconnectChannel(@ConnectedSocket() client: Socket) {
-    return this.switchChannel(client);
+    const user = await this.activeService.getUserBySocketId(client.id);
+    if (!user || !user.chat_id)
+      return ;
+    const users = await this.activeService.getUsersByChatId(user.chat_id);
+    this.switchChannel(client);
+    if (users.length == 1)
+      await this.chanService.deleteChannel(user.user_id, user.chat_id);
+    else
+    {
+      const chan = await this.chanService.getChannelById(user.chat_id);
+      if (!chan)
+        return ;
+      this.chanService.deleteModerator(chan.creator_id, {chat_id: user.chat_id, user_id: user.user_id})
+      if (chan.creator_id)
+      {
+        console.log("deleting creator on " + chan.id);
+        
+        await this.chanService.deleteCreator(chan.id)
+      }
+    }
+    
   }
 }

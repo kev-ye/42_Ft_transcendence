@@ -17,6 +17,6 @@ export class ChannelEntity {
     @Column({nullable: true})
     password?: string;
 
-    @Column()
+    @Column({nullable: true})
     creator_id: string;
 }

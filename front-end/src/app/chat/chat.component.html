@@ -21,7 +21,7 @@
                         <mat-icon *ngIf="channel.access == 1"> lock </mat-icon>
                         <mat-icon *ngIf="channel.access == 0"> lock_open </mat-icon>
                         <mat-icon *ngIf="channel.access == 2"> block_icon </mat-icon>
-                        <mat-icon *ngIf="channel.moderator"> report </mat-icon>
+                        <!-- <mat-icon *ngIf="channel.moderator"> report </mat-icon> -->
 
                         <div style="position: absolute; left: 25%; top: 50%; transform: translate(0, -50%);" [ngStyle]="{'font-weight': channel.access < 2 ? 'bold' : ''}">
                             {{ channel.name }}
@@ -32,8 +32,8 @@
             </div>
             <div *ngIf="chat.show" style="overflow: hidden; height: 90vh; width: 350px">
                 <div class="ChatInformation" style="position: relative; height: 5vh; width: 350px;">
-                    <div (click)="openChannelSettings()" style="position: absolute; top: 0%; left: 50%; transform: translate(-50%, 0); text-decoration: underline;" [ngStyle]="{'font-weight': chat.moderator ? 'bold': '',
-                                                                                              'cursor': chat.moderator ? 'pointer': 'default'}">
+                    <div (click)="openChannelSettings()" style="position: absolute; top: 0%; left: 50%; transform: translate(-50%, 0); text-decoration: underline;" [ngStyle]="{'font-weight': chat.creator_id == user.id ? 'bold': '',
+                                                                                              'cursor': chat.creator_id == user.id ? 'pointer': 'default'}">
                         {{ chat.name }}
                     </div>
                     <mat-icon (click)="openFriendList()" style="position: absolute; top: 0%; left: 0%; cursor: pointer;"> keyboard_arrow_left </mat-icon>
