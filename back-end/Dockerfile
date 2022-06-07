@@ -6,7 +6,7 @@ WORKDIR /pong/back-end
 #COPY package*.json ./
 COPY . .
 
-RUN npm install
+RUN npm install --force
 
 RUN npm run build
 
@@ -22,7 +22,7 @@ WORKDIR /pong/back-end
 
 COPY . .
 
-RUN npm install
+RUN npm install --force
 
 COPY --from=development /pong/back-end/dist ./dist
 

@@ -7,6 +7,7 @@ COPY . .
 
 RUN npm install
 RUN npm install -g @angular/cli
+RUN npm audit fix --force
 
 RUN npm run build
 
@@ -20,8 +21,9 @@ WORKDIR /pong/front-end
 COPY . .
 
 RUN npm install
+RUN npm audit fix --force
 
-RUN npm run build --configuration=production
+RUN npm run build
 
 # Stage 2.2: build production - nginx image
 FROM nginx:alpine AS production
